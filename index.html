@@ -1,44 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dylan's Portfolio</title>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio showcasing projects and skills">
+  <title>Portfolio | Home</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Dylan Bailes</h1>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="projects.html">Projects</a>
-            <a href="about.html">About</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-    </header>
+  <!-- PLACEHOLDER: Skip link for accessibility -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
-    <main>
-        <section>
-            <h2>Welcome!</h2>
-            <p>This is my personal portfolio where I showcase my projects and keep track of my work.</p>
-        </section>
+  <!-- Header & Navigation -->
+  <header class="header">
+    <div class="container header__inner">
+      <a href="#" class="logo" aria-label="Home">
+        <span class="logo__text">YourName</span>
+      </a>
+      
+      <button 
+        class="nav-toggle" 
+        aria-expanded="false" 
+        aria-controls="primary-navigation"
+        aria-label="Toggle navigation menu"
+      >
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
 
-        <section>
-            <h2>Featured Projects</h2>
-            <div class="project-cards">
-                <!-- Example project card -->
-                <div class="card">
-                    <img src="images/project1.jpg" alt="Project 1">
-                    <h3>Project 1</h3>
-                    <p>Short description of Project 1.</p>
-                    <a href="projects.html">See more</a>
-                </div>
+      <nav id="primary-navigation" class="nav" aria-label="Primary navigation">
+        <ul class="nav__list">
+          <li class="nav__item">
+            <a href="#about" class="nav__link">About</a>
+          </li>
+          <li class="nav__item">
+            <a href="#projects" class="nav__link">Projects</a>
+          </li>
+          <li class="nav__item">
+            <a href="#contact" class="nav__link">Contact</a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero__content">
+        <!-- PLACEHOLDER: Update hero headline -->
+        <h1 id="hero-title" class="hero__title">
+          Building Digital<br />
+          <span class="hero__highlight">Experiences</span>
+        </h1>
+        
+        <!-- PLACEHOLDER: Update hero subtext -->
+        <p class="hero__subtitle">
+          Frontend developer & UI/UX designer crafting accessible, 
+          performant, and beautiful web applications.
+        </p>
+        
+        <div class="hero__actions">
+          <a href="#projects" class="btn btn--primary">View My Work</a>
+          <a href="#contact" class="btn btn--secondary">Get In Touch</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about" aria-labelledby="about-title">
+      <div class="container about__content">
+        <!-- PLACEHOLDER: Update about section content -->
+        <h2 id="about-title" class="section-title">About Me</h2>
+        <p class="about__text">
+          I'm a passionate frontend developer with a keen eye for design. 
+          I specialize in creating responsive, accessible, and performant 
+          web applications that deliver exceptional user experiences.
+        </p>
+        <p class="about__text">
+          With expertise in modern JavaScript frameworks and a deep understanding 
+          of UX principles, I bridge the gap between design and development.
+        </p>
+      </div>
+    </section>
+
+    <!-- Projects Section with Tabs -->
+    <section id="projects" class="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <h2 id="projects-title" class="section-title">Projects</h2>
+        
+        <!-- Tab Navigation -->
+        <div class="tabs" role="tablist" aria-label="Project categories">
+          <!-- PLACEHOLDER: Update tab labels as needed -->
+          <button 
+            role="tab" 
+            id="tab-1" 
+            aria-selected="true" 
+            aria-controls="panel-1"
+            class="tab-btn tab-btn--active"
+          >
+            Project One
+          </button>
+          <button 
+            role="tab" 
+            id="tab-2" 
+            aria-selected="false" 
+            aria-controls="panel-2"
+            class="tab-btn"
+            tabindex="-1"
+          >
+            Project Two
+          </button>
+          <button 
+            role="tab" 
+            id="tab-3" 
+            aria-selected="false" 
+            aria-controls="panel-3"
+            class="tab-btn"
+            tabindex="-1"
+          >
+            Project Three
+          </button>
+        </div>
+
+        <!-- Tab Panels -->
+        <div class="tab-panels">
+          <!-- Panel 1 -->
+          <div 
+            role="tabpanel" 
+            id="panel-1" 
+            aria-labelledby="tab-1"
+            class="tab-panel tab-panel--active"
+          >
+            <!-- PLACEHOLDER: Project Title (h3) -->
+            <h3 class="project-title">E-Commerce Dashboard</h3>
+            
+            <!-- PLACEHOLDER: One-line summary (p) -->
+            <p class="project-summary">
+              A comprehensive analytics dashboard for online retailers with real-time data visualization.
+            </p>
+            
+            <!-- PLACEHOLDER: Tech/Tools Used (ul with placeholder list items) -->
+            <ul class="project-tech">
+              <li>React</li>
+              <li>TypeScript</li>
+              <li>D3.js</li>
+              <li>CSS Modules</li>
+            </ul>
+            
+            <!-- PLACEHOLDER: Current Status (badge) -->
+            <span class="project-status project-status--live">Live</span>
+            
+            <!-- PLACEHOLDER: Media/Model Placeholder (div with class cad-placeholder + alt text) -->
+            <div class="cad-placeholder" role="img" aria-label="Project screenshot or 3D model placeholder">
+              <span class="cad-placeholder__text">Project Preview / 3D Model</span>
             </div>
-        </section>
-    </main>
+            
+            <!-- PLACEHOLDER: Links (View Demo / GitHub / Docs) as buttons -->
+            <div class="project-links">
+              <a href="#" class="btn btn--primary btn--small">View Demo</a>
+              <a href="#" class="btn btn--secondary btn--small">GitHub</a>
+              <a href="#" class="btn btn--ghost btn--small">Docs</a>
+            </div>
+          </div>
 
-    <footer>
-        <p>&copy; 2026 Dylan Bailes</p>
-    </footer>
+          <!-- Panel 2 -->
+          <div 
+            role="tabpanel" 
+            id="panel-2" 
+            aria-labelledby="tab-2"
+            class="tab-panel"
+            hidden
+          >
+            <!-- PLACEHOLDER: Project Title (h3) -->
+            <h3 class="project-title">Task Management App</h3>
+            
+            <!-- PLACEHOLDER: One-line summary (p) -->
+            <p class="project-summary">
+              Collaborative task manager with drag-and-drop functionality and team features.
+            </p>
+            
+            <!-- PLACEHOLDER: Tech/Tools Used (ul with placeholder list items) -->
+            <ul class="project-tech">
+              <li>Vue 3</li>
+              <li>Pinia</li>
+              <li>Firebase</li>
+              <li>Tailwind CSS</li>
+            </ul>
+            
+            <!-- PLACEHOLDER: Current Status (badge) -->
+            <span class="project-status project-status--progress">In Progress</span>
+            
+            <!-- PLACEHOLDER: Media/Model Placeholder (div with class cad-placeholder + alt text) -->
+            <div class="cad-placeholder" role="img" aria-label="Project screenshot or 3D model placeholder">
+              <span class="cad-placeholder__text">Project Preview / 3D Model</span>
+            </div>
+            
+            <!-- PLACEHOLDER: Links (View Demo / GitHub / Docs) as buttons -->
+            <div class="project-links">
+              <a href="#" class="btn btn--primary btn--small">View Demo</a>
+              <a href="#" class="btn btn--secondary btn--small">GitHub</a>
+            </div>
+          </div>
+
+          <!-- Panel 3 -->
+          <div 
+            role="tabpanel" 
+            id="panel-3" 
+            aria-labelledby="tab-3"
+            class="tab-panel"
+            hidden
+          >
+            <!-- PLACEHOLDER: Project Title (h3) -->
+            <h3 class="project-title">Portfolio Generator</h3>
+            
+            <!-- PLACEHOLDER: One-line summary (p) -->
+            <p class="project-summary">
+              CLI tool that generates customizable portfolio templates for developers.
+            </p>
+            
+            <!-- PLACEHOLDER: Tech/Tools Used (ul with placeholder list items) -->
+            <ul class="project-tech">
+              <li>Node.js</li>
+              <li>EJS Templates</li>
+              <li>Inquirer.js</li>
+              <li>NPM Package</li>
+            </ul>
+            
+            <!-- PLACEHOLDER: Current Status (badge) -->
+            <span class="project-status project-status--planning">Planning</span>
+            
+            <!-- PLACEHOLDER: Media/Model Placeholder (div with class cad-placeholder + alt text) -->
+            <div class="cad-placeholder" role="img" aria-label="Project screenshot or 3D model placeholder">
+              <span class="cad-placeholder__text">Project Preview / 3D Model</span>
+            </div>
+            
+            <!-- PLACEHOLDER: Links (View Demo / GitHub / Docs) as buttons -->
+            <div class="project-links">
+              <a href="#" class="btn btn--secondary btn--small">GitHub</a>
+              <a href="#" class="btn btn--ghost btn--small">Docs</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact" aria-labelledby="contact-title">
+      <div class="container contact__content">
+        <!-- PLACEHOLDER: Update contact section content -->
+        <h2 id="contact-title" class="section-title">Get In Touch</h2>
+        <p class="contact__text">
+          Have a project in mind or want to collaborate? I'd love to hear from you.
+        </p>
+        <a href="mailto:hello@example.com" class="btn btn--primary">Say Hello</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__content">
+      <!-- PLACEHOLDER: Update social links and copyright -->
+      <nav class="footer__nav" aria-label="Footer navigation">
+        <a href="#" class="footer__link">GitHub</a>
+        <a href="#" class="footer__link">LinkedIn</a>
+        <a href="#" class="footer__link">Twitter</a>
+      </nav>
+      <p class="footer__copyright">
+        &copy; <span id="current-year"></span> YourName. All rights reserved.
+      </p>
+    </div>
+  </footer>
 </body>
 </html>
