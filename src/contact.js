@@ -37,11 +37,11 @@ function renderContact(container) {
 
   container.innerHTML = `
     <div class="section-head">
-      <span class="section-head__index">04</span>
+      <span class="section-head__index">05</span>
       <h2 id="contact-title" class="section-head__title">Contact</h2>
       <span class="section-head__rule"></span>
       <span class="section-head__tag">CON.CHANNEL</span>
-      <span class="section-head__ghost" aria-hidden="true">04</span>
+      <span class="section-head__ghost" aria-hidden="true">05</span>
     </div>
     <p class="contact__text">${escapeHtml(contact.blurb)}</p>
     <div class="contact__actions">${actions}</div>
