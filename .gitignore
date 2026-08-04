@@ -1,4 +1,13 @@
-```
-# Build artifacts
+# Dependencies
+node_modules/
+
+# Build output (deployed via GitHub Actions, not committed)
 dist/
-```
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
