@@ -47,11 +47,11 @@ function renderSkills(container) {
 
   container.innerHTML = `
     <div class="section-head">
-      <span class="section-head__index">02</span>
+      <span class="section-head__index">03</span>
       <h2 id="skills-title" class="section-head__title">Skills</h2>
       <span class="section-head__rule"></span>
       <span class="section-head__tag">SKL.MATRIX</span>
-      <span class="section-head__ghost" aria-hidden="true">02</span>
+      <span class="section-head__ghost" aria-hidden="true">03</span>
     </div>
     <div class="skills__grid">${categories}</div>
   `;

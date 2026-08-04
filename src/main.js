@@ -13,6 +13,7 @@ import { initTheme } from './theme.js';
 import { initNav } from './nav.js';
 import { initHero } from './hero.js';
 import { initAbout } from './about.js';
+import { initExperience } from './experience.js';
 import { initSkills } from './skills.js';
 import { initProjects } from './projects.js';
 import { initContact } from './contact.js';
@@ -41,6 +42,7 @@ function boot() {
   initNav();
   initHero();
   initAbout();
+  initExperience();
   initSkills();
   initProjects();
   initContact();

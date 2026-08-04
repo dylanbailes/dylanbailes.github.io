@@ -124,9 +124,44 @@ function renderSimulationMedia() {
 }
 
 function renderImageMedia(media) {
+  const gallery = media.gallery && media.gallery.length ? media.gallery : [];
+
+  const thumbs = gallery.length
+    ? `
+      <div class="project-media__thumbs" role="group" aria-label="Project image gallery">
+        ${gallery
+          .map(
+            (g, index) => `
+            <button
+              class="project-media__thumb"
+              data-gallery-src="${escapeHtml(g.src)}"
+              data-gallery-alt="${escapeHtml(g.alt || g.src)}"
+              aria-label="View gallery image ${index + 2}"
+            >
+              <img src="${escapeHtml(g.src)}" alt="" loading="lazy">
+            </button>`
+          )
+          .join('')}
+      </div>`
+    : '';
+
+  const counter = gallery.length
+    ? `<span class="project-media__counter">01 / ${String(gallery.length + 1).padStart(2, '0')}</span>`
+    : '';
+
   return `
-    <div class="project-card__media">
-      <img src="${escapeHtml(media.src)}" alt="${escapeHtml(media.alt || media.src)}" loading="lazy">
+    <div class="project-card__media project-media">
+      <div class="project-media__main">
+        <img
+          class="project-media__image"
+          src="${escapeHtml(media.src)}"
+          alt="${escapeHtml(media.alt || media.src)}"
+          data-gallery-main
+          loading="lazy"
+        >
+        ${counter}
+      </div>
+      ${thumbs}
     </div>
   `;
 }
@@ -210,11 +245,11 @@ function renderProjects(container) {
 
   container.innerHTML = `
     <div class="section-head">
-      <span class="section-head__index">03</span>
+      <span class="section-head__index">04</span>
       <h2 id="projects-title" class="section-head__title">Projects</h2>
       <span class="section-head__rule"></span>
       <span class="section-head__tag">PRJ.ARCHIVE</span>
-      <span class="section-head__ghost" aria-hidden="true">03</span>
+      <span class="section-head__ghost" aria-hidden="true">04</span>
     </div>
 
     <div class="project-filters" role="radiogroup" aria-label="Project categories">
@@ -289,6 +324,30 @@ function bindFilterClicks(buttons) {
   });
 }
 
+/** Swap the main project image when a gallery thumbnail is clicked. */
+function bindGallery() {
+  document.querySelectorAll('.project-media').forEach((media) => {
+    const main = media.querySelector('[data-gallery-main]');
+    const thumbs = media.querySelectorAll('.project-media__thumb');
+    const counter = media.querySelector('.project-media__counter');
+    if (!main || thumbs.length === 0) return;
+
+    const total = thumbs.length + 1;
+
+    thumbs.forEach((thumb, index) => {
+      thumb.addEventListener('click', () => {
+        main.src = thumb.dataset.gallerySrc;
+        main.alt = thumb.dataset.galleryAlt;
+        thumbs.forEach((t) => t.classList.remove('is-active'));
+        thumb.classList.add('is-active');
+        if (counter) {
+          counter.textContent = `${String(index + 2).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+        }
+      });
+    });
+  });
+}
+
 export function initProjects() {
   const mount = document.querySelector(MOUNT);
   if (!mount) return;
@@ -298,6 +357,7 @@ export function initProjects() {
   const buttons = document.querySelectorAll('.filter-btn');
   bindFilterClicks(buttons);
   bindFilterKeyboard(buttons);
+  bindGallery();
 
   initPCBViewer();
   initFusionViewers();

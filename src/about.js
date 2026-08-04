@@ -34,6 +34,10 @@ function renderAbout(container) {
     )
     .join('');
 
+  const note = profile.note
+    ? `<p class="about__note"><span class="about__note-tag">CLR</span>${escapeHtml(profile.note)}</p>`
+    : '';
+
   container.innerHTML = `
     <div class="section-head">
       <span class="section-head__index">01</span>
@@ -47,6 +51,7 @@ function renderAbout(container) {
       <div class="about__text-content">
         ${profile.about.map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
         <div class="about__stats">${stats}</div>
+        ${note}
       </div>
     </div>
   `;
