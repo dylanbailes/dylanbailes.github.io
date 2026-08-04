@@ -1,5 +1,10 @@
 # Fusion 360 Export Guide for Web Viewer
 
+This guide covers exporting models from **Fusion 360** and showing them on your
+portfolio with the 3D model viewer. The viewer is powered by
+[model-viewer](https://modelviewer.dev/) and is loaded automatically whenever a
+project in `src/config.js` uses `media: { type: 'model' }`.
+
 ## Quick Start
 
 ### Best Format: glTF Binary (.glb)
@@ -29,36 +34,43 @@ File → Export (NOT "Save As")
 
 ### 3. File Placement
 
-Place your exported `.glb` file in:
+Place your exported `.glb` file in the `public/` folder (Vite copies it into
+the build as-is):
+
 ```
-workspace/
+public/
 └── assets/
     └── models/
         └── your-model.glb
 ```
 
-### 4. Update HTML
+### 4. Activate the Viewer
 
-In `index.html`, find the project card and uncomment/configure:
+In `src/config.js`, find (or create) the project you want to show the model on
+and set its `media`:
 
-```html
-<model-viewer 
-  data-fusion-model="assets/models/your-model.glb"
-  data-fusion-options='{"environmentLighting": "studio", "exposure": 1.0}'
-  alt="3D CAD model from Fusion 360"
-  auto-rotate 
-  camera-controls 
-  touch-action="pan-y"
-  shadow-intensity="1"
-  environment-image="https://modelviewer.dev/shared-assets/environments/studio.hdr"
-  loading="lazy"
-  disable-tap>
-  
-  <div class="model-loading" slot="loading-animation">
-    <div class="loading-spinner"></div>
-    <p>Loading CAD model...</p>
-  </div>
-</model-viewer>
+```js
+{
+  title: 'Robotic Arm Assembly',
+  category: 'mechanical',
+  // ...
+  media: {
+    type: 'model',
+    src: 'assets/models/your-model.glb', // path relative to public/
+    alt: '3D CAD model from Fusion 360',
+    options: { environmentLighting: 'studio', exposure: 1.0 },
+  },
+}
+```
+
+With an empty `src: ''` the card shows a "TODO: insert your model" placeholder,
+so nothing breaks before you have a model file.
+
+### 5. Test Locally
+
+```bash
+npm run dev      # dev server → http://localhost:5173
+npm run build    # or check the production build
 ```
 
 ## Format Comparison
@@ -98,9 +110,9 @@ To ensure your Fusion 360 appearances are preserved:
 **Problem:** Loading spinner continues indefinitely or shows error
 
 **Solutions:**
-1. Verify file path is correct (case-sensitive!)
-2. Check that the file exists at the specified path
-3. Ensure your server serves `.glb` files with correct MIME type: `model/gltf-binary`
+1. Verify the file path in `config.js` is correct (case-sensitive!)
+2. Check that the file exists in `public/assets/models/`
+3. Ensure your server serves `.glb` files with correct MIME type: `model/gltf-binary` (Vite does this automatically)
 4. Check file size - consider compressing large models
 
 ### Poor Performance
@@ -110,69 +122,44 @@ To ensure your Fusion 360 appearances are preserved:
 **Solutions:**
 1. Reduce polygon count in Fusion 360 before export
 2. Use texture compression (KTX2/Basis)
-3. Enable `loading="lazy"` attribute
+3. Models are already `loading="lazy"` and the viewer library is loaded on demand
 4. Consider splitting complex assemblies into multiple viewers
 
 ## Advanced Configuration
 
 ### Environment Lighting Options
 
-Change how materials appear by switching environment maps:
-
-```javascript
-// Available environments:
-setEnvironment('studio');    // Neutral studio lighting (default)
-setEnvironment('warehouse'); // Industrial warehouse
-setEnvironment('park');      // Outdoor park scene
-setEnvironment('court');     // Basketball court
-```
+Change how materials appear by switching environment maps. Available options
+for `options.environmentLighting`: `studio` (default), `warehouse`, `park`,
+`court`.
 
 ### Custom Exposure & Shadows
 
-```html
-<model-viewer 
-  data-fusion-model="assets/models/your-model.glb"
-  data-fusion-options='{
-    "environmentLighting": "studio",
-    "exposure": 1.5,
-    "shadowIntensity": 0.8
-  }'>
-</model-viewer>
+```js
+media: {
+  type: 'model',
+  src: 'assets/models/your-model.glb',
+  options: {
+    environmentLighting: 'studio',
+    exposure: 1.5,
+    shadowIntensity: 0.8,
+    autoRotate: false,
+  },
+}
 ```
 
 ### Programmatic Control
 
-The following JavaScript functions are available globally:
+The helper lives in `src/fusion-viewer.js` and exports:
 
-```javascript
-// Setup a viewer manually
-setupFusionViewer(element, 'path/to/model.glb', options);
-
-// Change environment lighting
-setEnvironment('warehouse');
-
-// Toggle wireframe (placeholder for future implementation)
-toggleWireframe(true);
-
-// Capture screenshot
-captureScreenshot(viewerElement, 'my-model.png');
+```js
+import {
+  setupFusionViewer, // configure a <model-viewer> element for a model
+  setEnvironment,    // switch environment lighting on all viewers
+  toggleWireframe,   // placeholder — model-viewer has no native wireframe
+  captureScreenshot, // download the current view as a PNG
+} from './fusion-viewer.js';
 ```
-
-## Testing Locally
-
-Before deploying, test your setup:
-
-```bash
-# Start local development server
-npx vite dev
-
-# Visit http://localhost:5173
-```
-
-Check browser console for:
-- ✅ "✓ X materials/appearances preserved from Fusion 360"
-- ⚠️ Warnings about missing materials
-- ❌ Error messages about file paths
 
 ## Resources
 
