@@ -951,10 +951,6 @@ table {
     justify-content: space-between;
     gap: var(--sp-4);
   }
-  .experience__grid {
-    grid-template-columns: 1fr;
-    gap: var(--sp-8);
-  }
 }
 
 /* --------------------------------------------------------------------------
@@ -1101,6 +1097,27 @@ table {
   margin-bottom: 0;
 }
 
+/* Timeline on small screens — must follow the base rules above to win the cascade */
+@media (max-width: 768px) {
+  .experience__grid {
+    grid-template-columns: 1fr;
+    gap: var(--sp-6);
+  }
+  .timeline__item {
+    padding-left: var(--sp-5);
+  }
+  .timeline__card {
+    padding: var(--sp-4);
+  }
+  .timeline__bullets li {
+    font-size: var(--fs-sm);
+    line-height: 1.75;
+  }
+  .timeline__period {
+    font-size: 0.66rem;
+  }
+}
+
 /* --------------------------------------------------------------------------
    Skills
    -------------------------------------------------------------------------- */
@@ -1108,36 +1125,30 @@ table {
   background: var(--color-paper);
 }
 
-.skills__grid {
+.skills-board {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--sp-5);
 }
 
-.skill-category {
+.skill-group {
   background: var(--color-surface);
   border: 1px solid var(--color-line);
   border-radius: 2px;
-  padding: var(--sp-6);
-  transition: border-color var(--t-base), transform var(--t-base), box-shadow var(--t-base);
-}
-.skill-category:hover {
-  transform: translateY(-4px);
-  border-color: var(--color-accent);
-  box-shadow: 6px 6px 0 -3px var(--color-paper), 6px 6px 0 -1px var(--color-accent);
+  padding: var(--sp-5);
 }
 
-.skill-category__header {
+.skill-group__head {
   display: flex;
   align-items: center;
   gap: var(--sp-4);
   margin-bottom: var(--sp-5);
   padding-bottom: var(--sp-4);
-  border-bottom: 1px solid var(--color-line-soft);
+  border-bottom: 1px dashed var(--color-line);
 }
-.skill-category__icon {
+.skill-group__icon {
   width: 40px;
   height: 40px;
   border: 1px solid var(--color-line);
@@ -1146,72 +1157,98 @@ table {
   color: var(--color-accent);
   flex: none;
 }
-.skill-category__icon .icon {
+.skill-group__icon .icon {
   width: 20px;
   height: 20px;
 }
-.skill-category__header h3 {
+.skill-group__title {
   font-family: var(--font-display);
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  line-height: 1.1;
+  line-height: 1.15;
 }
-.skill-category__code {
+.skill-group__code {
   display: block;
   font-family: var(--font-mono);
   font-size: 0.6rem;
   letter-spacing: 0.24em;
   color: var(--color-faint);
-  margin-top: 0.3rem;
+  margin-top: 0.25rem;
 }
 
-.skill-list {
+.skill-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   display: flex;
-  flex-direction: column;
-  gap: var(--sp-4);
+  flex-wrap: wrap;
+  gap: var(--sp-2);
 }
-.skill-item__row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--sp-3);
-  margin-bottom: 0.55rem;
-}
-.skill-item__name {
-  font-family: var(--font-mono);
-  font-size: var(--fs-sm);
-  color: var(--color-ink-soft);
-}
-.skill-item__level {
+.skill-chip {
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  color: var(--color-ink-soft);
+  border: 1px solid var(--color-line);
+  border-radius: 2px;
+  background: var(--color-paper);
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast), transform var(--t-fast), box-shadow var(--t-fast);
+}
+.skill-chip:hover,
+.skill-chip:focus-visible {
   color: var(--color-accent);
+  border-color: var(--color-accent);
+  transform: translateY(-2px);
 }
-.skill-bar {
-  height: 2px;
-  background: var(--color-line);
-  border-radius: 0;
-  overflow: hidden;
-}
-.skill-bar__fill {
-  height: 100%;
-  width: var(--skill-level, 0%);
-  background: var(--color-accent);
-  transition: width 1s var(--ease);
+.skill-chip.is-active {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  box-shadow: 3px 3px 0 -1px var(--color-paper), 3px 3px 0 0 var(--color-accent);
 }
 
-/* Scroll-driven animation for skill bars */
-@supports (animation-timeline: view()) {
-  .skill-bar__fill {
-    width: 0;
-    animation: fillSkillBar 1s var(--ease) forwards;
-    animation-timeline: view();
-    animation-range: entry 20% cover 40%;
-  }
-  @keyframes fillSkillBar {
-    to { width: var(--skill-level); }
+.skill-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  margin: var(--sp-6) 0 0;
+  padding-top: var(--sp-4);
+  border-top: 1px dashed var(--color-line);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  min-height: 2.4rem;
+}
+.skill-readout [hidden] {
+  display: none;
+}
+.skill-readout__tag {
+  color: var(--color-accent);
+  letter-spacing: 0.18em;
+}
+.skill-readout__skill {
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--color-ink);
+  text-transform: uppercase;
+}
+.skill-readout__arrow {
+  color: var(--color-muted);
+}
+.skill-readout__value {
+  color: var(--color-muted);
+  letter-spacing: 0.08em;
+  line-height: 1.7;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .skills-board {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1647,6 +1684,19 @@ model-viewer {
   .simulation-placeholder {
     grid-template-columns: 1fr;
   }
+  /* Stack the timeline meta row so the WRK/EDU tag and dates never collide */
+  .timeline__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-2);
+  }
+  .timeline__bullets li {
+    padding-left: var(--sp-4);
+  }
+  .timeline__org {
+    line-height: 1.6;
+    margin-bottom: var(--sp-3);
+  }
 }
 
 /* Project summary & specs */
@@ -1833,7 +1883,7 @@ model-viewer {
   .section { padding: var(--sp-6) 0; page-break-inside: avoid; }
   .hero { min-height: auto; padding: var(--sp-6) 0; }
   .project-card,
-  .skill-category {
+  .skills-board {
     box-shadow: none;
     border: 1px solid #999;
   }
@@ -1841,7 +1891,6 @@ model-viewer {
   .project-card__media img {
     filter: none;
   }
-  .skill-bar__fill { background: #333; }
   a[href]::after {
     content: " (" attr(href) ")";
     font-size: 0.8em;

@@ -5,8 +5,8 @@
  * from the data below. Edit this file to change your content — no HTML needed.
  *
  * Remaining TODO items (all optional):
- *  - your GitHub profile URL in `contact.socials`
- *  - real links for remaining project "GitHub"/"Documentation" buttons
+ *  - real documentation URLs for the three projects whose "Documentation"
+ *    buttons are currently hidden (Autonomous Car Racing, FRC, UAS)
  *  - a CV PDF for the hero download button (`cvUrl`)
  */
 
@@ -127,48 +127,53 @@ export const site = {
   },
 
   /* ------------------------------------------------------------------
-   * Skills — rendered as category cards with animated bars
-   * `level` is the bar fill percentage
+   * Skills — all tools displayed at once, grouped by category. Each item
+   * carries its own `usage` list: the real projects that used that tool,
+   * shown when the chip is hovered or clicked.
    * ------------------------------------------------------------------ */
   skills: [
     {
       category: 'CAD & Simulation',
+      code: 'CAD',
       icon: 'gear', // icon keys: gear | chip | cpu | cube | wave
       items: [
-        { name: 'SolidWorks', level: 90 },
-        { name: 'Fusion 360', level: 85 },
-        { name: 'ANSYS FEA & Maxwell', level: 70 },
-        { name: 'SolidWorks Macros', level: 75 },
+        { name: 'SolidWorks', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots', 'UAS Motor & Spring Modeling'] },
+        { name: 'Fusion 360', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots'] },
+        { name: 'ANSYS FEA & Maxwell', usage: ['Multi-Chamber Camera Bioreactor'] },
+        { name: 'SolidWorks Macros', usage: ['UAS Motor & Spring Modeling'] },
       ],
     },
     {
       category: 'Electronics & Embedded',
+      code: 'ELE',
       icon: 'chip',
       items: [
-        { name: 'PCB Design (KiCad)', level: 80 },
-        { name: 'STM32', level: 85 },
-        { name: 'ESP32', level: 75 },
-        { name: 'Raspberry Pi', level: 80 },
+        { name: 'PCB Design (KiCad)', usage: ['Multi-Chamber Camera Bioreactor'] },
+        { name: 'STM32', usage: ['Multi-Chamber Camera Bioreactor'] },
+        { name: 'ESP32', usage: ['Multi-Chamber Camera Bioreactor'] },
+        { name: 'Raspberry Pi', usage: ['Multi-Chamber Camera Bioreactor'] },
       ],
     },
     {
       category: 'Manufacturing & Prototyping',
+      code: 'MFG',
       icon: 'cube',
       items: [
-        { name: 'CNC Operation', level: 85 },
-        { name: 'Manual Mill & Lathe', level: 75 },
-        { name: 'Rapid Prototyping', level: 90 },
-        { name: 'Design for Manufacturing', level: 80 },
+        { name: 'CNC Operation', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots'] },
+        { name: 'Manual Mill & Lathe', usage: ['FRC Competition Robots'] },
+        { name: 'Rapid Prototyping', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots'] },
+        { name: 'Design for Manufacturing', usage: ['Prime Day Delivery Bot', 'UAS Motor & Spring Modeling'] },
       ],
     },
     {
       category: 'Programming & Control',
+      code: 'PRG',
       icon: 'cpu',
       items: [
-        { name: 'Python', level: 90 },
-        { name: 'C++', level: 80 },
-        { name: 'ROS2', level: 70 },
-        { name: 'Linux', level: 85 },
+        { name: 'Python', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor', 'UAS Motor & Spring Modeling'] },
+        { name: 'C++', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor'] },
+        { name: 'ROS2', usage: ['Autonomous Car Racing'] },
+        { name: 'Linux', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor'] },
       ],
     },
   ],
@@ -211,7 +216,7 @@ export const site = {
       media: { type: 'image', src: 'assets/images/mae3-robot.jpg', alt: 'Prime Day Delivery Bot' },
       links: [
         { label: 'Final Report', href: 'assets/reports/mae3-prime-day-delivery-bot.md', primary: true },
-        { label: 'GitHub', href: '#' }, // TODO: repo URL
+        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
       ],
     },
     {
@@ -238,7 +243,7 @@ export const site = {
       },
       links: [
         { label: 'Documentation', href: 'assets/reports/mccb-final-report.md', primary: true },
-        { label: 'GitHub', href: '#' }, // TODO
+        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
       ],
     },
     {
@@ -253,8 +258,7 @@ export const site = {
         { label: 'Perception', value: 'Deep learning' },
       ],
       links: [
-        { label: 'Documentation', href: '#', primary: true }, // TODO
-        { label: 'GitHub', href: '#' }, // TODO
+        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
       ],
     },
     {
@@ -269,8 +273,7 @@ export const site = {
         { label: 'Hours', value: '1,000+ logged' },
       ],
       links: [
-        { label: 'Documentation', href: '#', primary: true }, // TODO
-        { label: 'GitHub', href: '#' }, // TODO
+        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
       ],
     },
     {
@@ -285,8 +288,7 @@ export const site = {
         { label: 'Automation', value: 'SolidWorks macros' },
       ],
       links: [
-        { label: 'Documentation', href: '#', primary: true }, // TODO
-        { label: 'GitHub', href: '#' }, // TODO
+        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
       ],
     },
   ],
@@ -307,7 +309,7 @@ export const site = {
 
     // Social icons (icon: 'github' | 'linkedin' | 'twitter')
     socials: [
-      { name: 'GitHub', icon: 'github', url: '#' }, // TODO: your GitHub profile URL
+      { name: 'GitHub', icon: 'github', url: 'https://github.com/dylanbailes' },
       { name: 'LinkedIn', icon: 'linkedin', url: 'https://www.linkedin.com/in/dylan-bailes' },
     ],
   },

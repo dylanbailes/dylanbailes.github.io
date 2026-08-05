@@ -61,7 +61,7 @@ function renderHero(mount, contentEl) {
       <span class="hero__meta-tags">MECH · PCB · FW · SIM</span>
     </p>
 
-    <h1 class="hero__title">
+    <h1 id="hero-title" class="hero__title">
       <span class="hero__name">${escapeHtml(profile.name)}</span><span class="hero__period">.</span>
     </h1>
 
