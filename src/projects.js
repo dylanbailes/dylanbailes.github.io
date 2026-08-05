@@ -215,9 +215,11 @@ function renderProjects(container) {
            </tbody></table>`
         : '';
 
-      const links = project.links && project.links.length
+      // Only render buttons with a real destination — never a dead "#" link
+      const liveLinks = (project.links || []).filter((link) => link.href && link.href !== '#');
+      const links = liveLinks.length
         ? `<div class="project-card__links">
-             ${project.links
+             ${liveLinks
                .map(
                  (link) =>
                    `<a href="${escapeHtml(link.href)}" class="btn btn--${link.primary ? 'primary' : 'ghost'} btn--small">${escapeHtml(link.label)}${icon('arrowRight')}</a>`
