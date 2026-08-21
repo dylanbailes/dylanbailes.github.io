@@ -9,6 +9,12 @@ export default defineConfig({
     outDir: 'dist',
     // Keep images/assets under this size inlined into the bundle
     assetsInlineLimit: 4096,
+    rollupOptions: {
+      input: {
+        main: 'index.html',
+        games: 'games.html',
+      },
+    },
   },
   server: {
     port: 5173,
