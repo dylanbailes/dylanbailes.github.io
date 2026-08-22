@@ -1,238 +1,283 @@
 /**
- * optilatro-viewer.js — Canvas-based Balatro game state visualization.
+ * optilatro-viewer.js — The REAL Optilatro bot running in the browser.
  *
- * Renders a simplified but visually faithful Balatro playfield:
- *   • Hand of 8 cards with suits and ranks
- *   • Joker row with mini-card previews
- *   • Score / mult / chips readout
- *   • Blind target bar
- *   • Animated card selection and scoring
+ * Unlike a heuristic re-implementation, this viewer loads the actual Python
+ * engine from github.com/dylanbailes/Optilatro (vendor/balatro-rl/balatro_sim)
+ * into Pyodide (CPython compiled to WebAssembly) and steps the genuine
+ * `HeuristicV10` policy against the genuine `BalatroGame` simulator — the
+ * exact code path used by `bench/bench_agent_v10.py`. Every decision you see
+ * is byte-for-byte what the bot does locally.
  *
- * The "bot" selects hands using a greedy heuristic (highest-scoring hand
- * type available). This is a *visual demo* — the real Optilatro engine
- * runs Python; here we replay its decision style in-browser.
+ * Data flow:
+ *   Pyodide FS  /optilatro/vendor/balatro-rl/balatro_sim/*.py   (engine)
+ *               /optilatro/tools/*.json                        (synergy data)
+ *               /optilatro/optilatro_bridge.py                 (JSON bridge)
+ *   JS  →  bridge.newGame(seed) / bridge.step()  →  JSON snapshot  →  canvas
  */
+
+/* ─── Engine loading ─────────────────────────────────────────────────────── */
+
+const PYODIDE_VERSION = '0.26.4';
+const PYODIDE_INDEX = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
+const ENGINE_BASE = new URL('optilatro/', document.baseURI).href;
+
+/** Map a manifest-relative path to its Pyodide FS location (repo layout). */
+function mapEnginePath(rel) {
+  if (rel.startsWith('balatro_sim/')) {
+    return `/optilatro/vendor/balatro-rl/${rel}`;
+  }
+  return `/optilatro/${rel}`;
+}
+
+function loadScript(src) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = resolve;
+    s.onerror = () => reject(new Error(`Failed to load ${src}`));
+    document.head.appendChild(s);
+  });
+}
+
+function ensureDir(fs, dirPath) {
+  const parts = dirPath.split('/').filter(Boolean);
+  let cur = '';
+  for (const part of parts) {
+    cur += `/${part}`;
+    try { fs.mkdir(cur); } catch { /* already exists */ }
+  }
+}
 
 /* ─── Constants ──────────────────────────────────────────────────────────── */
 
-const SUITS = ['♠', '♥', '♦', '♣'];
-const SUIT_COLORS = { '♠': '#d0d0cb', '♥': '#ff3b30', '♦': '#5ba3f5', '♣': '#4cd964' };
-const RANKS = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-const RANK_VALUES = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 10, 'Q': 10, 'K': 10, 'A': 11 };
+const SUIT_COLORS = { '♠': '#1c1c22', '♥': '#d64545', '♦': '#e08a3c', '♣': '#3a5a8c' };
 
-const HAND_TYPES = [
-  { name: 'Royal Flush',    base: 100, mult: 8,  min: 5 },
-  { name: 'Straight Flush',  base: 100, mult: 8,  min: 5 },
-  { name: 'Four of a Kind', base: 60,  mult: 7,  min: 4 },
-  { name: 'Full House',     base: 40,  mult: 4,  min: 5 },
-  { name: 'Flush',          base: 35,  mult: 4,  min: 5 },
-  { name: 'Straight',       base: 30,  mult: 4,  min: 5 },
-  { name: 'Three of a Kind',base: 30,  mult: 3,  min: 3 },
-  { name: 'Two Pair',       base: 20,  mult: 2,  min: 4 },
-  { name: 'Pair',           base: 10,  mult: 2,  min: 2 },
-  { name: 'High Card',      base: 5,   mult: 1,  min: 1 },
-];
+const ENHANCEMENT_STYLE = {
+  Bonus:  { label: '+30',  color: '#5ba3f5' },
+  Mult:   { label: '+4',   color: '#e5484d' },
+  Wild:   { label: 'WILD', color: '#a371f7' },
+  Glass:  { label: '×2',   color: '#9ad0f0' },
+  Steel:  { label: '×1.5', color: '#8b9bb0' },
+  Stone:  { label: '+50',  color: '#a6a59f' },
+  Gold:   { label: '$3',   color: '#f5a623' },
+  Lucky:  { label: 'LUCKY', color: '#e8c547' },
+};
 
-const BLINDS = [
-  { name: 'Small Blind',  base: 300 },
-  { name: 'Big Blind',    base: 450 },
-  { name: 'Boss Blind',   base: 600 },
-];
+const SEAL_COLORS = { Red: '#ff3b30', Blue: '#5ba3f5', Gold: '#f5a623', Purple: '#a371f7' };
 
-const JOKER_DEFS = [
-  { name: 'Joker',        effect: '+4 Mult',        color: '#e5484d' },
-  { name: 'Greedy Joker', effect: '+3 Mult per Diamond played', color: '#5ba3f5' },
-  { name: 'Lusty Joker',  effect: '+3 Mult per Heart played',   color: '#ff3b30' },
-  { name: 'Wrathful Joker', effect: '+3 Mult per Spade played', color: '#d0d0cb' },
-  { name: 'Gluttony Joker', effect: '+3 Mult per Club played',  color: '#4cd964' },
-  { name: 'Abstract Joker', effect: '+3 Mult per Joker owned',  color: '#a371f7' },
-  { name: 'Half Joker',   effect: '+20 Mult if hand ≤ 3 cards', color: '#f5a623' },
-  { name: 'Mystic Summit', effect: '+15 Mult if discards = 0',  color: '#2dd4bf' },
-];
+const EDITION_COLORS = { Foil: '#5ba3f5', Holographic: '#ff6ec7', Polychrome: '#b388ff', Negative: '#555' };
 
-const CARD_BACK_COLORS = {
-  light: { bg: '#ffffff', border: '#d8d7d2', shadow: '#c8c8c2' },
-  dark:  { bg: '#1a1a1a', border: '#2c2c2a', shadow: '#0b0b0b' },
+const KIND_LABELS = {
+  joker: 'JOKER', planet: 'PLANET', tarot: 'TAROT', spectral: 'SPECTRAL',
+  voucher: 'VOUCHER', booster: 'PACK', card: 'CARD',
+};
+
+/* ─── Joker display metadata (Joker-Display-mod style) ───────────────────── */
+
+let jokerSpec = {}; // key -> {name, effect, type, timing} from tools/joker_spec.json
+
+const SPEC_TYPE_TO_CATEGORY = {
+  Chips: 'chips',
+  'Chips+Mult': 'chips',
+  '+Mult': 'mult',
+  xMult: 'xmult',
+  Economy: 'econ',
+  Effect: 'misc',
+  Retrigger: 'misc',
+};
+
+const CATEGORY_ICON_COLOR = {
+  chips: '#5ba3f5',
+  mult: '#e5484d',
+  xmult: '#b388ff',
+  econ: '#f5a623',
+  misc: '#a6a59f',
+};
+
+/** Resolve display metadata (category icon + short effect) for a joker key. */
+function jokerMeta(key) {
+  const spec = jokerSpec[key];
+  if (!spec) return { category: 'misc', effect: '' };
+  return {
+    category: SPEC_TYPE_TO_CATEGORY[spec.type] || 'misc',
+    effect: spec.effect || '',
+  };
+}
+
+/* Per-action pacing (ms at 1x speed) — the bot's decision time adds on top.
+   Shop actions are paced slower so the agent's buying/rerolling is watchable. */
+const PACE_MS = {
+  play_blind: 900, skip_blind: 500, play: 800, discard: 550,
+  buy: 750, sell_joker: 700, use_consumable: 700, reroll: 600,
+  reroll_boss: 600, leave_shop: 500, pick_booster: 650, skip_booster: 400,
+  noop: 260,
 };
 
 /* ─── State ──────────────────────────────────────────────────────────────── */
 
 let canvas, ctx;
 let animationFrame;
-let simRunning = false;
-let simPaused = false;
-let simSpeed = 5;
-let simState = null;
-let simLog = [];
-let startTime = 0;
 
-/* ─── Card class ─────────────────────────────────────────────────────────── */
+let enginePromise = null;
+let engineReady = false;
+let bridge = null;
 
-class Card {
-  constructor(rank, suit) {
-    this.rank = rank;
-    this.suit = suit;
-    this.selected = false;
-    this.scored = false;
-    this.x = 0;
-    this.y = 0;
-    this.targetX = 0;
-    this.targetY = 0;
-    this.scale = 1;
-    this.opacity = 1;
-    this.rotation = 0;
-    this.targetRotation = 0;
-  }
+let snap = null;
+let running = false;
+let paused = false;
+let speed = 5;
+let loopGen = 0;
 
-  get value() { return RANK_VALUES[this.rank]; }
-  get color() { return SUIT_COLORS[this.suit]; }
-  get isRed() { return this.suit === '♥' || this.suit === '♦'; }
+let gamesPlayed = 0;
+let wins = 0;
+let nextSeed = 0;
+let lastEval = null;
+let lastActionText = '';
+
+/* ─── Engine bootstrap ───────────────────────────────────────────────────── */
+
+function setOverlay(text, progress) {
+  const el = document.getElementById('sim-overlay');
+  if (!el) return;
+  el.hidden = false;
+  const txt = el.querySelector('.sim-overlay__text');
+  if (txt) txt.textContent = text;
+  const bar = el.querySelector('.sim-overlay__progress-fill');
+  if (bar) bar.style.width = `${Math.round((progress || 0) * 100)}%`;
 }
 
-/* ─── Deck / Hand utilities ──────────────────────────────────────────────── */
+async function ensureEngine() {
+  if (enginePromise) return enginePromise;
+  enginePromise = (async () => {
+    setOverlay('Loading Python runtime (Pyodide)…', 0.02);
+    await loadScript(`${PYODIDE_INDEX}pyodide.js`);
+    // eslint-disable-next-line no-undef
+    const pyodide = await loadPyodide({ indexURL: PYODIDE_INDEX });
 
-function createDeck() {
-  const deck = [];
-  for (const suit of SUITS) {
-    for (const rank of RANKS) {
-      deck.push(new Card(rank, suit));
+    setOverlay('Fetching Optilatro engine files…', 0.15);
+    const manifest = await (await fetch(new URL('manifest.json', ENGINE_BASE))).json();
+    // Joker display metadata (short effects + categories) for the UI panels.
+    try {
+      jokerSpec = await (await fetch(new URL('tools/joker_spec.json', ENGINE_BASE))).json();
+    } catch { jokerSpec = {}; }
+    const files = manifest.files;
+    for (let i = 0; i < files.length; i++) {
+      const rel = files[i];
+      const res = await fetch(new URL(rel, ENGINE_BASE));
+      if (!res.ok) throw new Error(`Engine file fetch failed: ${rel} (${res.status})`);
+      const text = await res.text();
+      const fsPath = mapEnginePath(rel);
+      ensureDir(pyodide.FS, fsPath.substring(0, fsPath.lastIndexOf('/')));
+      pyodide.FS.writeFile(fsPath, text);
+      setOverlay(`Fetching engine files… (${i + 1}/${files.length})`, 0.15 + 0.6 * ((i + 1) / files.length));
     }
-  }
-  return shuffle(deck);
+
+    setOverlay('Booting Optilatro engine (heuristic_v10)…', 0.85);
+    pyodide.runPython(
+      'import sys; sys.path.insert(0, "/optilatro"); import optilatro_bridge'
+    );
+    const info = JSON.parse(pyodide.runPython('optilatro_bridge.engine_info()'));
+
+    const B = pyodide.globals.get('optilatro_bridge');
+    bridge = {
+      newGame: (seed) => JSON.parse(B.new_game(seed)),
+      step: () => JSON.parse(B.step()),
+    };
+
+    engineReady = true;
+    setOverlay('Engine ready', 1);
+    syncButtons();
+    addLog(`Real engine loaded — Python ${info.python}, policy ${info.engine}`, 'system');
+    addLog('Decisions come from the actual Optilatro Python code (Pyodide/WASM).', 'system');
+
+    // Hide the overlay shortly after ready so the idle canvas is visible.
+    setTimeout(() => {
+      const el = document.getElementById('sim-overlay');
+      if (el && engineReady) el.hidden = true;
+    }, 900);
+
+    return info;
+  })().catch((err) => {
+    enginePromise = null;
+    setOverlay(`Engine failed to load: ${err.message}`, 0);
+    addLog(`Engine load error: ${err.message}`, 'error');
+    throw err;
+  });
+  return enginePromise;
 }
 
-function shuffle(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
+/* ─── Run loop ───────────────────────────────────────────────────────────── */
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
-/* ─── Hand evaluation (simplified) ───────────────────────────────────────── */
+function paceFor(actionType) {
+  return (PACE_MS[actionType] || 400) / speed;
+}
 
-function evaluateHand(cards) {
-  if (cards.length === 0) return { type: 'None', base: 0, mult: 0, chips: 0 };
+async function runLoop() {
+  const gen = ++loopGen;
 
-  const ranks = cards.map(c => c.rank);
-  const suits = cards.map(c => c.suit);
-  const values = cards.map(c => c.value);
-
-  // Count rank frequency
-  const freq = {};
-  for (const r of ranks) freq[r] = (freq[r] || 0) + 1;
-  const freqs = Object.values(freq).sort((a, b) => b - a);
-
-  // Check flush
-  const isFlush = suits.every(s => s === suits[0]) && cards.length >= 5;
-
-  // Check straight
-  const uniqueVals = [...new Set(values)].sort((a, b) => a - b);
-  let isStraight = false;
-  if (uniqueVals.length >= 5) {
-    for (let i = 0; i <= uniqueVals.length - 5; i++) {
-      if (uniqueVals[i + 4] - uniqueVals[i] === 4) isStraight = true;
+  while (running && !paused && gen === loopGen) {
+    if (!snap || snap.done) {
+      snap = bridge.newGame(nextSeed++);
+      lastEval = null;
+      lastActionText = '';
+      addLog(`New run — seed ${snap.seed} · heuristic_v10 · Red Deck / White Stake`, 'system');
+      updatePanels();
+      await sleep(700 / speed);
+      continue;
     }
-    // Ace-low straight (A-2-3-4-5)
-    if (uniqueVals.includes(11) && uniqueVals.includes(2) && uniqueVals.includes(3) && uniqueVals.includes(4) && uniqueVals.includes(5)) {
-      isStraight = true;
+
+    let out;
+    try {
+      out = bridge.step();
+    } catch (err) {
+      addLog(`Engine error: ${err.message}`, 'error');
+      running = false;
+      syncButtons();
+      return;
     }
-  }
 
-  let handType = 'High Card';
-  let base = 5, mult = 1;
-
-  if (isFlush && isStraight) {
-    // Check royal
-    const hasRoyal = values.includes(10) && values.includes(11) && ranks.includes('K') && ranks.includes('Q') && ranks.includes('J');
-    if (hasRoyal && cards.length === 5) {
-      handType = 'Royal Flush'; base = 100; mult = 8;
-    } else {
-      handType = 'Straight Flush'; base = 100; mult = 8;
+    snap = out.snapshot;
+    const act = out.action || {};
+    if (act.eval) lastEval = act.eval;
+    lastActionText = act.desc || '';
+    if (act.desc) addLog(act.desc, actionLogClass(act.type));
+    if (act.ms !== undefined && act.ms > 50) {
+      // Slow decisions are interesting — surface them.
+      addLog(`  ↳ decided in ${act.ms.toFixed(0)} ms`, 'system');
     }
-  } else if (freqs[0] >= 4) {
-    handType = 'Four of a Kind'; base = 60; mult = 7;
-  } else if (freqs[0] >= 3 && freqs[1] >= 2) {
-    handType = 'Full House'; base = 40; mult = 4;
-  } else if (isFlush) {
-    handType = 'Flush'; base = 35; mult = 4;
-  } else if (isStraight) {
-    handType = 'Straight'; base = 30; mult = 4;
-  } else if (freqs[0] >= 3) {
-    handType = 'Three of a Kind'; base = 30; mult = 3;
-  } else if (freqs[0] >= 2 && freqs[1] >= 2) {
-    handType = 'Two Pair'; base = 20; mult = 2;
-  } else if (freqs[0] >= 2) {
-    handType = 'Pair'; base = 10; mult = 2;
-  } else {
-    handType = 'High Card'; base = 5; mult = 1;
-  }
 
-  const chips = base + values.reduce((s, v) => s + v, 0);
-  return { type: handType, base, mult, chips, total: chips * mult };
-}
+    updatePanels();
 
-/* ─── Bot decision: pick best hand from dealt cards ──────────────────────── */
-
-function botSelectHand(hand) {
-  // Try all 5-card combos to find the best hand type (simplified — real Optilatro
-  // does full search, here we use a greedy heuristic).
-  if (hand.length <= 5) {
-    return { cards: hand, eval: evaluateHand(hand) };
-  }
-
-  let bestEval = null;
-  let bestCombo = null;
-
-  // Check all 5-card combos (brute-force is fine for 8C5 = 56 combos)
-  const combos = getCombinations(hand, 5);
-  for (const combo of combos) {
-    const ev = evaluateHand(combo);
-    if (!bestEval || ev.total > bestEval.total ||
-        (ev.total === bestEval.total && handTypeRank(ev.type) < handTypeRank(bestEval.type))) {
-      bestEval = ev;
-      bestCombo = combo;
+    if (snap.done) {
+      gamesPlayed++;
+      if (snap.won) wins++;
+      addLog(
+        snap.won
+          ? `★ WIN — Ante 8 cleared on seed ${snap.seed}`
+          : `✗ LOSS — eliminated at Ante ${snap.ante} on seed ${snap.seed}`,
+        snap.won ? 'success' : 'error'
+      );
+      updateStats();
+      await sleep(2000 / Math.max(1, Math.sqrt(speed)));
+      continue;
     }
+
+    await sleep(paceFor(act.type));
   }
-
-  return { cards: bestCombo || hand.slice(0, 5), eval: bestEval || evaluateHand(hand.slice(0, 5)) };
 }
 
-function handTypeRank(name) {
-  return HAND_TYPES.findIndex(h => h.name === name);
+function actionLogClass(type) {
+  if (type === 'play') return 'success';
+  if (type === 'discard') return '';
+  if (type === 'buy' || type === 'sell_joker') return 'system';
+  return '';
 }
 
-function getCombinations(arr, k) {
-  if (k === 0) return [[]];
-  if (arr.length === 0) return [];
-  const [first, ...rest] = arr;
-  const withFirst = getCombinations(rest, k - 1).map(c => [first, ...c]);
-  const withoutFirst = getCombinations(rest, k);
-  return [...withFirst, ...withoutFirst];
-}
-
-/* ─── Joker selection ────────────────────────────────────────────────────── */
-
-function selectJokers(count) {
-  const available = shuffle([...JOKER_DEFS]);
-  return available.slice(0, Math.min(count, available.length));
-}
-
-function jokerMultiplier(jokers, playedCards) {
-  let bonus = 0;
-  for (const j of jokers) {
-    if (j.name === 'Joker') bonus += 4;
-    else if (j.name === 'Greedy Joker') bonus += playedCards.filter(c => c.suit === '♦').length * 3;
-    else if (j.name === 'Lusty Joker') bonus += playedCards.filter(c => c.suit === '♥').length * 3;
-    else if (j.name === 'Wrathful Joker') bonus += playedCards.filter(c => c.suit === '♠').length * 3;
-    else if (j.name === 'Gluttony Joker') bonus += playedCards.filter(c => c.suit === '♣').length * 3;
-    else if (j.name === 'Abstract Joker') bonus += jokers.length * 3;
-  }
-  return bonus;
-}
-
-/* ─── Drawing helpers ────────────────────────────────────────────────────── */
+/* ─── Theme colors ───────────────────────────────────────────────────────── */
 
 function getThemeColors() {
   const theme = document.documentElement.getAttribute('data-theme') || 'light';
@@ -240,100 +285,97 @@ function getThemeColors() {
     return {
       paper: '#0b0b0b', surface: '#141414', ink: '#f2f2ee',
       muted: '#8b8b85', faint: '#565650', line: '#2c2c2a',
-      accent: '#ff3b30',
+      accent: '#ff3b30', good: '#4cd964',
     };
   }
   return {
     paper: '#f4f4f1', surface: '#ffffff', ink: '#111110',
     muted: '#75746e', faint: '#a6a59f', line: '#d8d7d2',
-    accent: '#ff3b30',
+    accent: '#ff3b30', good: '#3aa655',
   };
 }
 
+/* ─── Drawing primitives ─────────────────────────────────────────────────── */
+
 function drawCard(card, x, y, w, h, opts = {}) {
   const c = getThemeColors();
-  const { highlight = false, scored = false, dimmed = false, scale = 1, faceDown = false } = opts;
+  const { dimmed = false } = opts;
 
   ctx.save();
-  ctx.translate(x + w / 2, y + h / 2);
-  ctx.scale(scale, scale);
-  ctx.translate(-w / 2, -h / 2);
+  if (dimmed) ctx.globalAlpha = 0.45;
 
-  if (dimmed) ctx.globalAlpha = 0.35;
-
-  // Card body
   const r = 4;
+  const isStone = card.enhancement === 'Stone';
+
   ctx.beginPath();
-  ctx.roundRect(0, 0, w, h, r);
-  ctx.fillStyle = faceDown ? c.line : c.surface;
+  ctx.roundRect(x, y, w, h, r);
+  ctx.fillStyle = isStone ? c.line : c.surface;
   ctx.fill();
-  ctx.strokeStyle = highlight ? c.accent : c.line;
-  ctx.lineWidth = highlight ? 2 : 1;
+
+  // Edition border
+  const edColor = EDITION_COLORS[card.edition];
+  ctx.strokeStyle = edColor || c.line;
+  ctx.lineWidth = edColor ? 2 : 1;
   ctx.stroke();
 
-  if (faceDown) {
-    // Card back pattern
-    ctx.strokeStyle = c.faint;
-    ctx.lineWidth = 0.5;
-    for (let i = 0; i < 6; i++) {
-      ctx.beginPath();
-      ctx.moveTo(w * 0.2 + i * w * 0.1, h * 0.15);
-      ctx.lineTo(w * 0.2 + i * w * 0.1, h * 0.85);
-      ctx.stroke();
-    }
+  if (card.flipped) {
+    // Face-down (The House / The Fish / The Mark)
+    ctx.fillStyle = c.ink;
+    ctx.beginPath();
+    ctx.roundRect(x + 3, y + 3, w - 6, h - 6, 3);
+    ctx.fill();
     ctx.restore();
     return;
   }
 
-  // Suit symbol (center)
-  ctx.font = `${h * 0.38}px serif`;
-  ctx.fillStyle = card.color;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(card.suit, w / 2, h * 0.5);
+  const suitColor = SUIT_COLORS[card.symbol] || c.ink;
 
-  // Rank (top-left)
-  ctx.font = `bold ${h * 0.2}px 'Space Grotesk', sans-serif`;
-  ctx.fillStyle = card.color;
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText(card.rank, w * 0.1, h * 0.06);
+  if (isStone) {
+    ctx.font = `bold ${h * 0.22}px 'Space Grotesk', sans-serif`;
+    ctx.fillStyle = c.ink;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('STONE', x + w / 2, y + h / 2);
+  } else {
+    // Suit symbol (center)
+    ctx.font = `${h * 0.34}px serif`;
+    ctx.fillStyle = suitColor;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(card.symbol, x + w / 2, y + h * 0.44);
 
-  // Suit small (top-left, under rank)
-  ctx.font = `${h * 0.15}px serif`;
-  ctx.fillText(card.suit, w * 0.1, h * 0.26);
+    // Rank (top-left)
+    ctx.font = `bold ${h * 0.19}px 'Space Grotesk', sans-serif`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(card.rankName, x + w * 0.09, y + h * 0.05);
 
-  // Rank (bottom-right, rotated)
-  ctx.save();
-  ctx.translate(w * 0.9, h * 0.88);
-  ctx.rotate(Math.PI);
-  ctx.font = `bold ${h * 0.2}px 'Space Grotesk', sans-serif`;
-  ctx.fillStyle = card.color;
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText(card.rank, 0, 0);
-  ctx.font = `${h * 0.15}px serif`;
-  ctx.fillText(card.suit, 0, h * 0.02);
-  ctx.restore();
+    // Enhancement badge (bottom)
+    const enh = ENHANCEMENT_STYLE[card.enhancement];
+    if (enh) {
+      ctx.font = `bold ${Math.max(7, h * 0.11)}px 'IBM Plex Mono', monospace`;
+      ctx.fillStyle = enh.color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText(enh.label, x + w / 2, y + h * 0.97);
+    }
+  }
 
-  // Scored overlay
-  if (scored) {
+  // Seal dot (bottom-right)
+  const sealColor = SEAL_COLORS[card.seal];
+  if (sealColor) {
     ctx.beginPath();
-    ctx.roundRect(0, 0, w, h, r);
-    ctx.fillStyle = 'rgba(255, 59, 48, 0.15)';
+    ctx.arc(x + w * 0.86, y + h * 0.88, Math.max(2.5, w * 0.055), 0, Math.PI * 2);
+    ctx.fillStyle = sealColor;
     ctx.fill();
   }
 
-  // Highlight glow
-  if (highlight) {
-    ctx.shadowColor = c.accent;
-    ctx.shadowBlur = 12;
+  // Debuffed overlay
+  if (card.debuffed) {
     ctx.beginPath();
-    ctx.roundRect(0, 0, w, h, r);
-    ctx.strokeStyle = c.accent;
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.shadowBlur = 0;
+    ctx.roundRect(x, y, w, h, r);
+    ctx.fillStyle = 'rgba(128, 128, 128, 0.45)';
+    ctx.fill();
   }
 
   ctx.restore();
@@ -341,118 +383,182 @@ function drawCard(card, x, y, w, h, opts = {}) {
 
 function drawJoker(joker, x, y, w, h) {
   const c = getThemeColors();
+  const edColor = EDITION_COLORS[joker.edition];
 
   ctx.save();
   ctx.beginPath();
   ctx.roundRect(x, y, w, h, 3);
   ctx.fillStyle = c.surface;
   ctx.fill();
-  ctx.strokeStyle = joker.color;
-  ctx.lineWidth = 1.5;
+  ctx.strokeStyle = edColor || c.line;
+  ctx.lineWidth = edColor ? 2 : 1;
   ctx.stroke();
 
-  // Colored top stripe
+  // Top stripe
   ctx.beginPath();
   ctx.roundRect(x, y, w, 4, [3, 3, 0, 0]);
-  ctx.fillStyle = joker.color;
+  ctx.fillStyle = edColor || c.accent;
   ctx.fill();
 
-  // Joker icon (star)
-  ctx.font = `${h * 0.35}px serif`;
-  ctx.fillStyle = joker.color;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('★', x + w / 2, y + h * 0.35);
+  // Category icon (chips / mult / xmult / econ / misc)
+  drawCategoryIcon(jokerMeta(joker.key).category, x + w / 2, y + h * 0.28, w * 0.4);
 
-  // Name
-  ctx.font = `${Math.min(10, w * 0.12)}px 'IBM Plex Mono', monospace`;
+  // Name (wrapped, up to 2 lines)
+  ctx.font = `${Math.min(9, w * 0.12)}px 'IBM Plex Mono', monospace`;
   ctx.fillStyle = c.ink;
+  ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  const nameLines = joker.name.split(' ');
-  nameLines.forEach((line, i) => {
-    ctx.fillText(line, x + w / 2, y + h * 0.6 + i * (h * 0.14));
+  wrapText(joker.name, 12, 2).forEach((line, i) => {
+    ctx.fillText(line, x + w / 2, y + h * 0.55 + i * (h * 0.17));
   });
 
   ctx.restore();
+
+  // Short effect text beneath the card (Balatro Joker-Display-mod style)
+  const effect = jokerMeta(joker.key).effect;
+  if (effect) {
+    ctx.save();
+    ctx.font = `7px 'IBM Plex Mono', monospace`;
+    ctx.fillStyle = c.muted;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    wrapText(effect, 17, 3).forEach((line, i) => {
+      ctx.fillText(line, x + w / 2, y + h + 4 + i * 8);
+    });
+    ctx.restore();
+  }
 }
 
-function drawScorePanel(x, y, w, h, handEval, jokerMult, scoreProgress) {
-  const c = getThemeColors();
+/** Wrap text into at most `maxLines` lines of `maxChars` characters. */
+function wrapText(text, maxChars, maxLines) {
+  const words = String(text).split(' ');
+  const lines = [];
+  let cur = '';
+  for (const word of words) {
+    const test = cur ? `${cur} ${word}` : word;
+    if (test.length > maxChars && cur) {
+      lines.push(cur);
+      cur = word;
+      if (lines.length === maxLines) break;
+    } else {
+      cur = test;
+    }
+  }
+  if (cur && lines.length < maxLines) lines.push(cur);
+  return lines;
+}
 
+/**
+ * Category icon drawn as vector primitives — mirrors public/optilatro/icons/*.svg
+ * (chips / mult / xmult / econ / misc), centered at (cx, cy) at size `s`.
+ */
+function drawCategoryIcon(category, cx, cy, s) {
+  const color = CATEGORY_ICON_COLOR[category] || CATEGORY_ICON_COLOR.misc;
+  const r = s / 2;
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = Math.max(1, s * 0.09);
+
+  if (category === 'chips') {
+    // Stacked poker chips
+    ctx.beginPath();
+    ctx.ellipse(cx, cy - r * 0.45, r * 0.85, r * 0.34, 0, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.85, cy - r * 0.45);
+    ctx.lineTo(cx - r * 0.85, cy + r * 0.15);
+    ctx.moveTo(cx + r * 0.85, cy - r * 0.45);
+    ctx.lineTo(cx + r * 0.85, cy + r * 0.15);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(cx, cy + r * 0.15, r * 0.85, r * 0.34, 0, 0, Math.PI * 2);
+    ctx.stroke();
+  } else if (category === 'mult' || category === 'xmult') {
+    // Rounded square with + or ×
+    const q = r * 0.95;
+    ctx.beginPath();
+    ctx.roundRect(cx - q, cy - q, q * 2, q * 2, q * 0.35);
+    ctx.stroke();
+    ctx.lineWidth = Math.max(1.2, s * 0.11);
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    if (category === 'mult') {
+      ctx.moveTo(cx, cy - q * 0.5); ctx.lineTo(cx, cy + q * 0.5);
+      ctx.moveTo(cx - q * 0.5, cy); ctx.lineTo(cx + q * 0.5, cy);
+    } else {
+      ctx.moveTo(cx - q * 0.5, cy - q * 0.5); ctx.lineTo(cx + q * 0.5, cy + q * 0.5);
+      ctx.moveTo(cx + q * 0.5, cy - q * 0.5); ctx.lineTo(cx - q * 0.5, cy + q * 0.5);
+    }
+    ctx.stroke();
+  } else if (category === 'econ') {
+    // Coin with $
+    ctx.beginPath();
+    ctx.arc(cx, cy, r * 0.9, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.font = `bold ${s}px 'Space Grotesk', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('$', cx, cy + s * 0.05);
+  } else {
+    // Four-point sparkle
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r);
+    ctx.quadraticCurveTo(cx + r * 0.18, cy - r * 0.18, cx + r, cy);
+    ctx.quadraticCurveTo(cx + r * 0.18, cy + r * 0.18, cx, cy + r);
+    ctx.quadraticCurveTo(cx - r * 0.18, cy + r * 0.18, cx - r, cy);
+    ctx.quadraticCurveTo(cx - r * 0.18, cy - r * 0.18, cx, cy - r);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawConsumable(cons, x, y, w, h) {
+  const c = getThemeColors();
   ctx.save();
   ctx.beginPath();
   ctx.roundRect(x, y, w, h, 3);
+  ctx.fillStyle = c.surface;
+  ctx.fill();
+  ctx.strokeStyle = '#a371f7';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.font = `${h * 0.28}px serif`;
+  ctx.fillStyle = '#a371f7';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('☾', x + w / 2, y + h * 0.35);
+
+  ctx.font = `${Math.min(8, w * 0.12)}px 'IBM Plex Mono', monospace`;
+  ctx.fillStyle = c.ink;
+  ctx.textBaseline = 'top';
+  const name = cons.name.length > 12 ? `${cons.name.slice(0, 11)}…` : cons.name;
+  ctx.fillText(name, x + w / 2, y + h * 0.58);
+  ctx.restore();
+}
+
+function drawPanel(x, y, w, h, title) {
+  const c = getThemeColors();
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 4);
   ctx.fillStyle = c.surface;
   ctx.fill();
   ctx.strokeStyle = c.line;
   ctx.lineWidth = 1;
   ctx.stroke();
-
-  const pad = 10;
-
-  // Hand type label
-  ctx.font = `bold 13px 'Space Grotesk', sans-serif`;
-  ctx.fillStyle = c.accent;
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText(handEval.type.toUpperCase(), x + pad, y + pad);
-
-  // Chips × Mult
-  ctx.font = `11px 'IBM Plex Mono', monospace`;
-  ctx.fillStyle = c.muted;
-  const totalMult = handEval.mult + jokerMult;
-  ctx.fillText(`${handEval.chips} × ${totalMult}`, x + pad, y + pad + 20);
-
-  // Total score
-  const total = handEval.chips * totalMult;
-  ctx.font = `bold 22px 'Space Grotesk', sans-serif`;
-  ctx.fillStyle = c.ink;
-  ctx.fillText(total.toLocaleString(), x + pad, y + pad + 38);
-
-  // Score progress bar
-  const barY = y + h - 16;
-  const barW = w - pad * 2;
-  ctx.beginPath();
-  ctx.roundRect(x + pad, barY, barW, 6, 3);
-  ctx.fillStyle = c.line;
-  ctx.fill();
-
-  const fillW = Math.min(barW, barW * scoreProgress);
-  if (fillW > 0) {
-    ctx.beginPath();
-    ctx.roundRect(x + pad, barY, fillW, 6, 3);
-    ctx.fillStyle = scoreProgress >= 1 ? '#4cd964' : c.accent;
-    ctx.fill();
+  if (title) {
+    ctx.font = `bold 11px 'IBM Plex Mono', monospace`;
+    ctx.fillStyle = c.accent;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(title, x + 10, y + 8);
   }
-
   ctx.restore();
 }
 
-function drawBlindInfo(x, y, w, blind, score, target) {
-  const c = getThemeColors();
-
-  ctx.save();
-
-  // Blind name
-  ctx.font = `bold 12px 'Space Grotesk', sans-serif`;
-  ctx.fillStyle = c.ink;
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText(blind.name.toUpperCase(), x, y);
-
-  // Target
-  ctx.font = `10px 'IBM Plex Mono', monospace`;
-  ctx.fillStyle = c.muted;
-  ctx.fillText(`Target: ${target.toLocaleString()}`, x, y + 16);
-
-  // Score so far
-  ctx.fillStyle = score >= target ? '#4cd964' : c.accent;
-  ctx.fillText(`Score: ${score.toLocaleString()}`, x, y + 30);
-
-  ctx.restore();
-}
-
-/* ─── Main render loop ───────────────────────────────────────────────────── */
+/* ─── Main render ────────────────────────────────────────────────────────── */
 
 function render() {
   if (!canvas || !ctx) return;
@@ -460,126 +566,36 @@ function render() {
   const c = getThemeColors();
   const dpr = window.devicePixelRatio || 1;
   const rect = canvas.getBoundingClientRect();
-  canvas.width = rect.width * dpr;
-  canvas.height = rect.height * dpr;
-  ctx.scale(dpr, dpr);
+  if (canvas.width !== Math.round(rect.width * dpr) || canvas.height !== Math.round(rect.height * dpr)) {
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const W = rect.width;
   const H = rect.height;
 
-  // Clear
   ctx.clearRect(0, 0, W, H);
   ctx.fillStyle = c.paper;
   ctx.fillRect(0, 0, W, H);
 
-  if (!simState) {
-    // Draw idle state
+  if (!snap || !snap.ready) {
     drawIdleState(W, H, c);
     animationFrame = requestAnimationFrame(render);
     return;
   }
 
-  const s = simState;
-
-  // ── Layout regions ──
-  const topPad = 16;
-  const cardAreaH = H * 0.42;
-  const cardY = H - cardAreaH - 16;
-  const cardW = Math.min(72, (W - 100) / 9);
-  const cardH = cardW * 1.45;
-  const cardGap = 8;
-  const totalCardsW = s.hand.length * cardW + (s.hand.length - 1) * cardGap;
-  const cardStartX = (W - totalCardsW) / 2;
-
-  // ── Top bar: Blind info + Score ──
-  drawBlindInfo(16, topPad, 200, s.blind, s.currentScore, s.blindTarget);
-  drawScorePanel(W - 230, topPad, 214, 90, s.handEval, s.jokerBonus, s.currentScore / s.blindTarget);
-
-  // ── Joker row ──
-  const jokerW = 64;
-  const jokerH = 80;
-  const jokerGap = 8;
-  const jokerStartX = 16;
-  const jokerY = topPad + 14;
-  ctx.font = `10px 'IBM Plex Mono', monospace`;
-  ctx.fillStyle = c.faint;
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText('JOKERS', jokerStartX, jokerY - 12);
-
-  s.jokers.forEach((j, i) => {
-    drawJoker(j, jokerStartX + i * (jokerW + jokerGap), jokerY, jokerW, jokerH);
-  });
-
-  // ── Hand area label ──
-  ctx.font = `10px 'IBM Plex Mono', monospace`;
-  ctx.fillStyle = c.faint;
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'top';
-  ctx.fillText('HAND', cardStartX, cardY - 16);
-
-  // ── Draw cards ──
-  s.hand.forEach((card, i) => {
-    const x = cardStartX + i * (cardW + cardGap);
-    const isSelected = s.selectedIndices.includes(i);
-    const isPlayed = s.playedIndices.includes(i);
-    const yOffset = isSelected ? -12 : 0;
-
-    drawCard(card, x, cardY + yOffset, cardW, cardH, {
-      highlight: isSelected,
-      scored: isPlayed,
-      dimmed: !isSelected && !isPlayed && s.phase === 'selecting',
-    });
-  });
-
-  // ── Played cards area (above hand) ──
-  if (s.playedCards.length > 0) {
-    const playedY = cardY - cardH - 40;
-    ctx.font = `10px 'IBM Plex Mono', monospace`;
-    ctx.fillStyle = c.faint;
-    ctx.textAlign = 'left';
-    ctx.textBaseline = 'top';
-    ctx.fillText('PLAYED', cardStartX, playedY - 14);
-
-    const playedCardW = cardW * 0.85;
-    const playedCardH = cardH * 0.85;
-    s.playedCards.forEach((card, i) => {
-      const px = cardStartX + i * (playedCardW + 6);
-      drawCard(card, px, playedY, playedCardW, playedCardH, { scored: true });
-    });
-  }
-
-  // ── Phase label ──
-  ctx.font = `bold 11px 'IBM Plex Mono', monospace`;
-  ctx.fillStyle = c.accent;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'top';
-  const phaseLabels = {
-    idle: 'READY',
-    selecting: 'BOT THINKING…',
-    playing: 'SCORING',
-    scoring: 'MULTIPLYING',
-    result: s.currentScore >= s.blindTarget ? 'BLIND CLEARED ✓' : 'HANDS LEFT: ' + s.handsLeft,
-    gameOver: 'GAME OVER',
-    win: 'ANTE CLEARED!',
-  };
-  ctx.fillText(phaseLabels[s.phase] || '', W / 2, cardY - 50);
-
-  // ── Decision log overlay ──
-  if (s.lastDecision) {
-    const logY = H - 12;
-    ctx.font = `10px 'IBM Plex Mono', monospace`;
-    ctx.fillStyle = c.muted;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText(s.lastDecision, W / 2, logY);
-  }
+  drawTopBar(W, c);
+  drawConsumableRow(W, c);
+  drawJokerRow(c);
+  drawHandArea(W, H, c);
+  drawStatePanel(W, H, c);
+  drawBottomStatus(W, H, c);
 
   animationFrame = requestAnimationFrame(render);
 }
 
 function drawIdleState(W, H, c) {
-  // Grid pattern
   ctx.strokeStyle = c.line;
   ctx.lineWidth = 0.5;
   for (let x = 0; x < W; x += 48) {
@@ -595,332 +611,288 @@ function drawIdleState(W, H, c) {
     ctx.stroke();
   }
 
-  // Center text
   ctx.font = `bold 16px 'Space Grotesk', sans-serif`;
   ctx.fillStyle = c.faint;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText('OPTILATRO', W / 2, H / 2 - 16);
+  ctx.fillText('OPTILATRO — REAL ENGINE', W / 2, H / 2 - 16);
   ctx.font = `11px 'IBM Plex Mono', monospace`;
-  ctx.fillText('Press Start Run to begin simulation', W / 2, H / 2 + 10);
+  ctx.fillText('Loading the actual Python bot (Pyodide)…', W / 2, H / 2 + 10);
 }
 
-/* ─── Simulation engine ──────────────────────────────────────────────────── */
+function drawTopBar(W, c) {
+  const s = snap;
+  const pad = 16;
 
-function initSimState() {
-  const deck = createDeck();
-  const hand = deck.splice(0, 8);
-  const jokerCount = 2 + Math.floor(Math.random() * 3);
-  const jokers = selectJokers(jokerCount);
-  const blindIndex = 0;
-  const blind = BLINDS[blindIndex];
+  // Blind info (left)
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.font = `bold 13px 'Space Grotesk', sans-serif`;
+  ctx.fillStyle = c.ink;
+  ctx.fillText(`${s.blind.name.toUpperCase()}${s.blind.bossDisplay ? ` — ${s.blind.bossDisplay}` : ''}`, pad, pad);
 
-  simState = {
-    deck,
-    hand,
-    jokers,
-    blind,
-    blindIndex,
-    blindTarget: blind.base,
-    currentScore: 0,
-    handsLeft: 4,
-    discardsLeft: 3,
-    ante: 1,
-    selectedIndices: [],
-    playedIndices: [],
-    playedCards: [],
-    handEval: { type: '—', base: 0, mult: 0, chips: 0, total: 0 },
-    jokerBonus: 0,
-    phase: 'idle',
-    lastDecision: '',
-    totalGames: 0,
-    wins: 0,
-    stepTimer: 0,
-    scoreAnimTarget: 0,
-    scoreAnimCurrent: 0,
-  };
+  ctx.font = `11px 'IBM Plex Mono', monospace`;
+  ctx.fillStyle = c.muted;
+  ctx.fillText(`Target ${s.blind.target.toLocaleString()}   Scored ${s.chipsScored.toLocaleString()}`, pad, pad + 18);
+  ctx.fillText(`Hands ${s.handsLeft}   Discards ${s.discardsLeft}   Deck ${s.deckRemaining}`, pad, pad + 33);
 
-  updateStatsPanel();
-  updateHandEval(null);
-  updateJokerPanel();
-}
-
-function stepSim(timestamp) {
-  if (!simRunning || simPaused || !simState) return;
-
-  if (!startTime) startTime = timestamp;
-  const elapsed = timestamp - startTime;
-
-  const s = simState;
-  const tick = 800 / simSpeed; // ms per step
-
-  if (timestamp - s.stepTimer < tick) {
-    animationFrame = requestAnimationFrame(stepSim);
-    return;
-  }
-  s.stepTimer = timestamp;
-
-  switch (s.phase) {
-    case 'idle':
-      startNewBlind();
-      break;
-
-    case 'selecting':
-      botSelectAndPlay();
-      break;
-
-    case 'playing':
-      animateScoring();
-      break;
-
-    case 'scoring':
-      applyScore();
-      break;
-
-    case 'result':
-      advancePhase();
-      break;
-
-    case 'win':
-      advanceAnte();
-      break;
-
-    case 'gameOver':
-      endGame(false);
-      break;
+  // Chips progress bar
+  const barW = Math.min(260, W * 0.3);
+  const frac = Math.min(1, s.chipsScored / Math.max(1, s.blind.target));
+  ctx.beginPath();
+  ctx.roundRect(pad, pad + 50, barW, 7, 3);
+  ctx.fillStyle = c.line;
+  ctx.fill();
+  if (frac > 0) {
+    ctx.beginPath();
+    ctx.roundRect(pad, pad + 50, barW * frac, 7, 3);
+    ctx.fillStyle = frac >= 1 ? c.good : c.accent;
+    ctx.fill();
   }
 
-  updateStatsPanel();
-  animationFrame = requestAnimationFrame(stepSim);
+  // Money + ante (right)
+  ctx.textAlign = 'right';
+  ctx.font = `bold 20px 'Space Grotesk', sans-serif`;
+  ctx.fillStyle = '#f5a623';
+  ctx.fillText(`$${s.dollars}`, W - pad, pad);
+  ctx.font = `11px 'IBM Plex Mono', monospace`;
+  ctx.fillStyle = c.muted;
+  ctx.fillText(`Ante ${s.ante}/8 · seed ${s.seed} · heuristic_v10`, W - pad, pad + 26);
 }
 
-function startNewBlind() {
-  const s = simState;
-  // Draw up to 8 cards
-  while (s.hand.length < 8 && s.deck.length > 0) {
-    s.hand.push(s.deck.pop());
+function drawJokerRow(c) {
+  const s = snap;
+  if (!s.jokers.length) return;
+  const jokerW = 78;
+  const jokerH = 72;
+  const gap = 10;
+  const x0 = 16;
+  const y0 = 100; // card bottom = 172; effect text extends ~28px below each card
+
+  ctx.font = `10px 'IBM Plex Mono', monospace`;
+  ctx.fillStyle = c.faint;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(`JOKERS ${s.jokers.length}/5`, x0, y0 - 14);
+
+  s.jokers.forEach((j, i) => {
+    drawJoker(j, x0 + i * (jokerW + gap), y0, jokerW, jokerH);
+  });
+}
+
+function drawConsumableRow(W, c) {
+  const s = snap;
+  if (!s.consumables.length) return;
+  const w = 52;
+  const h = 58;
+  const gap = 6;
+  const totalW = s.consumables.length * w + (s.consumables.length - 1) * gap;
+  const x0 = W - 16 - totalW; // upper-right corner, under the money readout
+  const y0 = 74;
+
+  ctx.font = `10px 'IBM Plex Mono', monospace`;
+  ctx.fillStyle = c.faint;
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'top';
+  ctx.fillText('CONSUMABLES', W - 16, y0 - 14);
+
+  s.consumables.forEach((cons, i) => {
+    drawConsumable(cons, x0 + i * (w + gap), y0, w, h);
+  });
+}
+
+function drawHandArea(W, H, c) {
+  const s = snap;
+  const cards = s.hand || [];
+  if (!cards.length) return;
+
+  const cardW = Math.min(64, (W - 80) / Math.max(cards.length, 1) - 8);
+  const cardH = cardW * 1.42;
+  const gap = 8;
+  const totalW = cards.length * cardW + (cards.length - 1) * gap;
+  const x0 = (W - totalW) / 2;
+  const y0 = H - cardH - 44;
+
+  ctx.font = `10px 'IBM Plex Mono', monospace`;
+  ctx.fillStyle = c.faint;
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText(`HAND (${cards.length})`, x0, y0 - 16);
+
+  cards.forEach((card, i) => {
+    drawCard(card, x0 + i * (cardW + gap), y0, cardW, cardH);
+  });
+}
+
+function drawStatePanel(W, H, c) {
+  const s = snap;
+
+  if (s.state === 'SHOP' && s.shop.length) {
+    const panelW = Math.min(460, W - 32);
+    const rowH = 20;
+    const panelH = 34 + s.shop.length * rowH;
+    const x = (W - panelW) / 2;
+    const y = 218; // below the joker row + effect text
+    drawPanel(x, y, panelW, panelH, 'SHOP — BOT DECIDING');
+
+    ctx.font = `11px 'IBM Plex Mono', monospace`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    s.shop.forEach((item, i) => {
+      const ry = y + 26 + i * rowH;
+      const kind = KIND_LABELS[item.kind] || item.kind.toUpperCase();
+      const ed = item.edition !== 'None' ? ` [${item.edition}]` : '';
+      ctx.fillStyle = item.sold ? c.faint : c.ink;
+      const label = `${kind.padEnd(8)} ${item.name}${ed}`;
+      ctx.fillText(label, x + 12, ry);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = item.sold ? c.faint : '#f5a623';
+      ctx.fillText(item.sold ? 'SOLD' : `$${item.price}`, x + panelW - 12, ry);
+      ctx.textAlign = 'left';
+    });
   }
 
-  s.blind = BLINDS[s.blindIndex % BLINDS.length];
-  s.blindTarget = Math.floor(s.blind.base * (1 + (s.ante - 1) * 0.4));
-  s.currentScore = 0;
-  s.handsLeft = 4;
-  s.discardsLeft = 3;
-  s.selectedIndices = [];
-  s.playedIndices = [];
-  s.playedCards = [];
-  s.handEval = { type: '—', base: 0, mult: 0, chips: 0, total: 0 };
-  s.jokerBonus = 0;
-  s.phase = 'selecting';
-  s.lastDecision = `Ante ${s.ante} — ${s.blind.name} (target: ${s.blindTarget})`;
-  addLog(s.lastDecision);
-  updateHandEval(null);
-}
+  if (s.state === 'BOOSTER_OPEN' && s.boosterChoices.length) {
+    const panelW = Math.min(460, W - 32);
+    const rowH = 20;
+    const panelH = 34 + s.boosterChoices.length * rowH;
+    const x = (W - panelW) / 2;
+    const y = 218; // below the joker row + effect text
+    drawPanel(x, y, panelW, panelH, 'BOOSTER PACK — BOT PICKING');
 
-function botSelectAndPlay() {
-  const s = simState;
-  if (s.handsLeft <= 0) {
-    s.phase = 'gameOver';
-    s.lastDecision = 'No hands remaining — game over';
-    addLog(s.lastDecision);
-    return;
+    ctx.font = `11px 'IBM Plex Mono', monospace`;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    s.boosterChoices.forEach((choice, i) => {
+      const ry = y + 26 + i * rowH;
+      const kind = KIND_LABELS[choice.kind] || choice.kind.toUpperCase();
+      const ed = choice.edition && choice.edition !== 'None' ? ` [${choice.edition}]` : '';
+      ctx.fillStyle = c.ink;
+      ctx.fillText(`${kind.padEnd(8)} ${choice.name}${ed}`, x + 12, ry);
+    });
   }
 
-  // Bot evaluates and picks best hand
-  const { cards, eval: ev } = botSelectHand(s.hand);
-  s.playedCards = cards;
-  s.handEval = ev;
-  s.jokerBonus = jokerMultiplier(s.jokers, cards);
-
-  // Mark selected indices
-  s.selectedIndices = [];
-  for (const played of cards) {
-    const idx = s.hand.findIndex((c, i) => c === played && !s.selectedIndices.includes(i));
-    if (idx !== -1) s.selectedIndices.push(idx);
+  if (s.state === 'BLIND_SELECT') {
+    ctx.font = `bold 12px 'IBM Plex Mono', monospace`;
+    ctx.fillStyle = c.accent;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('SELECTING BLIND — bot weighing skip vs play…', W / 2, H * 0.45);
   }
 
-  s.lastDecision = `Bot plays ${ev.type} (${ev.chips} × ${ev.mult + s.jokerBonus})`;
-  addLog(s.lastDecision);
-  updateHandEval(ev);
-
-  // Transition to playing
-  setTimeout(() => {
-    if (!simState || simState.phase !== 'selecting') return;
-    simState.phase = 'playing';
-    simState.playedIndices = [...simState.selectedIndices];
-  }, tickMs());
-
-  setTimeout(() => {
-    if (!simState || simState.phase !== 'playing') return;
-    simState.phase = 'scoring';
-  }, tickMs() * 2);
-}
-
-function animateScoring() {
-  // Scoring animation is handled visually; just transition
-}
-
-function applyScore() {
-  const s = simState;
-  const total = s.handEval.chips * (s.handEval.mult + s.jokerBonus);
-  s.currentScore += total;
-  s.handsLeft--;
-
-  // Remove played cards from hand
-  s.hand = s.hand.filter((_, i) => !s.playedIndices.includes(i));
-  s.selectedIndices = [];
-  s.playedIndices = [];
-  s.playedCards = [];
-
-  if (s.currentScore >= s.blindTarget) {
-    s.phase = 'win';
-    s.lastDecision = `Blind cleared! Score: ${s.currentScore.toLocaleString()}`;
-    addLog(s.lastDecision, 'success');
-  } else if (s.handsLeft <= 0) {
-    s.phase = 'gameOver';
-    s.lastDecision = `Failed to meet target. Score: ${s.currentScore.toLocaleString()} / ${s.blindTarget.toLocaleString()}`;
-    addLog(s.lastDecision, 'error');
-  } else {
-    s.phase = 'selecting';
-    s.lastDecision = `Score: ${s.currentScore.toLocaleString()} / ${s.blindTarget.toLocaleString()} — ${s.handsLeft} hands left`;
-    addLog(s.lastDecision);
-    updateHandEval(null);
+  if (s.state === 'ROUND_EVAL') {
+    ctx.font = `bold 12px 'IBM Plex Mono', monospace`;
+    ctx.fillStyle = c.good;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText('ROUND CLEAR — collecting payout…', W / 2, H * 0.45);
   }
-}
 
-function advancePhase() {
-  const s = simState;
-  s.blindIndex++;
-  if (s.blindIndex >= BLINDS.length) {
-    // Ante complete
-    s.phase = 'win';
-    s.lastDecision = `Ante ${s.ante} complete!`;
-    addLog(s.lastDecision, 'success');
-  } else {
-    s.phase = 'selecting';
-    startNewBlind();
+  if (s.done) {
+    ctx.save();
+    ctx.fillStyle = s.won ? 'rgba(76, 217, 100, 0.12)' : 'rgba(255, 59, 48, 0.10)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.font = `bold 26px 'Space Grotesk', sans-serif`;
+    ctx.fillStyle = s.won ? c.good : c.accent;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(s.won ? '★ ANTE 8 CLEARED — WIN' : `ELIMINATED — ANTE ${s.ante}`, W / 2, H / 2);
+    ctx.font = `12px 'IBM Plex Mono', monospace`;
+    ctx.fillStyle = c.muted;
+    ctx.fillText(`seed ${s.seed} · starting next run…`, W / 2, H / 2 + 26);
+    ctx.restore();
   }
 }
 
-function advanceAnte() {
-  const s = simState;
-  s.ante++;
-  s.blindIndex = 0;
-
-  if (s.ante > 8) {
-    endGame(true);
-    return;
-  }
-
-  // Reshuffle for next ante
-  s.deck = createDeck();
-  s.hand = s.deck.splice(0, 8);
-
-  // Maybe swap jokers
-  if (Math.random() > 0.5) {
-    const newJokers = selectJokers(s.jokers.length);
-    s.jokers = newJokers;
-    s.lastDecision = `Ante ${s.ante} — new jokers acquired`;
-    addLog(s.lastDecision);
-    updateJokerPanel();
-  }
-
-  s.phase = 'selecting';
-  startNewBlind();
+function drawBottomStatus(W, H, c) {
+  if (!lastActionText) return;
+  ctx.font = `11px 'IBM Plex Mono', monospace`;
+  ctx.fillStyle = c.muted;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'bottom';
+  const text = lastActionText.length > 110 ? `${lastActionText.slice(0, 109)}…` : lastActionText;
+  ctx.fillText(text, W / 2, H - 10);
 }
 
-function endGame(won) {
-  const s = simState;
-  s.totalGames++;
-  if (won) s.wins++;
+/* ─── Sidebar DOM updates ────────────────────────────────────────────────── */
 
-  s.phase = 'idle';
-  s.lastDecision = won
-    ? `Victory! Won game ${s.totalGames}. Win rate: ${((s.wins / s.totalGames) * 100).toFixed(1)}%`
-    : `Defeated at Ante ${s.ante}. Win rate: ${((s.wins / s.totalGames) * 100).toFixed(1)}%`;
-  addLog(s.lastDecision, won ? 'success' : 'error');
-
-  // Auto-start next game after a pause
-  setTimeout(() => {
-    if (!simRunning || simPaused) return;
-    initSimState();
-    simState.totalGames = s.totalGames;
-    simState.wins = s.wins;
-    simState.phase = 'idle';
-  }, tickMs() * 3);
-}
-
-function tickMs() {
-  return 800 / simSpeed;
-}
-
-/* ─── UI updates ─────────────────────────────────────────────────────────── */
-
-function updateStatsPanel() {
-  if (!simState) return;
-  const s = simState;
+function updateStats() {
   const el = (id) => document.getElementById(id);
-  if (el('stat-winrate')) el('stat-winrate').textContent = s.totalGames > 0
-    ? `${((s.wins / s.totalGames) * 100).toFixed(1)}%` : '—';
-  if (el('stat-games')) el('stat-games').textContent = s.totalGames;
-  if (el('stat-ante')) el('stat-ante').textContent = s.ante ? `${s.ante} / 8` : '—';
-  if (el('stat-blind')) el('stat-blind').textContent = s.blind ? s.blind.name : '—';
+  if (el('stat-winrate')) {
+    el('stat-winrate').textContent = gamesPlayed > 0
+      ? `${((wins / gamesPlayed) * 100).toFixed(1)}%` : '—';
+  }
+  if (el('stat-games')) el('stat-games').textContent = gamesPlayed;
+  if (el('stat-ante')) el('stat-ante').textContent = snap ? `${snap.ante} / 8` : '—';
+  if (el('stat-blind')) {
+    el('stat-blind').textContent = snap
+      ? (snap.blind.bossDisplay || snap.blind.kind)
+      : '—';
+  }
 }
 
-function updateHandEval(ev) {
+function updateHandEvalPanel() {
   const el = document.getElementById('sim-hand-eval');
   if (!el) return;
 
-  if (!ev || ev.type === '—') {
-    el.innerHTML = '<p class="sim-placeholder-text">Bot is evaluating hands…</p>';
+  if (!lastEval) {
+    el.innerHTML = '<p class="sim-placeholder-text">Waiting for the bot to play a hand…</p>';
     return;
   }
 
   el.innerHTML = `
     <div class="hand-eval-row">
-      <span class="hand-eval-label">Hand Type</span>
-      <span class="hand-eval-value hand-eval-value--accent">${ev.type}</span>
+      <span class="hand-eval-label">Last Hand Played</span>
+      <span class="hand-eval-value hand-eval-value--accent">${lastEval.type}</span>
     </div>
     <div class="hand-eval-row">
-      <span class="hand-eval-label">Base Chips</span>
-      <span class="hand-eval-value">${ev.base}</span>
+      <span class="hand-eval-label">Cards Played</span>
+      <span class="hand-eval-value">${lastEval.count}</span>
     </div>
     <div class="hand-eval-row">
-      <span class="hand-eval-label">Card Values</span>
-      <span class="hand-eval-value">+${ev.chips - ev.base}</span>
+      <span class="hand-eval-label">Chips Gained</span>
+      <span class="hand-eval-value">+${(lastEval.gained || 0).toLocaleString()}</span>
     </div>
-    <div class="hand-eval-row">
-      <span class="hand-eval-label">Multiplier</span>
-      <span class="hand-eval-value">${ev.mult}</span>
-    </div>
-    ${simState.jokerBonus > 0 ? `
-    <div class="hand-eval-row">
-      <span class="hand-eval-label">Joker Bonus</span>
-      <span class="hand-eval-value hand-eval-value--accent">+${simState.jokerBonus}</span>
-    </div>` : ''}
     <div class="hand-eval-row hand-eval-row--total">
-      <span class="hand-eval-label">Total</span>
-      <span class="hand-eval-value hand-eval-value--accent">${(ev.chips * (ev.mult + (simState?.jokerBonus || 0))).toLocaleString()}</span>
+      <span class="hand-eval-label">Blind Progress</span>
+      <span class="hand-eval-value hand-eval-value--accent">${snap ? `${Math.min(100, Math.round((snap.chipsScored / Math.max(1, snap.blind.target)) * 100))}%` : '—'}</span>
     </div>
   `;
 }
 
 function updateJokerPanel() {
   const el = document.getElementById('sim-joker-panel');
-  if (!el || !simState) return;
-
-  if (simState.jokers.length === 0) {
-    el.innerHTML = '<p class="sim-placeholder-text">No jokers in play</p>';
+  if (!el) return;
+  if (!snap || snap.jokers.length === 0) {
+    el.innerHTML = '<p class="sim-placeholder-text">No jokers owned yet</p>';
     return;
   }
+  el.innerHTML = snap.jokers.map((j) => {
+    const meta = jokerMeta(j.key);
+    const iconFile = `${meta.category}.svg`;
+    const ed = j.edition !== 'None' ? `<span class="joker-edition">${j.edition}</span>` : '';
+    const effect = meta.effect
+      ? `<span class="joker-effect" title="${meta.effect.replace(/"/g, '"')}">${meta.effect}</span>`
+      : '';
+    return `
+      <div class="joker-row">
+        <img class="joker-row__icon" src="${new URL(`icons/${iconFile}`, ENGINE_BASE).href}" alt="" width="18" height="18">
+        <div class="joker-row__body">
+          <div class="joker-row__head">
+            <span class="joker-name">${j.name}</span>
+            ${ed}
+          </div>
+          ${effect}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
-  el.innerHTML = simState.jokers.map(j => `
-    <div class="joker-row">
-      <span class="joker-dot" style="background:${j.color}"></span>
-      <span class="joker-name">${j.name}</span>
-      <span class="joker-effect">${j.effect}</span>
-    </div>
-  `).join('');
+function updatePanels() {
+  updateStats();
+  updateHandEvalPanel();
+  updateJokerPanel();
 }
 
 function addLog(msg, type = '') {
@@ -931,17 +903,30 @@ function addLog(msg, type = '') {
   const time = `${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
   const entry = document.createElement('div');
   entry.className = `sim-log__entry ${type ? `sim-log__entry--${type}` : ''}`;
-  entry.innerHTML = `<span class="sim-log__time">${time}</span><span class="sim-log__msg">${msg}</span>`;
+  entry.innerHTML = `<span class="sim-log__time">${time}</span><span class="sim-log__msg"></span>`;
+  entry.querySelector('.sim-log__msg').textContent = msg;
   el.appendChild(entry);
   el.scrollTop = el.scrollHeight;
 
-  // Keep log manageable
-  while (el.children.length > 50) {
+  while (el.children.length > 80) {
     el.removeChild(el.firstChild);
   }
 }
 
 /* ─── Controls ───────────────────────────────────────────────────────────── */
+
+function syncButtons() {
+  const startBtn = document.getElementById('sim-start-btn');
+  const pauseBtn = document.getElementById('sim-pause-btn');
+  if (startBtn) {
+    startBtn.disabled = running || !engineReady;
+    startBtn.textContent = !engineReady ? 'Loading engine…' : (running ? 'Running…' : 'Start Run');
+  }
+  if (pauseBtn) {
+    pauseBtn.disabled = !running;
+    pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+  }
+}
 
 function bindControls() {
   const startBtn = document.getElementById('sim-start-btn');
@@ -949,84 +934,59 @@ function bindControls() {
   const resetBtn = document.getElementById('sim-reset-btn');
   const speedSlider = document.getElementById('sim-speed');
   const speedValue = document.getElementById('sim-speed-value');
-  const overlay = document.getElementById('sim-overlay');
 
   if (startBtn) {
-    startBtn.addEventListener('click', () => {
-      if (simRunning && !simPaused) return;
-
-      if (overlay) overlay.hidden = true;
-
-      if (!simState) {
-        initSimState();
+    startBtn.addEventListener('click', async () => {
+      if (running) return;
+      try {
+        await ensureEngine();
+      } catch {
+        return; // error already surfaced
       }
-
-      simRunning = true;
-      simPaused = false;
-      startTime = 0;
-      startBtn.textContent = 'Running…';
-      startBtn.disabled = true;
-      pauseBtn.disabled = false;
-
-      animationFrame = requestAnimationFrame(stepSim);
+      running = true;
+      paused = false;
+      syncButtons();
+      runLoop();
     });
   }
 
   if (pauseBtn) {
     pauseBtn.addEventListener('click', () => {
-      simPaused = !simPaused;
-      pauseBtn.textContent = simPaused ? 'Resume' : 'Pause';
-      if (!simPaused) {
-        startTime = 0;
-        animationFrame = requestAnimationFrame(stepSim);
-      }
+      if (!running) return;
+      paused = !paused;
+      syncButtons();
+      if (!paused) runLoop();
     });
   }
 
   if (resetBtn) {
     resetBtn.addEventListener('click', () => {
-      simRunning = false;
-      simPaused = false;
-      simState = null;
-      startTime = 0;
-      if (animationFrame) cancelAnimationFrame(animationFrame);
+      running = false;
+      paused = false;
+      loopGen++; // cancel any in-flight loop
+      snap = null;
+      lastEval = null;
+      lastActionText = '';
+      gamesPlayed = 0;
+      wins = 0;
+      nextSeed = 0;
 
-      if (overlay) overlay.hidden = false;
-      if (startBtn) { startBtn.textContent = 'Start Run'; startBtn.disabled = false; }
-      if (pauseBtn) { pauseBtn.textContent = 'Pause'; pauseBtn.disabled = true; }
-
-      // Clear log
       const logEl = document.getElementById('sim-log');
       if (logEl) {
-        logEl.innerHTML = `<div class="sim-log__entry sim-log__entry--system">
-          <span class="sim-log__time">00:00</span>
-          <span class="sim-log__msg">Simulator reset. Press Start Run to begin.</span>
-        </div>`;
+        logEl.innerHTML = '';
+        addLog('Simulator reset. Press Start Run to begin.', 'system');
       }
 
-      updateStatsPanel();
-      updateHandEval(null);
-      updateJokerPanel();
+      updatePanels();
+      syncButtons();
     });
   }
 
   if (speedSlider) {
     speedSlider.addEventListener('input', () => {
-      simSpeed = parseInt(speedSlider.value);
-      if (speedValue) speedValue.textContent = `${simSpeed}x`;
+      speed = parseInt(speedSlider.value, 10);
+      if (speedValue) speedValue.textContent = `${speed}x`;
     });
-  }
-}
-
-/* ─── Resize ─────────────────────────────────────────────────────────────── */
-
-function handleResize() {
-  if (canvas) {
-    const container = canvas.parentElement;
-    if (container) {
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-    }
   }
 }
 
@@ -1042,9 +1002,10 @@ export function initOptilatroViewer() {
   if (!canvas) return;
   ctx = canvas.getContext('2d');
 
-  handleResize();
-  window.addEventListener('resize', handleResize);
-
   bindControls();
+  syncButtons();
   render();
+
+  // Begin loading the engine immediately (runs while the user reads the page).
+  ensureEngine().catch(() => { /* surfaced in overlay + log */ });
 }
