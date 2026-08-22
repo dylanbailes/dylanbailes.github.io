@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive games, simulators, and demos — including Optilatro, a Balatro optimal play agent.">
+  <meta name="author" content="Dylan Bailes">
+  <meta name="theme-color" content="#f4f4f1">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Games & Simulators — Dylan Bailes">
+  <meta property="og:description" content="Interactive games, simulators, and demos.">
+  <meta property="og:url" content="https://dylanbailes.github.io/games.html">
+  <title>Games & Simulators</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111110'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ff3b30'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" src="/src/games.js"></script>
+</head>
+<body>
+  <noscript>
+    <p style="padding:1rem;text-align:center">
+      This site renders its content with JavaScript. Please enable it to view games.
+    </p>
+  </noscript>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <button class="theme-toggle" aria-label="Toggle dark/light theme" title="Toggle theme">
+    <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="5"/>
+      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>
+    <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+  </button>
+
+  <header class="header">
+    <div class="container header__inner">
+      <a href="index.html#hero" class="logo" aria-label="Back to portfolio">
+        <span class="logo__text" data-logo-text>DylanBailes</span>
+        <span class="logo__tagline" data-logo-tagline>Controls & Robotics Engineer</span>
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-controls="primary-navigation" aria-label="Toggle navigation menu">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
+      <nav id="primary-navigation" class="nav" aria-label="Primary navigation">
+        <ul class="nav__list">
+          <li class="nav__item"><a href="index.html#about" class="nav__link">About</a></li>
+          <li class="nav__item"><a href="index.html#experience" class="nav__link">Experience</a></li>
+          <li class="nav__item"><a href="index.html#skills" class="nav__link">Skills</a></li>
+          <li class="nav__item"><a href="index.html#projects" class="nav__link">Projects</a></li>
+          <li class="nav__item"><a href="index.html#contact" class="nav__link">Contact</a></li>
+          <li class="nav__item"><a href="games.html" class="nav__link nav__link--active" aria-current="page">Games</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="games-hero" aria-labelledby="games-hero-title">
+      <div class="container">
+        <div class="section-head">
+          <span class="section-head__index">G.00</span>
+          <h1 id="games-hero-title" class="section-head__title">Games & Simulators</h1>
+          <span class="section-head__rule"></span>
+          <span class="section-head__tag">PLAY.DEMO</span>
+          <span class="section-head__ghost" aria-hidden="true">G</span>
+        </div>
+        <p class="games-hero__intro">
+          Interactive demonstrations of AI agents, game theory, and optimization —
+          built to visualize decision-making in real time.
+        </p>
+      </div>
+    </section>
+
+    <section class="games-grid-section section" aria-labelledby="games-grid-title">
+      <div class="container">
+        <h2 id="games-grid-title" class="sr-only">Available Games</h2>
+        <div class="games-grid">
+          <article class="game-card game-card--active" data-game="optilatro">
+            <div class="game-card__badge">LIVE</div>
+            <div class="game-card__header">
+              <span class="game-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"><rect x="2" y="3" width="20" height="18" rx="1"/><path d="M8 7v10M12 7v10M16 7v10M6 12h12"/></svg>
+              </span>
+              <h3 class="game-card__title">Optilatro</h3>
+            </div>
+            <p class="game-card__desc">
+              A search-first Balatro agent that maximizes ante-8 win rate.
+              The <strong>actual Python engine</strong> runs in your browser via
+              WebAssembly (Pyodide) — every decision is exactly what the bot
+              makes locally, not a re-implementation.
+            </p>
+            <div class="game-card__meta">
+              <span class="game-card__tag">Balatro</span>
+              <span class="game-card__tag">AI Agent</span>
+              <span class="game-card__tag">Game Theory</span>
+            </div>
+            <div class="game-card__actions">
+              <button class="btn btn--primary btn--small" data-launch-game="optilatro">Launch Simulator</button>
+              <a href="https://github.com/dylanbailes/Optilatro" target="_blank" rel="noopener" class="btn btn--ghost btn--small">GitHub</a>
+            </div>
+          </article>
+
+          <article class="game-card game-card--coming-soon">
+            <div class="game-card__badge game-card__badge--soon">SOON</div>
+            <div class="game-card__header">
+              <span class="game-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              </span>
+              <h3 class="game-card__title">More Coming Soon</h3>
+            </div>
+            <p class="game-card__desc">
+              Additional game theory simulations and interactive demos
+              will be added here as the project grows.
+            </p>
+            <div class="game-card__meta">
+              <span class="game-card__tag">TBD</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="simulator-section section" id="simulator-viewport" aria-labelledby="sim-title" hidden>
+      <div class="container">
+        <div class="section-head">
+          <span class="section-head__index">SIM</span>
+          <h2 id="sim-title" class="section-head__title">Optilatro — Balatro Agent</h2>
+          <span class="section-head__rule"></span>
+          <span class="section-head__tag">ACTIVE.SIM</span>
+        </div>
+
+        <div class="engine-note">
+          <span class="engine-note__tag">REAL ENGINE</span>
+          <span>Runs the unmodified Optilatro Python engine (heuristic_v10) via Pyodide / WebAssembly. Decisions are identical to local benchmark runs.</span>
+          <a href="https://github.com/dylanbailes/Optilatro" target="_blank" rel="noopener" style="margin-left:auto;color:var(--color-accent)">source ↗</a>
+        </div>
+
+        <div class="sim-layout">
+          <div class="sim-main">
+            <div class="sim-viewport" id="optilatro-viewport">
+              <canvas id="optilatro-canvas"></canvas>
+              <div class="sim-overlay" id="sim-overlay">
+                <div class="sim-overlay__content">
+                  <div class="loading-spinner"></div>
+                  <p class="sim-overlay__text">Initializing simulator…</p>
+                  <div class="sim-overlay__progress">
+                    <span class="sim-overlay__progress-fill"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sim-controls">
+              <button class="btn btn--primary btn--small" id="sim-start-btn">Start Run</button>
+              <button class="btn btn--ghost btn--small" id="sim-pause-btn" disabled>Pause</button>
+              <button class="btn btn--ghost btn--small" id="sim-reset-btn">Reset</button>
+              <div class="sim-speed-control">
+                <label class="sim-speed-label" for="sim-speed">Speed</label>
+                <input type="range" id="sim-speed" min="1" max="10" value="5" class="sim-speed-slider">
+                <span class="sim-speed-value" id="sim-speed-value">5x</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="sim-sidebar" id="sim-sidebar">
+            <div class="sim-stats-panel">
+              <h3 class="sim-panel-title">Run Statistics</h3>
+              <div class="sim-stat-grid">
+                <div class="sim-stat">
+                  <span class="sim-stat__label">Win Rate</span>
+                  <span class="sim-stat__value" id="stat-winrate">0.0%</span>
+                </div>
+                <div class="sim-stat">
+                  <span class="sim-stat__label">Games Played</span>
+                  <span class="sim-stat__value" id="stat-games">0</span>
+                </div>
+                <div class="sim-stat">
+                  <span class="sim-stat__label">Current Ante</span>
+                  <span class="sim-stat__value" id="stat-ante">—</span>
+                </div>
+                <div class="sim-stat">
+                  <span class="sim-stat__label">Current Blind</span>
+                  <span class="sim-stat__value" id="stat-blind">—</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="sim-stats-panel">
+              <h3 class="sim-panel-title">Hand Evaluation</h3>
+              <div class="sim-hand-eval" id="sim-hand-eval">
+                <p class="sim-placeholder-text">Start a run to see hand evaluation</p>
+              </div>
+            </div>
+
+            <div class="sim-stats-panel">
+              <h3 class="sim-panel-title">Joker Analysis</h3>
+              <div class="sim-joker-panel" id="sim-joker-panel">
+                <p class="sim-placeholder-text">Joker EVs will appear during play</p>
+              </div>
+            </div>
+
+            <div class="sim-stats-panel">
+              <h3 class="sim-panel-title">Decision Log</h3>
+              <div class="sim-log" id="sim-log">
+                <div class="sim-log__entry sim-log__entry--system">
+                  <span class="sim-log__time">00:00</span>
+                  <span class="sim-log__msg">Simulator ready. Press Start Run to begin.</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__barcode" aria-hidden="true"></div>
+    <div class="container footer__content">
+      <nav class="footer__nav" aria-label="Footer navigation">
+        <a href="index.html#about" class="footer__link">About</a>
+        <a href="index.html#experience" class="footer__link">Experience</a>
+        <a href="index.html#skills" class="footer__link">Skills</a>
+        <a href="index.html#projects" class="footer__link">Projects</a>
+        <a href="index.html#contact" class="footer__link">Contact</a>
+        <a href="games.html" class="footer__link footer__link--active">Games</a>
+      </nav>
+      <p class="footer__copyright">
+        &copy; <span id="current-year"></span> Dylan Bailes. All rights reserved.
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
