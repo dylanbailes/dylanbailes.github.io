@@ -90,8 +90,9 @@
             </div>
             <p class="game-card__desc">
               A search-first Balatro agent that maximizes ante-8 win rate.
-              Watch the bot evaluate hands, select jokers, and play optimally
-              through each blind.
+              The <strong>actual Python engine</strong> runs in your browser via
+              WebAssembly (Pyodide) — every decision is exactly what the bot
+              makes locally, not a re-implementation.
             </p>
             <div class="game-card__meta">
               <span class="game-card__tag">Balatro</span>
@@ -133,6 +134,12 @@
           <span class="section-head__tag">ACTIVE.SIM</span>
         </div>
 
+        <div class="engine-note">
+          <span class="engine-note__tag">REAL ENGINE</span>
+          <span>Runs the unmodified Optilatro Python engine (heuristic_v10) via Pyodide / WebAssembly. Decisions are identical to local benchmark runs.</span>
+          <a href="https://github.com/dylanbailes/Optilatro" target="_blank" rel="noopener" style="margin-left:auto;color:var(--color-accent)">source ↗</a>
+        </div>
+
         <div class="sim-layout">
           <div class="sim-main">
             <div class="sim-viewport" id="optilatro-viewport">
@@ -141,6 +148,9 @@
                 <div class="sim-overlay__content">
                   <div class="loading-spinner"></div>
                   <p class="sim-overlay__text">Initializing simulator…</p>
+                  <div class="sim-overlay__progress">
+                    <span class="sim-overlay__progress-fill"></span>
+                  </div>
                 </div>
               </div>
             </div>
