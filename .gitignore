@@ -11,3 +11,7 @@ npm-debug.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Python bytecode caches (Optilatro engine under public/optilatro)
+__pycache__/
+*.pyc
