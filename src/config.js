@@ -216,7 +216,7 @@ export const site = {
       title: 'Multi-Chamber Camera Bioreactor',
       category: 'pcb',
       summary:
-        "Senior capstone (MAE 156B) for a stem-cell research lab: a four-chamber bioreactor applying electric and magnetic field stimulation with microscope observation. Designed two custom KiCad PCBs and STM32 firmware with Hall-sensor feedback, orchestrated by a Raspberry Pi.",
+        "Senior capstone (MAE 156B) for a stem-cell research lab: a four-chamber platform for electric and magnetic stimulation with microscope observation. Designed the magnetic subsystem, two KiCad PCB prototypes, and STM32 firmware; validated the field with ANSYS and bench measurements.",
       specs: [
         { label: 'Chambers', value: '4 optically clear' },
         { label: 'Stimulation', value: 'E-field 1.5 V/cm · B-field ≥1.5 mT' },
@@ -244,7 +244,8 @@ export const site = {
         ],
       },
       links: [
-        { label: 'Documentation', href: 'assets/reports/mccb-final-report.md', primary: true },
+        { label: 'Read Case Study', href: 'bioreactor.html', primary: true },
+        { label: 'Full Technical Report', href: 'assets/reports/mccb-final-report.md' },
       ],
     },
     {

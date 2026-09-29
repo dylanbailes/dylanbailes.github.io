@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dylan Bailes's engineering case study of a four-chamber bioreactor: magnetic-field hardware, electronics, STM32 firmware, simulation, and testing.">
+  <meta name="author" content="Dylan Bailes">
+  <title>Multi-Chamber Camera Bioreactor | Dylan Bailes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DotGothic16&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" src="/src/case-study.js"></script>
+</head>
+<body>
+  <a href="#case-study" class="skip-link">Skip to case study</a>
+  <button class="theme-toggle" aria-label="Toggle dark/light theme" title="Toggle theme">
+    <svg class="theme-toggle__icon theme-toggle__icon--sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <svg class="theme-toggle__icon theme-toggle__icon--moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+
+  <header class="case-header">
+    <div class="container case-header__inner">
+      <a class="logo" href="index.html" aria-label="Dylan Bailes, home">
+        <span class="logo__text">DylanBailes</span>
+        <span class="logo__tagline">Engineering Portfolio</span>
+      </a>
+      <a class="case-header__back" href="index.html#projects">← All projects</a>
+    </div>
+  </header>
+
+  <main id="case-study" class="case-study container">
+    <div class="case-study__eyebrow">P.02 / HARDWARE · EMBEDDED · SIMULATION</div>
+    <div class="case-study__intro">
+      <div>
+        <h1>Multi-Chamber Camera Bioreactor<span class="case-study__period">.</span></h1>
+        <p class="case-study__lead">A four-chamber research platform for applying electric and magnetic stimulation while observing cell cultures. My focus was the magnetic-field subsystem, control electronics, firmware development, and validation.</p>
+        <div class="case-study__actions">
+          <a class="btn btn--primary" href="#problem">Explore the project →</a>
+          <a class="btn btn--ghost" href="assets/reports/mccb-final-report.md">Full Technical Report ↗</a>
+        </div>
+      </div>
+      <figure class="case-study__hero-figure">
+        <img src="assets/images/mccb-final-design.png" alt="CAD rendering of the four-chamber bioreactor assembly">
+        <figcaption>Four-well final design · UC San Diego MAE 156B, 2026</figcaption>
+      </figure>
+    </div>
+
+    <div class="case-study__metrics" aria-label="Project highlights">
+      <div><strong>4</strong><span>Independent chambers</span></div>
+      <div><strong>4.98 mT</strong><span>Measured center field</span></div>
+      <div><strong>&lt;1%</strong><span>Field variation across well</span></div>
+      <div><strong>2</strong><span>Custom PCB designs</span></div>
+    </div>
+
+    <div class="case-study__layout">
+      <nav class="case-study__toc" aria-label="Case study sections">
+        <span>CONTENTS</span>
+        <a href="#problem">01 Problem</a>
+        <a href="#requirements">02 Requirements</a>
+        <a href="#architecture">03 Architecture</a>
+        <a href="#electronics">04 Electronics</a>
+        <a href="#firmware">05 Firmware</a>
+        <a href="#simulation">06 Simulation</a>
+        <a href="#testing">07 Testing</a>
+        <a href="#lessons">08 Lessons learned</a>
+      </nav>
+
+      <div class="case-study__sections">
+        <section id="problem" class="case-study__section">
+          <p class="case-study__section-index">01 / PROBLEM</p>
+          <h2>Study cell response under controlled fields</h2>
+          <p>A stem-cell research lab needed a way to apply repeatable electric and magnetic stimuli to cell cultures and observe the response. The team built a modular platform with four wells so experiments could be controlled separately while microscopy remained available beneath each chamber.</p>
+        </section>
+
+        <section id="requirements" class="case-study__section">
+          <p class="case-study__section-index">02 / REQUIREMENTS</p>
+          <h2>Make the fields measurable and the samples visible</h2>
+          <ul class="case-study__list">
+            <li>Four optically clear, sealable chambers with individual stimulation control.</li>
+            <li>A magnetic field of at least 1.5 mT with good uniformity across each well.</li>
+            <li>Electric-field control around the 1.5 V/cm target while avoiding electrolysis.</li>
+            <li>Microscope access, fluid ports, and a clear path to field feedback and calibration.</li>
+          </ul>
+        </section>
+
+        <section id="architecture" class="case-study__section">
+          <p class="case-study__section-index">03 / ARCHITECTURE</p>
+          <h2>Four repeatable well modules</h2>
+          <p>Each chamber paired a clear-bottom well and titanium electrodes with Helmholtz coils for magnetic stimulation. A microscope stage sat below each well. The system architecture connected sensor feedback and stimulus control to a Raspberry Pi touchscreen interface; the final integrated build used an ESP32 control path and perf-board drive electronics.</p>
+          <figure class="case-study__figure">
+            <img src="assets/images/mccb-intermediate.jpg" alt="Intermediate physical bioreactor assembly with structural frame and well modules" loading="lazy">
+            <figcaption>Intermediate assembly during mechanical and electronics integration</figcaption>
+          </figure>
+        </section>
+
+        <section id="electronics" class="case-study__section">
+          <p class="case-study__section-index">04 / ELECTRONICS</p>
+          <h2>Drive, sense, and debug the magnetic subsystem</h2>
+          <p>I designed two KiCad PCB prototypes for the magnetic-field electronics, including the drive and Hall-sensor feedback paths. PCB debugging exposed issues that could not be fully revised within the project timeline. The working integrated system used perf-board assemblies for field drive while the PCB design remained a clear next iteration.</p>
+        </section>
+
+        <section id="firmware" class="case-study__section">
+          <p class="case-study__section-index">05 / FIRMWARE</p>
+          <h2>Bring up STM32 control hardware</h2>
+          <p>STM32 firmware development included I²C and UART interfaces, peripheral bring-up, and recovery from option-byte configuration problems. When HAL did not provide the needed behavior, I configured peripherals through direct register access. That work turned board-level problems into specific, testable issues.</p>
+        </section>
+
+        <section id="simulation" class="case-study__section">
+          <p class="case-study__section-index">06 / SIMULATION</p>
+          <h2>Check field behavior before and after building</h2>
+          <p>ANSYS Maxwell simulations helped compare magnetic-field geometry and predict uniformity. The team also simulated the electric field in the saline-filled wells. Those results guided the prototype geometry and provided a reference for physical field mapping.</p>
+          <figure class="case-study__figure">
+            <img src="assets/images/mccb-surface-comparison.png" alt="Comparison of bioreactor field simulation results" loading="lazy">
+            <figcaption>Simulation comparison used to assess field distribution</figcaption>
+          </figure>
+        </section>
+
+        <section id="testing" class="case-study__section">
+          <p class="case-study__section-index">07 / TESTING</p>
+          <h2>Measure what the prototype delivered</h2>
+          <p>Bench mapping measured a 4.98 mT magnetic field at the coil center and less than 1% variation across the well footprint. Hall sensors tracked the 100 Hz drive waveform, and AC tests covered the intended 0–250 Hz range. Cross-well magnetic isolation still needs formal characterization.</p>
+          <figure class="case-study__figure">
+            <img src="assets/images/mccb-setup-web.jpg" alt="Bioreactor magnetic-field bench test setup" loading="lazy">
+            <figcaption>Prototype test setup for the magnetic-field subsystem</figcaption>
+          </figure>
+        </section>
+
+        <section id="lessons" class="case-study__section">
+          <p class="case-study__section-index">08 / LESSONS LEARNED</p>
+          <h2>Isolate subsystems, then integrate with evidence</h2>
+          <p>Working coil and field measurements provided a validated baseline even while the custom drive PCB needed another revision. The next engineering steps are to complete that board revision, integrate it into the control system, and characterize interaction between neighboring wells. The project reinforced the value of keeping a testable prototype path when custom electronics lag system integration.</p>
+        </section>
+      </div>
+    </div>
+
+    <footer class="case-study__footer">
+      <a class="btn btn--primary" href="index.html#projects">← Back to projects</a>
+      <a class="btn btn--ghost" href="assets/reports/mccb-final-report.md">Full Technical Report ↗</a>
+    </footer>
+  </main>
+</body>
+</html>

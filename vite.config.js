@@ -13,6 +13,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         games: 'games.html',
+        bioreactor: 'bioreactor.html',
       },
     },
   },
