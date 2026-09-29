@@ -252,12 +252,12 @@ export const site = {
       title: 'Autonomous Car Racing',
       category: 'firmware',
       summary:
-        "Manufactured an autonomous vehicle platform for MAE 148 using computer vision, LIDAR, and GPS. Worked with three ECE engineers to integrate the sensor stack and feed a deep-learning perception pipeline, with Kalman filtering and state-space control for robust operation.",
+        "Integrated an autonomous vehicle platform using camera, LiDAR, and GPS sensing with ROS2. Worked with three ECE engineers on sensor and system integration supporting deep-learning perception, Kalman-filter state estimation, and state-space control.",
       specs: [
-        { label: 'Course', value: 'MAE 148 (Spring 2026)' },
-        { label: 'Sensors', value: 'Camera · LIDAR · GPS' },
-        { label: 'Control', value: 'Kalman · State-space' },
         { label: 'Perception', value: 'Deep learning' },
+        { label: 'Estimation', value: 'Kalman filter' },
+        { label: 'Control', value: 'State-space' },
+        { label: 'Middleware', value: 'ROS2' },
       ],
     },
     {
