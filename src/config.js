@@ -4,9 +4,6 @@
  * Every section (hero, about, skills, projects, contact, footer) is rendered
  * from the data below. Edit this file to change your content — no HTML needed.
  *
- * Remaining TODO items (all optional):
- *  - real documentation URLs for the three projects whose "Documentation"
- *    buttons are currently hidden (Autonomous Car Racing, FRC, UAS)
  */
 
 export const site = {
@@ -213,7 +210,6 @@ export const site = {
       media: { type: 'image', src: 'assets/images/mae3-robot.jpg', alt: 'Prime Day Delivery Bot' },
       links: [
         { label: 'Final Report', href: 'assets/reports/mae3-prime-day-delivery-bot.md', primary: true },
-        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
       ],
     },
     {
@@ -240,7 +236,6 @@ export const site = {
       },
       links: [
         { label: 'Documentation', href: 'assets/reports/mccb-final-report.md', primary: true },
-        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
       ],
     },
     {
@@ -254,9 +249,6 @@ export const site = {
         { label: 'Control', value: 'Kalman · State-space' },
         { label: 'Perception', value: 'Deep learning' },
       ],
-      links: [
-        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
-      ],
     },
     {
       title: 'FRC Competition Robots',
@@ -269,9 +261,6 @@ export const site = {
         { label: 'Parts', value: '300+ fabricated' },
         { label: 'Hours', value: '1,000+ logged' },
       ],
-      links: [
-        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
-      ],
     },
     {
       title: 'UAS Mechanism Design & Engineering Analysis',
@@ -283,9 +272,6 @@ export const site = {
         { label: 'Design', value: 'Motor-driven SUAS mechanism' },
         { label: 'Tolerance', value: '99.5% confidence spring-force analysis' },
         { label: 'FEA', value: 'Mesh convergence + stress extrapolation' },
-      ],
-      links: [
-        { label: 'GitHub', href: 'https://github.com/dylanbailes' },
       ],
     },
   ],
