@@ -263,6 +263,26 @@ export const site = {
         { label: 'Final estimate', value: 'Extended Kalman filter' },
         { label: 'Final control', value: 'State-space · Pure Pursuit/P' },
       ],
+      media: {
+        type: 'image',
+        tone: 'color',
+        src: 'assets/images/robobutler-prototype.png',
+        alt: 'Full RoboButler final-project RC car with camera and cargo carousel',
+        fit: 'contain',
+        caption: 'RoboButler prototype · team project',
+        gallery: [
+          {
+            src: 'assets/images/robobutler-hardware-detail.jpg',
+            alt: 'Close-up of the RoboButler camera mount, electronics, and cargo carousel',
+            caption: 'Vehicle electronics and cargo carousel · team project',
+          },
+          {
+            src: 'assets/images/robobutler-outdoor-test.jpg',
+            alt: 'RoboButler RC car in an outdoor AprilTag-following test',
+            caption: 'Outdoor AprilTag-following test',
+          },
+        ],
+      },
       challengesTitle: 'Racing & Final Project',
       challenges: [
         'Racing: integrated sensors and ROS2 with a four-person team for GPS-guided and vision-guided laps.',

@@ -126,7 +126,7 @@ function renderSimulationMedia() {
 
 function renderImageMedia(media) {
   const gallery = media.gallery && media.gallery.length ? media.gallery : [];
-  const images = [{ src: media.src, alt: media.alt }, ...gallery];
+  const images = [{ src: media.src, alt: media.alt, fit: media.fit, caption: media.caption }, ...gallery];
 
   const thumbs = gallery.length
     ? `
@@ -138,6 +138,8 @@ function renderImageMedia(media) {
               class="project-media__thumb${index === 0 ? ' is-active' : ''}"
               data-gallery-src="${escapeHtml(g.src)}"
               data-gallery-alt="${escapeHtml(g.alt || g.src)}"
+              data-gallery-fit="${g.fit === 'contain' ? 'contain' : 'cover'}"
+              data-gallery-caption="${escapeHtml(g.caption || '')}"
               aria-label="View gallery image ${index + 1}"
               aria-pressed="${index === 0}"
             >
@@ -151,12 +153,15 @@ function renderImageMedia(media) {
   const counter = gallery.length
     ? `<span class="project-media__counter">01 / ${String(gallery.length + 1).padStart(2, '0')}</span>`
     : '';
+  const caption = images.some((img) => img.caption)
+    ? `<p class="project-media__caption" data-gallery-caption-text>${escapeHtml(media.caption || '')}</p>`
+    : '';
 
   return `
     <div class="project-card__media project-media${media.tone === 'color' ? ' project-media--color' : ''}">
       <div class="project-media__main">
         <img
-          class="project-media__image"
+          class="project-media__image${media.fit === 'contain' ? ' project-media__image--contain' : ''}"
           src="${escapeHtml(media.src)}"
           alt="${escapeHtml(media.alt || media.src)}"
           data-gallery-main
@@ -165,6 +170,7 @@ function renderImageMedia(media) {
         ${counter}
       </div>
       ${thumbs}
+      ${caption}
     </div>
   `;
 }
@@ -344,6 +350,7 @@ function bindGallery() {
     const main = media.querySelector('[data-gallery-main]');
     const thumbs = media.querySelectorAll('.project-media__thumb');
     const counter = media.querySelector('.project-media__counter');
+    const caption = media.querySelector('[data-gallery-caption-text]');
     if (!main || thumbs.length === 0) return;
 
     const total = thumbs.length;
@@ -352,6 +359,8 @@ function bindGallery() {
       thumb.addEventListener('click', () => {
         main.src = thumb.dataset.gallerySrc;
         main.alt = thumb.dataset.galleryAlt;
+        main.classList.toggle('project-media__image--contain', thumb.dataset.galleryFit === 'contain');
+        if (caption) caption.textContent = thumb.dataset.galleryCaption;
         thumbs.forEach((t) => {
           t.classList.remove('is-active');
           t.setAttribute('aria-pressed', 'false');
