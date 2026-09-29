@@ -72,11 +72,9 @@ export const site = {
         location: 'Simi Valley, CA',
         period: 'Jun 2025 — Aug 2025',
         bullets: [
-          'Contributed to mechanical design and development of SUAS (small unmanned aerial system) drones',
-          'Designed and tested custom motor-driven mechanisms under strict weight and strength constraints',
-          'Developed physics-based models to predict motor and spring behavior, validating design constraints',
-          'Created SolidWorks macros to automate geometry optimization, significantly reducing design iteration time',
-          'Collaborated with cross-functional engineering teams to advance subassemblies through initial design phases',
+          'Designed and prototyped a motor-driven SUAS mechanism under mass, packaging, and load constraints; completed the prototype and initial subassembly design',
+          'Built motor and spring models and a 99.5% confidence GD&T/tolerance analysis, revealing insufficient spring-force margin in the worst-case range',
+          'Automated FEA mesh refinement near holes and tight corners, then fit stress-convergence curves to estimate the converged peak stress',
         ],
       },
       {
