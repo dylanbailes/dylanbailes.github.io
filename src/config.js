@@ -69,9 +69,10 @@ export const site = {
         location: 'Simi Valley, CA',
         period: 'Jun 2025 — Aug 2025',
         bullets: [
-          'Designed and prototyped a motor-driven SUAS mechanism under mass, packaging, and load constraints; completed the prototype and initial subassembly design',
-          'Built motor and spring models and a 99.5% confidence GD&T/tolerance analysis, revealing insufficient spring-force margin in the worst-case range',
-          'Automated FEA mesh refinement near holes and tight corners, then fit stress-convergence curves to estimate the converged peak stress',
+          'Designed and prototyped a motor-driven SUAS mechanism under tight mass, packaging, and load constraints, completing the prototype and initial design for one subassembly',
+          'Tested motor-driven mechanisms against weight and strength requirements and worked with cross-functional engineering teams to advance subassemblies through initial design',
+          'Developed physics-based motor and spring models; a 99.5% confidence GD&T/tolerance analysis showed insufficient spring-force margin at the low end of the tolerance range',
+          'Built SolidWorks macros and FEA automation to refine meshes near holes and tight corners, fit stress-convergence curves, and estimate asymptotic peak stress while reducing design iteration time',
         ],
       },
       {
@@ -80,19 +81,19 @@ export const site = {
         location: 'Granada Hills, CA',
         period: 'Aug 2019 — Jun 2023',
         bullets: [
-          "Led the mechanical team designing two award-winning competition robots — the first awards in the team's 20+ year history",
-          'Fabricated 300+ parts and integrated with electronics and programming across CAD, CNC, and manual machining',
-          'Logged 1,000+ hours across Fusion 360, SolidWorks, CNC, and manual machining',
-          'Developed and delivered a robotics curriculum for elementary school students',
+          "Led mechanical design of two award-winning FRC robots, including the team's first regional competition win",
+          'Modeled and fabricated 300+ parts using Fusion 360, SolidWorks, CNC equipment, and manual machining',
+          'Logged 1,000+ hands-on hours and integrated mechanisms with electronics and programming teams',
+          'Developed and taught an elementary-school robotics curriculum',
         ],
       },
       {
-        role: 'Audio Engineer',
+        role: 'Audio Engineer / Intern',
         org: 'RK Media',
         location: 'Thousand Oaks, CA',
         period: 'Jun 2022 — Oct 2024',
         bullets: [
-          'Developed an automated file-sorting tool that improved team organization speed by 500%',
+          "Wrote an automated file-sorting tool to streamline the team's media organization workflow",
         ],
       },
     ],
@@ -104,7 +105,7 @@ export const site = {
         location: 'Expected Jun 2027',
         period: '2025 — 2027',
         bullets: [
-          'Coursework in optimal and nonlinear control, sensing and estimation in robotics, and planning and learning in robotics',
+          'Coursework in Optimal Linear Control, Nonlinear Control, Parametric Identification of Systems, and Embedded Systems',
         ],
       },
       {
@@ -113,8 +114,9 @@ export const site = {
         location: 'Conferred Jun 2026',
         period: '2023 — 2026',
         bullets: [
-          'GPA 3.6/4.0 — Provost Honors — completed full degree requirements in three years',
-          'Courses include Linear Control Design (Kalman, H-Infinity, L2-to-L-Infinity), Dynamics & Control of Aerospace Vehicles, Autonomous Vehicles, Orbital Mechanics, and Machine Learning Algorithms',
+          'GPA 3.62/4.00 — Provost Honors — completed degree requirements in three years',
+          'Controls coursework: Linear Control Design (Kalman filtering and H-Infinity), Intro to Autonomous Vehicles, and Dynamics and Control of Aerospace Vehicles',
+          'Additional coursework: Orbital Mechanics, Advanced Vibrations, Solid Mechanics I & II, Machine Learning Algorithms, and Linear Circuits',
         ],
       },
     ],
@@ -265,10 +267,10 @@ export const site = {
       title: 'FRC Competition Robots',
       category: 'mechanical',
       summary:
-        "Mechanical lead for Robodox FRC (Team 980): led the mechanical team on two award-winning robots — the first awards in the team's 20+ year history — fabricating 300+ parts across CAD, CNC, and manual machining, and delivering a robotics curriculum to elementary students.",
+        "Mechanical lead for Robodox FRC (Team 980): led design of two award-winning robots, including the team's first regional competition win. Modeled and fabricated 300+ parts across CAD, CNC, and manual machining, and taught a robotics curriculum to elementary students.",
       specs: [
         { label: 'Team', value: 'Robodox FRC 980' },
-        { label: 'Result', value: '2 awards (team first)' },
+        { label: 'Result', value: 'First regional win' },
         { label: 'Parts', value: '300+ fabricated' },
         { label: 'Hours', value: '1,000+ logged' },
       ],
