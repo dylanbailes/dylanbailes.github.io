@@ -6,23 +6,37 @@ import { site } from './config.js';
 
 let nav = null;
 let toggle = null;
+let previousOverflow = '';
+let inertElements = [];
+const mobileLayout = () => window.matchMedia('(max-width: 1024px)').matches;
 
 function isOpen() {
-  return nav.classList.contains('is-open');
+  return nav?.classList.contains('is-open');
 }
 
 export function closeMobileNav() {
-  if (!nav) return;
+  if (!nav || !isOpen()) return;
   nav.classList.remove('is-open');
   toggle.setAttribute('aria-expanded', 'false');
-  document.body.style.overflow = '';
+  document.body.style.overflow = previousOverflow;
+  inertElements.forEach((element) => { element.inert = false; });
+  inertElements = [];
 }
 
 function toggleMenu() {
-  const willOpen = !isOpen();
-  nav.classList.toggle('is-open');
-  toggle.setAttribute('aria-expanded', willOpen);
-  document.body.style.overflow = willOpen ? 'hidden' : '';
+  if (isOpen()) {
+    closeMobileNav();
+    return;
+  }
+  if (!mobileLayout()) return;
+  previousOverflow = document.body.style.overflow;
+  nav.classList.add('is-open');
+  toggle.setAttribute('aria-expanded', 'true');
+  document.body.style.overflow = 'hidden';
+  inertElements = [...document.querySelectorAll('main, footer, .header .logo, .skip-link')]
+    .filter((element) => !element.inert);
+  inertElements.forEach((element) => { element.inert = true; });
+  nav.querySelector('.nav__link')?.focus();
 }
 
 function bindNav() {
@@ -39,12 +53,25 @@ function bindNav() {
       closeMobileNav();
       toggle.focus();
     }
+    if (e.key === 'Tab' && isOpen()) {
+      const controls = [document.querySelector('.theme-toggle'), toggle, ...nav.querySelectorAll('a[href]')]
+        .filter(Boolean);
+      const index = controls.indexOf(document.activeElement);
+      e.preventDefault();
+      controls[(index + (e.shiftKey ? -1 : 1) + controls.length) % controls.length].focus();
+    }
   });
 
   // Close when clicking outside
   document.addEventListener('click', (e) => {
     if (isOpen() && !nav.contains(e.target) && !toggle.contains(e.target)) {
       closeMobileNav();
+    }
+  });
+  window.matchMedia('(max-width: 1024px)').addEventListener('change', (event) => {
+    if (!event.matches && isOpen()) {
+      closeMobileNav();
+      if (document.activeElement === toggle) nav.querySelector('.nav__link')?.focus();
     }
   });
 }

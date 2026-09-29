@@ -6,6 +6,7 @@
   <meta name="description" content="Play Letter League, a mobile-first word game powered by Cloudflare Workers and D1, or explore Optilatro, a Balatro optimal play agent.">
   <meta name="author" content="Dylan Bailes">
   <meta name="theme-color" content="#f4f4f1">
+  <!-- Early theme -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Games & Simulators — Dylan Bailes">
   <meta property="og:description" content="Interactive games, simulators, and demos.">
@@ -20,7 +21,7 @@
 <body>
   <noscript>
     <p style="padding:1rem;text-align:center">
-      This site renders its content with JavaScript. Please enable it to view games.
+      Enable JavaScript to launch the games and simulator. The game descriptions and source links are available below.
     </p>
   </noscript>
   <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -59,7 +60,7 @@
     </div>
   </header>
 
-  <main id="main-content">
+  <main id="main-content" tabindex="-1">
     <section class="games-hero" aria-labelledby="games-hero-title">
       <div class="container">
         <div class="section-head">
@@ -127,7 +128,7 @@
             </div>
             <div class="game-card__actions">
               <button class="btn btn--primary btn--small" data-launch-game="letter-league" aria-haspopup="dialog" aria-controls="letter-league-dialog">Play Letter League</button>
-              <a href="https://github.com/dylanbailes/LetterLeague" target="_blank" rel="noopener" class="btn btn--ghost btn--small">GitHub (private)</a>
+              <a href="https://letter-league.boggle.workers.dev/" target="_blank" rel="noopener" class="btn btn--ghost btn--small">Open standalone ↗</a>
             </div>
           </article>
         </div>
@@ -152,8 +153,8 @@
         <div class="sim-layout">
           <div class="sim-main">
             <div class="sim-viewport" id="optilatro-viewport">
-              <canvas id="optilatro-canvas"></canvas>
-              <div class="sim-overlay" id="sim-overlay">
+              <canvas id="optilatro-canvas" role="img" aria-label="Optilatro game visualization. Run statistics, hand evaluation, joker analysis, and the decision log are available below."></canvas>
+              <div class="sim-overlay" id="sim-overlay" role="status">
                 <div class="sim-overlay__content">
                   <div class="loading-spinner"></div>
                   <p class="sim-overlay__text">Initializing simulator…</p>

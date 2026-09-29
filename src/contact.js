@@ -9,7 +9,7 @@ import { icon } from './icons.js';
 
 const MOUNT = '[data-mount="contact"]';
 
-function renderContact(container) {
+export function renderContact() {
   const { contact } = site;
 
   const actions = contact.links
@@ -35,7 +35,7 @@ function renderContact(container) {
     )
     .join('');
 
-  container.innerHTML = `
+  return `
     <div class="section-head">
       <span class="section-head__index">05</span>
       <h2 id="contact-title" class="section-head__title">Contact</h2>
@@ -59,7 +59,9 @@ function renderFooter() {
 
 export function initContact() {
   const mount = document.querySelector(MOUNT);
-  if (mount) renderContact(mount.querySelector('.container'));
+  if (mount && !mount.querySelector('#contact-title')) {
+    mount.querySelector('.container').innerHTML = renderContact();
+  }
 
   renderFooter();
 }

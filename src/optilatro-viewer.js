@@ -17,6 +17,8 @@
 
 /* ─── Engine loading ─────────────────────────────────────────────────────── */
 
+import { escapeHtml } from './utils.js';
+
 const PYODIDE_VERSION = '0.26.4';
 const PYODIDE_INDEX = `https://cdn.jsdelivr.net/pyodide/v${PYODIDE_VERSION}/full/`;
 const ENGINE_BASE = new URL('optilatro/', document.baseURI).href;
@@ -50,7 +52,8 @@ function ensureDir(fs, dirPath) {
 
 /* ─── Constants ──────────────────────────────────────────────────────────── */
 
-const SUIT_COLORS = { '♠': '#1c1c22', '♥': '#d64545', '♦': '#e08a3c', '♣': '#3a5a8c' };
+const SUIT_COLORS = { '♠': '#111110', '♥': '#b82a30', '♦': '#915511', '♣': '#285189' };
+const DARK_SUIT_COLORS = { '♠': '#f2f2ee', '♥': '#ff7479', '♦': '#ffaf66', '♣': '#8aadf4' };
 
 const ENHANCEMENT_STYLE = {
   Bonus:  { label: '+30',  color: '#5ba3f5' },
@@ -155,7 +158,9 @@ async function ensureEngine() {
     const pyodide = await loadPyodide({ indexURL: PYODIDE_INDEX });
 
     setOverlay('Fetching Optilatro engine files…', 0.15);
-    const manifest = await (await fetch(new URL('manifest.json', ENGINE_BASE))).json();
+    const manifestResponse = await fetch(new URL('manifest.json', ENGINE_BASE));
+    if (!manifestResponse.ok) throw new Error(`Engine manifest fetch failed (${manifestResponse.status})`);
+    const manifest = await manifestResponse.json();
     // Joker display metadata (short effects + categories) for the UI panels.
     try {
       jokerSpec = await (await fetch(new URL('tools/joker_spec.json', ENGINE_BASE))).json();
@@ -185,6 +190,7 @@ async function ensureEngine() {
     };
 
     engineReady = true;
+    queueRender();
     setOverlay('Engine ready', 1);
     syncButtons();
     addLog(`Real engine loaded — Python ${info.python}, policy ${info.engine}`, 'system');
@@ -199,10 +205,12 @@ async function ensureEngine() {
     return info;
   })().catch((err) => {
     enginePromise = null;
+    syncButtons();
     setOverlay(`Engine failed to load: ${err.message}`, 0);
     addLog(`Engine load error: ${err.message}`, 'error');
     throw err;
   });
+  syncButtons();
   return enginePromise;
 }
 
@@ -284,14 +292,14 @@ function getThemeColors() {
   if (theme === 'dark') {
     return {
       paper: '#0b0b0b', surface: '#141414', ink: '#f2f2ee',
-      muted: '#8b8b85', faint: '#565650', line: '#2c2c2a',
+      muted: '#8b8b85', faint: '#82827b', line: '#2c2c2a', money: '#f5a623',
       accent: '#ff3b30', good: '#4cd964',
     };
   }
   return {
     paper: '#f4f4f1', surface: '#ffffff', ink: '#111110',
-    muted: '#75746e', faint: '#a6a59f', line: '#d8d7d2',
-    accent: '#ff3b30', good: '#3aa655',
+    muted: '#686760', faint: '#706f68', line: '#d8d7d2', money: '#915511',
+    accent: '#c82b23', good: '#227532',
   };
 }
 
@@ -328,7 +336,8 @@ function drawCard(card, x, y, w, h, opts = {}) {
     return;
   }
 
-  const suitColor = SUIT_COLORS[card.symbol] || c.ink;
+  const suitPalette = document.documentElement.dataset.theme === 'dark' ? DARK_SUIT_COLORS : SUIT_COLORS;
+  const suitColor = suitPalette[card.symbol] || c.ink;
 
   if (isStone) {
     ctx.font = `bold ${h * 0.22}px 'Space Grotesk', sans-serif`;
@@ -560,6 +569,16 @@ function drawPanel(x, y, w, h, title) {
 
 /* ─── Main render ────────────────────────────────────────────────────────── */
 
+// The board changes only on engine steps, resize, or theme changes.
+// Avoid continuously repainting a static canvas while visitors read or pause.
+function queueRender() {
+  if (animationFrame) return;
+  animationFrame = requestAnimationFrame(() => {
+    animationFrame = null;
+    render();
+  });
+}
+
 function render() {
   if (!canvas || !ctx) return;
 
@@ -581,18 +600,16 @@ function render() {
 
   if (!snap || !snap.ready) {
     drawIdleState(W, H, c);
-    animationFrame = requestAnimationFrame(render);
     return;
   }
 
   drawTopBar(W, c);
   drawConsumableRow(W, c);
-  drawJokerRow(c);
+  drawJokerRow(W, c);
   drawHandArea(W, H, c);
   drawStatePanel(W, H, c);
   drawBottomStatus(W, H, c);
 
-  animationFrame = requestAnimationFrame(render);
 }
 
 function drawIdleState(W, H, c) {
@@ -617,7 +634,7 @@ function drawIdleState(W, H, c) {
   ctx.textBaseline = 'middle';
   ctx.fillText('OPTILATRO — REAL ENGINE', W / 2, H / 2 - 16);
   ctx.font = `11px 'IBM Plex Mono', monospace`;
-  ctx.fillText('Loading the actual Python bot (Pyodide)…', W / 2, H / 2 + 10);
+  ctx.fillText(engineReady ? 'Press Start Run to begin.' : 'Loading the actual Python bot (Pyodide)…', W / 2, H / 2 + 10, W - 32);
 }
 
 function drawTopBar(W, c) {
@@ -629,7 +646,7 @@ function drawTopBar(W, c) {
   ctx.textBaseline = 'top';
   ctx.font = `bold 13px 'Space Grotesk', sans-serif`;
   ctx.fillStyle = c.ink;
-  ctx.fillText(`${s.blind.name.toUpperCase()}${s.blind.bossDisplay ? ` — ${s.blind.bossDisplay}` : ''}`, pad, pad);
+  ctx.fillText(`${s.blind.name.toUpperCase()}${s.blind.bossDisplay ? ` — ${s.blind.bossDisplay}` : ''}`, pad, pad, W - 110);
 
   ctx.font = `11px 'IBM Plex Mono', monospace`;
   ctx.fillStyle = c.muted;
@@ -653,19 +670,19 @@ function drawTopBar(W, c) {
   // Money + ante (right)
   ctx.textAlign = 'right';
   ctx.font = `bold 20px 'Space Grotesk', sans-serif`;
-  ctx.fillStyle = '#f5a623';
+  ctx.fillStyle = c.money;
   ctx.fillText(`$${s.dollars}`, W - pad, pad);
   ctx.font = `11px 'IBM Plex Mono', monospace`;
   ctx.fillStyle = c.muted;
-  ctx.fillText(`Ante ${s.ante}/8 · seed ${s.seed} · heuristic_v10`, W - pad, pad + 26);
+  ctx.fillText(W < 560 ? `Ante ${s.ante}/8` : `Ante ${s.ante}/8 · seed ${s.seed} · heuristic_v10`, W - pad, pad + 26);
 }
 
-function drawJokerRow(c) {
+function drawJokerRow(W, c) {
   const s = snap;
   if (!s.jokers.length) return;
-  const jokerW = 78;
+  const gap = W < 560 ? 6 : 10;
+  const jokerW = Math.min(78, (W - 32 - gap * 4) / 5);
   const jokerH = 72;
-  const gap = 10;
   const x0 = 16;
   const y0 = 100; // card bottom = 172; effect text extends ~28px below each card
 
@@ -706,12 +723,14 @@ function drawHandArea(W, H, c) {
   const cards = s.hand || [];
   if (!cards.length) return;
 
-  const cardW = Math.min(64, (W - 80) / Math.max(cards.length, 1) - 8);
-  const cardH = cardW * 1.42;
   const gap = 8;
-  const totalW = cards.length * cardW + (cards.length - 1) * gap;
+  const columns = W < 560 ? Math.min(4, cards.length) : cards.length;
+  const rows = Math.ceil(cards.length / columns);
+  const cardW = Math.min(64, (W - 32 - gap * (columns - 1)) / columns);
+  const cardH = cardW * 1.42;
+  const totalW = columns * cardW + (columns - 1) * gap;
   const x0 = (W - totalW) / 2;
-  const y0 = H - cardH - 44;
+  const y0 = H - rows * cardH - (rows - 1) * gap - 44;
 
   ctx.font = `10px 'IBM Plex Mono', monospace`;
   ctx.fillStyle = c.faint;
@@ -720,7 +739,7 @@ function drawHandArea(W, H, c) {
   ctx.fillText(`HAND (${cards.length})`, x0, y0 - 16);
 
   cards.forEach((card, i) => {
-    drawCard(card, x0 + i * (cardW + gap), y0, cardW, cardH);
+    drawCard(card, x0 + (i % columns) * (cardW + gap), y0 + Math.floor(i / columns) * (cardH + gap), cardW, cardH);
   });
 }
 
@@ -746,7 +765,7 @@ function drawStatePanel(W, H, c) {
       const label = `${kind.padEnd(8)} ${item.name}${ed}`;
       ctx.fillText(label, x + 12, ry);
       ctx.textAlign = 'right';
-      ctx.fillStyle = item.sold ? c.faint : '#f5a623';
+      ctx.fillStyle = item.sold ? c.faint : c.money;
       ctx.fillText(item.sold ? 'SOLD' : `$${item.price}`, x + panelW - 12, ry);
       ctx.textAlign = 'left';
     });
@@ -843,7 +862,7 @@ function updateHandEvalPanel() {
   el.innerHTML = `
     <div class="hand-eval-row">
       <span class="hand-eval-label">Last Hand Played</span>
-      <span class="hand-eval-value hand-eval-value--accent">${lastEval.type}</span>
+      <span class="hand-eval-value hand-eval-value--accent">${escapeHtml(lastEval.type)}</span>
     </div>
     <div class="hand-eval-row">
       <span class="hand-eval-label">Cards Played</span>
@@ -870,16 +889,16 @@ function updateJokerPanel() {
   el.innerHTML = snap.jokers.map((j) => {
     const meta = jokerMeta(j.key);
     const iconFile = `${meta.category}.svg`;
-    const ed = j.edition !== 'None' ? `<span class="joker-edition">${j.edition}</span>` : '';
+    const ed = j.edition !== 'None' ? `<span class="joker-edition">${escapeHtml(j.edition)}</span>` : '';
     const effect = meta.effect
-      ? `<span class="joker-effect" title="${meta.effect.replace(/"/g, '"')}">${meta.effect}</span>`
+      ? `<span class="joker-effect" title="${escapeHtml(meta.effect)}">${escapeHtml(meta.effect)}</span>`
       : '';
     return `
       <div class="joker-row">
         <img class="joker-row__icon" src="${new URL(`icons/${iconFile}`, ENGINE_BASE).href}" alt="" width="18" height="18">
         <div class="joker-row__body">
           <div class="joker-row__head">
-            <span class="joker-name">${j.name}</span>
+            <span class="joker-name">${escapeHtml(j.name)}</span>
             ${ed}
           </div>
           ${effect}
@@ -893,6 +912,7 @@ function updatePanels() {
   updateStats();
   updateHandEvalPanel();
   updateJokerPanel();
+  queueRender();
 }
 
 function addLog(msg, type = '') {
@@ -919,8 +939,10 @@ function syncButtons() {
   const startBtn = document.getElementById('sim-start-btn');
   const pauseBtn = document.getElementById('sim-pause-btn');
   if (startBtn) {
-    startBtn.disabled = running || !engineReady;
-    startBtn.textContent = !engineReady ? 'Loading engine…' : (running ? 'Running…' : 'Start Run');
+    startBtn.disabled = running || (!engineReady && enginePromise !== null);
+    startBtn.textContent = !engineReady
+      ? (enginePromise ? 'Loading engine…' : 'Retry loading engine')
+      : (running ? 'Running…' : 'Start Run');
   }
   if (pauseBtn) {
     pauseBtn.disabled = !running;
@@ -1004,7 +1026,11 @@ export function initOptilatroViewer() {
 
   bindControls();
   syncButtons();
-  render();
+  queueRender();
+  new ResizeObserver(queueRender).observe(canvas);
+  new MutationObserver(queueRender).observe(document.documentElement, {
+    attributes: true, attributeFilter: ['data-theme'],
+  });
 
   // Begin loading the engine immediately (runs while the user reads the page).
   ensureEngine().catch(() => { /* surfaced in overlay + log */ });

@@ -7,6 +7,7 @@
 import { site } from './config.js';
 import { escapeHtml } from './utils.js';
 import { icon } from './icons.js';
+import { imageAttributes } from './image-assets.js';
 import { initFusionViewers } from './fusion-viewer.js';
 import { initPCBViewer } from './pcb-viewer.js';
 
@@ -143,7 +144,7 @@ function renderImageMedia(media) {
               aria-label="View gallery image ${index + 1}"
               aria-pressed="${index === 0}"
             >
-              <img src="${escapeHtml(g.src)}" alt="" loading="lazy">
+              <img src="${escapeHtml(g.src)}" alt="" decoding="async" width="76" height="54" loading="lazy">
             </button>`
           )
           .join('')}
@@ -165,6 +166,7 @@ function renderImageMedia(media) {
           src="${escapeHtml(media.src)}"
           alt="${escapeHtml(media.alt || media.src)}"
           data-gallery-main
+          ${imageAttributes(media.src)}
           loading="lazy"
         >
         ${counter}
@@ -196,7 +198,7 @@ const categoryLabel = (id) => {
   return cat ? cat.label : id;
 };
 
-function renderProjects(container) {
+export function renderProjects() {
   // Filter buttons (radiogroup for accessibility)
   const filters = site.projectCategories
     .map(
@@ -219,7 +221,7 @@ function renderProjects(container) {
       const specs = project.specs && project.specs.length
         ? `<table class="tech-specs-table"><tbody>
              ${project.specs
-               .map((spec) => `<tr><th>${escapeHtml(spec.label)}</th><td>${escapeHtml(spec.value)}</td></tr>`)
+               .map((spec) => `<tr><th scope="row">${escapeHtml(spec.label)}</th><td>${escapeHtml(spec.value)}</td></tr>`)
                .join('')}
            </tbody></table>`
         : '';
@@ -263,7 +265,7 @@ function renderProjects(container) {
     })
     .join('');
 
-  container.innerHTML = `
+  return `
     <div class="section-head">
       <span class="section-head__index">04</span>
       <h2 id="projects-title" class="section-head__title">Projects</h2>
@@ -300,7 +302,8 @@ function filterProjects(category) {
 
     if (matches) {
       card.classList.remove('hidden');
-      card.style.animation = `fadeInUp 0.4s var(--ease) forwards ${index * 0.05}s`;
+      card.style.animation = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? '' : `fadeInUp 0.4s var(--ease) forwards ${index * 0.05}s`;
     } else {
       card.classList.add('hidden');
       card.style.animation = '';
@@ -326,8 +329,8 @@ function bindFilterKeyboard(buttons) {
     if (baseIndex === -1) return;
 
     let next = -1;
-    if (e.key === 'ArrowRight') next = (baseIndex + 1) % radios.length;
-    else if (e.key === 'ArrowLeft') next = (baseIndex - 1 + radios.length) % radios.length;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') next = (baseIndex + 1) % radios.length;
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') next = (baseIndex - 1 + radios.length) % radios.length;
     else if (e.key === 'Home') next = 0;
     else if (e.key === 'End') next = radios.length - 1;
     else return;
@@ -379,7 +382,9 @@ export function initProjects() {
   const mount = document.querySelector(MOUNT);
   if (!mount) return;
 
-  renderProjects(mount.querySelector('.container'));
+  if (!mount.querySelector('#projects-title')) {
+    mount.querySelector('.container').innerHTML = renderProjects();
+  }
 
   const buttons = document.querySelectorAll('.filter-btn');
   bindFilterClicks(buttons);

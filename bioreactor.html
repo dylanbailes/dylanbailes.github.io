@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Dylan Bailes's engineering case study of a four-chamber bioreactor: magnetic-field hardware, electronics, STM32 firmware, simulation, and testing.">
   <meta name="author" content="Dylan Bailes">
+  <meta name="theme-color" content="#f4f4f1">
+  <!-- Early theme -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111110'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23ff3b30'/%3E%3C/svg%3E">
   <title>Multi-Chamber Camera Bioreactor | Dylan Bailes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,7 +31,7 @@
     </div>
   </header>
 
-  <main id="case-study" class="case-study container">
+  <main id="case-study" class="case-study container" tabindex="-1">
     <div class="case-study__eyebrow">P.02 / HARDWARE · EMBEDDED · SIMULATION</div>
     <div class="case-study__intro">
       <div>
@@ -40,7 +43,7 @@
         </div>
       </div>
       <figure class="case-study__hero-figure">
-        <img src="assets/images/mccb-final-design.png" alt="CAD rendering of the four-chamber bioreactor assembly">
+        <img src="assets/images/mccb-final-design.webp" alt="CAD rendering of the four-chamber bioreactor assembly" width="747" height="678" decoding="async" fetchpriority="high">
         <figcaption>Four-well final design · UC San Diego MAE 156B, 2026</figcaption>
       </figure>
     </div>
@@ -88,7 +91,7 @@
           <h2>Four repeatable well modules</h2>
           <p>Each chamber paired a clear-bottom well and titanium electrodes with Helmholtz coils for magnetic stimulation. A microscope stage sat below each well. The system architecture connected sensor feedback and stimulus control to a Raspberry Pi touchscreen interface; the final integrated build used an ESP32 control path and perf-board drive electronics.</p>
           <figure class="case-study__figure">
-            <img src="assets/images/mccb-intermediate.jpg" alt="Intermediate physical bioreactor assembly with structural frame and well modules" loading="lazy">
+            <img src="assets/images/mccb-intermediate.webp" alt="Intermediate physical bioreactor assembly with structural frame and well modules" width="1200" height="1071" decoding="async" loading="lazy">
             <figcaption>Intermediate assembly during mechanical and electronics integration</figcaption>
           </figure>
         </section>
@@ -110,7 +113,7 @@
           <h2>Check field behavior before and after building</h2>
           <p>ANSYS Maxwell simulations helped compare magnetic-field geometry and predict uniformity. The team also simulated the electric field in the saline-filled wells. Those results guided the prototype geometry and provided a reference for physical field mapping.</p>
           <figure class="case-study__figure">
-            <img src="assets/images/mccb-surface-comparison.png" alt="Comparison of bioreactor field simulation results" loading="lazy">
+            <img src="assets/images/mccb-surface-comparison.webp" alt="Comparison of bioreactor field simulation results" width="597" height="336" decoding="async" loading="lazy">
             <figcaption>Simulation comparison used to assess field distribution</figcaption>
           </figure>
         </section>
@@ -120,7 +123,7 @@
           <h2>Measure what the prototype delivered</h2>
           <p>Bench mapping measured a 4.98 mT magnetic field at the coil center and less than 1% variation across the well footprint. Hall sensors tracked the 100 Hz drive waveform, and AC tests covered the intended 0–250 Hz range. Cross-well magnetic isolation still needs formal characterization.</p>
           <figure class="case-study__figure">
-            <img src="assets/images/mccb-setup-web.jpg" alt="Bioreactor magnetic-field bench test setup" loading="lazy">
+            <img src="assets/images/mccb-setup-web.webp" alt="Bioreactor magnetic-field bench test setup" width="1200" height="900" decoding="async" loading="lazy">
             <figcaption>Prototype test setup for the magnetic-field subsystem</figcaption>
           </figure>
         </section>
