@@ -253,15 +253,25 @@ export const site = {
       ],
     },
     {
-      title: 'Autonomous Car Racing',
+      title: 'Autonomous Car Racing & RoboButler',
       category: 'firmware',
       summary:
-        "Integrated an autonomous vehicle platform using camera, LiDAR, and GPS sensing with ROS2. Worked with three ECE engineers on sensor and system integration supporting deep-learning perception, Kalman-filter state estimation, and state-space control.",
+        'In ECE/MAE 148, worked with three ECE teammates on ROS2 racing laps using GPS, camera, LiDAR, and neural-network perception. For the later eight-person RoboButler final project, led navigation software for target following, object detection, Kalman-filter state estimation, and state-space control.',
       specs: [
-        { label: 'Perception', value: 'Deep learning' },
-        { label: 'Estimation', value: 'Kalman filter' },
-        { label: 'Control', value: 'State-space' },
-        { label: 'Middleware', value: 'ROS2' },
+        { label: 'Racing', value: 'ROS2 · GPS · camera · LiDAR' },
+        { label: 'Final vision', value: 'Depth · AprilTags · object detection' },
+        { label: 'Final estimate', value: 'Extended Kalman filter' },
+        { label: 'Final control', value: 'State-space · Pure Pursuit/P' },
+      ],
+      challengesTitle: 'Racing & Final Project',
+      challenges: [
+        'Racing: integrated sensors and ROS2 with a four-person team for GPS-guided and vision-guided laps.',
+        'Final project: wrote AprilTag navigation, OAK-D depth-map processing, edge detection, and object detection software for the eight-person RoboButler team.',
+        'Implemented an extended Kalman filter and state-space control. The linked VisCarPath repository covers part of the final-project navigation system, including Pure Pursuit and proportional path following.',
+        'Navigation and gesture-controlled actuation worked separately. Automatic handoff between the two remained incomplete because both needed the camera.',
+      ],
+      links: [
+        { label: 'Final Project Source Code', href: 'https://github.com/dylanbailes/VisCarPath' },
       ],
     },
     {
