@@ -55,9 +55,9 @@ export const site = {
 
     // Animated stat counters — derived from your resume
     stats: [
-      { value: 6, label: 'Years Experience' },
+      { value: 1000, label: 'Hands-On Engineering Hours' },
       { value: 300, label: 'Parts Fabricated' },
-      { value: 1000, label: 'Hands-On Hours' },
+      { value: 6, label: 'Years Building Robots & Hardware' },
     ],
   },
 

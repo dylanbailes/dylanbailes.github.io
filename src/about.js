@@ -59,6 +59,7 @@ function renderAbout(container) {
 
 function animateCounter(element) {
   const target = parseInt(element.dataset.count, 10) || 0;
+  const formatCount = (value) => value.toLocaleString('en-US');
   const duration = 1600;
   const step = target / (duration / 16);
   let current = 0;
@@ -66,10 +67,10 @@ function animateCounter(element) {
   const update = () => {
     current += step;
     if (current < target) {
-      element.textContent = Math.floor(current);
+      element.textContent = formatCount(Math.floor(current));
       requestAnimationFrame(update);
     } else {
-      element.textContent = target;
+      element.textContent = formatCount(target);
     }
   };
 
