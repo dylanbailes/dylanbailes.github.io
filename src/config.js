@@ -77,7 +77,7 @@ export const site = {
       },
       {
         role: 'Mechanical Lead',
-        org: 'Robodox — FRC Team 980',
+        org: 'Robodox — FRC Team 599',
         location: 'Granada Hills, CA',
         period: 'Aug 2019 — Jun 2023',
         bullets: [
@@ -265,7 +265,6 @@ export const site = {
       ],
       media: {
         type: 'image',
-        tone: 'color',
         src: 'assets/images/robobutler-prototype.png',
         alt: 'Full RoboButler final-project RC car with camera and cargo carousel',
         fit: 'contain',
@@ -316,9 +315,9 @@ export const site = {
       title: 'FRC Competition Robots',
       category: 'mechanical',
       summary:
-        "Mechanical lead for Robodox FRC (Team 980): led design of two award-winning robots, including the team's first regional competition win. Modeled and fabricated 300+ parts across CAD, CNC, and manual machining, and taught a robotics curriculum to elementary students.",
+        "Mechanical lead for Robodox FRC (Team 599): led design of two award-winning robots, including the team's first regional competition win. Modeled and fabricated 300+ parts across CAD, CNC, and manual machining, and taught a robotics curriculum to elementary students.",
       specs: [
-        { label: 'Team', value: 'Robodox FRC 980' },
+        { label: 'Team', value: 'Robodox FRC 599' },
         { label: 'Result', value: 'First regional win' },
         { label: 'Parts', value: '300+ fabricated' },
         { label: 'Hours', value: '1,000+ logged' },
@@ -337,7 +336,6 @@ export const site = {
       ],
       media: {
         type: 'image',
-        tone: 'color',
         src: 'assets/images/uas-tolerance-workflow.svg',
         alt: 'Illustrative workflow for tolerance analysis and spring-force margin review; no project measurements',
         gallery: [
