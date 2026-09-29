@@ -223,6 +223,15 @@ export const site = {
         { label: 'Electronics', value: '2× KiCad PCBs + STM32' },
         { label: 'Validation', value: 'ANSYS field simulations' },
       ],
+      challenges: [
+        'Brought up STM32 firmware and configured peripherals',
+        'Integrated I²C and UART interfaces',
+        'Recovered from option-byte configuration issues',
+        'Used direct register-level peripheral configuration when HAL was insufficient',
+        'Debugged the custom PCB prototype and drive electronics',
+        'Validated field behavior with ANSYS and bench measurements',
+      ],
+      challengeNote: 'The custom drive PCB did not reach full system integration; the magnetic-field subsystem was tested on a working prototype setup.',
       media: {
         type: 'image',
         src: 'assets/images/mccb-final-design.png',

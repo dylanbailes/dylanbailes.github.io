@@ -1740,6 +1740,29 @@ model-viewer {
   flex-wrap: wrap;
 }
 
+.project-card__details {
+  border-top: 1px dashed var(--color-line);
+  margin-bottom: var(--sp-5);
+  padding-top: var(--sp-4);
+  font-size: var(--fs-sm);
+  color: var(--color-ink-soft);
+}
+.project-card__details summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+.project-card__details ul {
+  list-style: disc;
+  margin: var(--sp-4) 0 var(--sp-3) var(--sp-5);
+}
+.project-card__details li + li { margin-top: var(--sp-2); }
+.project-card__details p { color: var(--color-muted); }
+
 /* --------------------------------------------------------------------------
    Contact
    -------------------------------------------------------------------------- */

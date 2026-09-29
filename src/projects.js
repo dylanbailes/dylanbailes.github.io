@@ -215,6 +215,14 @@ function renderProjects(container) {
            </tbody></table>`
         : '';
 
+      const challenges = project.challenges?.length
+        ? `<details class="project-card__details">
+             <summary>Engineering Challenges</summary>
+             <ul>${project.challenges.map((challenge) => `<li>${escapeHtml(challenge)}</li>`).join('')}</ul>
+             ${project.challengeNote ? `<p>${escapeHtml(project.challengeNote)}</p>` : ''}
+           </details>`
+        : '';
+
       // Only render buttons with a real destination — never a dead "#" link
       const liveLinks = (project.links || []).filter((link) => link.href && link.href !== '#');
       const links = liveLinks.length
@@ -240,6 +248,7 @@ function renderProjects(container) {
 
           <p class="project-card__summary">${escapeHtml(project.summary)}</p>
           ${specs}
+          ${challenges}
           ${links}
         </article>`;
     })
