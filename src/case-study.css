@@ -43,6 +43,7 @@
   letter-spacing: -0.055em;
   line-height: 1.02;
   text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 .case-study__period { color: var(--color-accent); }
 .case-study__lead {
@@ -179,7 +180,15 @@
   .case-study__toc span { width: 100%; padding-bottom: 0; }
 }
 @media (max-width: 600px) {
-  .case-header__back { margin-right: 46px; font-size: 0.62rem; }
+  .case-header__inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-3);
+    padding-top: var(--sp-4);
+    padding-bottom: var(--sp-4);
+    padding-right: 76px;
+  }
+  .case-header__back { margin-right: 0; font-size: 0.62rem; }
   .case-header .logo__tagline { display: none; }
   .case-study { padding-top: var(--sp-8); }
   .case-study__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }

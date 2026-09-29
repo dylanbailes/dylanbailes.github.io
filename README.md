@@ -7,26 +7,30 @@ Built with **Vite** (vanilla JS + ES modules) and deployed to **GitHub Pages** v
 ## Quick start
 
 ```bash
-npm install     # install dependencies
+npm ci          # install the audited dependency lockfile
 npm run dev     # dev server at http://localhost:5173
 npm run build   # production build → dist/
+npm test        # verify theme behavior, rendered content, metadata and local links
 npm run preview # preview the production build locally
 ```
 
 ## How this site is organized
 
 ```
-├── index.html          # slim skeleton — sections are mounted by JS
+├── index.html          # page template — sections rendered by Vite before loading
+├── build/portfolio-html.js # shared rendering, metadata, first-paint theme
 ├── vite.config.js      # build config (base './' for GitHub Pages)
 ├── src/
 │   ├── config.js       # ★ ALL your content lives here — edit this file
 │   ├── main.js         # entry point: imports styles + boots modules
 │   ├── styles.css      # all styling (theme tokens, sections, print styles)
-│   ├── theme.js        # dark/light theme
+│   ├── theme-bootstrap.js # inlined into every page before CSS or modules
+│   ├── theme.js        # dark/light theme, persistence and system changes
+│   ├── image-assets.js # optimized image dimensions
 │   ├── nav.js          # mobile nav + header scroll + logo
 │   ├── hero.js         # hero section + role typewriter
 │   ├── about.js        # about section + stat counters
-│   ├── skills.js       # skills cards + animated bars
+│   ├── skills.js       # grouped skill chips + usage readout
 │   ├── projects.js     # project cards + filters + media renderers
 │   ├── fusion-viewer.js# 3D CAD model viewer (Fusion 360 exports)
 │   ├── pcb-viewer.js   # PCB viewer controls (scaffolding)
@@ -37,9 +41,23 @@ npm run preview # preview the production build locally
 
 ## Editing your content
 
-**Open `src/config.js`** — it's the single source of truth. Update the `TODO` /
-sample values: your name, email, social links, about text, stats, skills and
+**Open `src/config.js`** — it's the single source of truth for your name,
+email, social links, about text, stats, skills and
 projects. No HTML editing required.
+
+Vite renders the portfolio into HTML from this config in both development and
+production. Browser JavaScript attaches filters, galleries, counters, navigation,
+and theme controls to the existing content. The portfolio remains readable when
+JavaScript is unavailable, and search/share metadata is present in the HTML.
+
+The theme bootstrap and critical background styles run in every page's head, before
+stylesheets and modules load. Keep the `<!-- Early theme -->` marker in each page.
+Automatic system-theme changes do not create an explicit saved preference.
+
+Photos are served as optimized WebP files. Original JPG/PNG URLs remain available
+for existing links. Update `src/image-assets.js` with dimensions when adding photos.
+Letter League's security policy permits embedding only from the published
+`https://dylanbailes.github.io` origin; use **Open standalone** during local previews.
 
 ### Adding a project
 

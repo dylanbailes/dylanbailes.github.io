@@ -45,7 +45,7 @@ export const site = {
     ],
 
     // Photo lives in public/assets/images/ — referenced without the prefix
-    photo: 'assets/images/profile.jpg',
+    photo: 'assets/images/profile.webp',
 
     // Small mono note shown under the About stats (e.g. citizenship / clearance)
     note: 'U.S. Citizen — Eligible for Security Clearance',
@@ -211,7 +211,7 @@ export const site = {
         { label: 'Robot Mass', value: '2.3 kg' },
         { label: 'Lift Time', value: '6 s to full extension' },
       ],
-      media: { type: 'image', src: 'assets/images/mae3-robot.jpg', alt: 'Prime Day Delivery Bot' },
+      media: { type: 'image', src: 'assets/images/mae3-robot.webp', alt: 'Prime Day Delivery Bot' },
       links: [
         { label: 'Final Report', href: 'assets/reports/mae3-prime-day-delivery-bot.md', primary: true },
       ],
@@ -238,13 +238,13 @@ export const site = {
       challengeNote: 'The custom drive PCB did not reach full system integration; the magnetic-field subsystem was tested on a working prototype setup.',
       media: {
         type: 'image',
-        src: 'assets/images/mccb-final-design.png',
+        src: 'assets/images/mccb-final-design.webp',
         alt: 'Multi-Chamber Camera Bioreactor final design',
         // Extra shots — shown as a thumbnail strip under the main image
         gallery: [
-          { src: 'assets/images/mccb-intermediate.jpg', alt: 'Bioreactor intermediate design iteration' },
-          { src: 'assets/images/mccb-surface-comparison.png', alt: 'ANSYS surface field comparison' },
-          { src: 'assets/images/mccb-setup-web.jpg', alt: 'Bioreactor lab test setup' },
+          { src: 'assets/images/mccb-intermediate.webp', alt: 'Bioreactor intermediate design iteration' },
+          { src: 'assets/images/mccb-surface-comparison.webp', alt: 'ANSYS surface field comparison' },
+          { src: 'assets/images/mccb-setup-web.webp', alt: 'Bioreactor lab test setup' },
         ],
       },
       links: [
@@ -265,24 +265,24 @@ export const site = {
       ],
       media: {
         type: 'image',
-        src: 'assets/images/robobutler-prototype.png',
+        src: 'assets/images/robobutler-prototype.webp',
         alt: 'Full RoboButler final-project RC car with camera and cargo carousel',
         fit: 'contain',
         caption: 'RoboButler prototype · team project',
         gallery: [
           {
-            src: 'assets/images/robobutler-apriltag-depth-map.jpg',
+            src: 'assets/images/robobutler-apriltag-depth-map.webp',
             alt: 'Side-by-side AprilTag camera view and color-coded depth map from the RoboButler final project',
             fit: 'contain',
             caption: 'AprilTag detection and depth map · final-project vision test',
           },
           {
-            src: 'assets/images/robobutler-hardware-detail.jpg',
+            src: 'assets/images/robobutler-hardware-detail.webp',
             alt: 'Close-up of the RoboButler camera mount, electronics, and cargo carousel',
             caption: 'Vehicle electronics and cargo carousel · team project',
           },
           {
-            src: 'assets/images/robobutler-outdoor-test.jpg',
+            src: 'assets/images/robobutler-outdoor-test.webp',
             alt: 'RoboButler RC car in an outdoor AprilTag-following test',
             caption: 'Outdoor AprilTag-following test',
           },

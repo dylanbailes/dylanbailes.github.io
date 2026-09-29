@@ -11,7 +11,7 @@ import { icon } from './icons.js';
 
 const MOUNT = '[data-mount="skills"]';
 
-function renderSkills(container) {
+export function renderSkills() {
   const groups = site.skills
     .map((cat) => {
       const chips = cat.items
@@ -22,6 +22,8 @@ function renderSkills(container) {
               <button
                 type="button"
                 class="skill-chip"
+                aria-pressed="false"
+                aria-controls="skill-readout"
                 data-name="${escapeHtml(item.name)}"
                 data-usage='${escapeHtml(JSON.stringify(usage))}'
               >${escapeHtml(item.name)}</button>
@@ -43,7 +45,7 @@ function renderSkills(container) {
     })
     .join('');
 
-  container.innerHTML = `
+  return `
     <div class="section-head">
       <span class="section-head__index">03</span>
       <h2 id="skills-title" class="section-head__title">Skills</h2>
@@ -52,7 +54,7 @@ function renderSkills(container) {
       <span class="section-head__ghost" aria-hidden="true">03</span>
     </div>
     <div class="skills-board">${groups}</div>
-    <p class="skill-readout" aria-live="polite" aria-atomic="true">
+    <p id="skill-readout" class="skill-readout" aria-live="polite" aria-atomic="true">
       <span class="skill-readout__tag">// USED IN</span>
       <span class="skill-readout__skill" hidden></span>
       <span class="skill-readout__arrow" hidden>→</span>
@@ -102,11 +104,16 @@ function bindChips(container) {
     chip.addEventListener('click', () => {
       if (pinned === chip) {
         pinned.classList.remove('is-active');
+        pinned.setAttribute('aria-pressed', 'false');
         pinned = null;
         showPinned();
       } else {
-        if (pinned) pinned.classList.remove('is-active');
+        if (pinned) {
+          pinned.classList.remove('is-active');
+          pinned.setAttribute('aria-pressed', 'false');
+        }
         chip.classList.add('is-active');
+        chip.setAttribute('aria-pressed', 'true');
         pinned = chip;
         show(chip);
       }
@@ -123,6 +130,6 @@ export function initSkills() {
   if (!mount) return;
 
   const container = mount.querySelector('.container');
-  renderSkills(container);
+  if (!mount.querySelector('#skills-title')) container.innerHTML = renderSkills();
   bindChips(container);
 }

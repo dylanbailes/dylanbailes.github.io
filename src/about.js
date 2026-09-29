@@ -5,14 +5,15 @@
 
 import { site } from './config.js';
 import { escapeHtml } from './utils.js';
+import { imageAttributes } from './image-assets.js';
 
 const MOUNT = '[data-mount="about"]';
 
-function renderAbout(container) {
+export function renderAbout() {
   const { profile } = site;
 
   const image = profile.photo
-    ? `<div class="about__frame"><img class="about__image-photo" src="${escapeHtml(profile.photo)}" alt="Portrait of ${escapeHtml(profile.name)}" loading="lazy"></div>`
+    ? `<div class="about__frame"><img class="about__image-photo" src="${escapeHtml(profile.photo)}" alt="Portrait of ${escapeHtml(profile.name)}" ${imageAttributes(profile.photo)} loading="lazy"></div>`
     : `<div class="about__frame">
          <div class="about__image-placeholder">
            <svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,7 +29,7 @@ function renderAbout(container) {
     .map(
       (stat) => `
         <div class="stat-item">
-          <span class="stat-item__value" data-count="${stat.value}">0</span>
+          <span class="stat-item__value" data-count="${stat.value}">${stat.value.toLocaleString('en-US')}</span>
           <span class="stat-item__label">${escapeHtml(stat.label)}</span>
         </div>`
     )
@@ -38,7 +39,7 @@ function renderAbout(container) {
     ? `<p class="about__note"><span class="about__note-tag">CLR</span>${escapeHtml(profile.note)}</p>`
     : '';
 
-  container.innerHTML = `
+  return `
     <div class="section-head">
       <span class="section-head__index">01</span>
       <h2 id="about-title" class="section-head__title">About</h2>
@@ -60,6 +61,10 @@ function renderAbout(container) {
 function animateCounter(element) {
   const target = parseInt(element.dataset.count, 10) || 0;
   const formatCount = (value) => value.toLocaleString('en-US');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    element.textContent = formatCount(target);
+    return;
+  }
   const duration = 1600;
   const step = target / (duration / 16);
   let current = 0;
@@ -100,6 +105,8 @@ export function initAbout() {
   const mount = document.querySelector(MOUNT);
   if (!mount) return;
 
-  renderAbout(mount.querySelector('.container'));
+  if (!mount.querySelector('#about-title')) {
+    mount.querySelector('.container').innerHTML = renderAbout();
+  }
   initCounters();
 }

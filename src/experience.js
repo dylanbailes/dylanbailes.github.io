@@ -41,10 +41,10 @@ function renderGroup(title, items, kind) {
     </div>`;
 }
 
-function renderExperience(container) {
+export function renderExperience() {
   const { experience } = site;
 
-  container.innerHTML = `
+  return `
     <div class="section-head">
       <span class="section-head__index">02</span>
       <h2 id="experience-title" class="section-head__title">Experience</h2>
@@ -63,5 +63,7 @@ export function initExperience() {
   const mount = document.querySelector(MOUNT);
   if (!mount) return;
 
-  renderExperience(mount.querySelector('.container'));
+  if (!mount.querySelector('#experience-title')) {
+    mount.querySelector('.container').innerHTML = renderExperience();
+  }
 }

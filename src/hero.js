@@ -18,12 +18,12 @@ const MOUNT = '[data-mount="hero"]';
  * Renders the background/annotation layer into the section, the content into
  * the container, and the scroll indicator + marquee at the section bottom.
  */
-function renderHero(mount, contentEl) {
+export function renderHero() {
   const { profile, cvUrl } = site;
   const rolesAttr = escapeHtml(JSON.stringify(profile.roles));
 
   // --- Background layer + annotations (anchored to the section) ---
-  mount.insertAdjacentHTML('afterbegin', `
+  const background = `
     <div class="hero__grid" aria-hidden="true"></div>
     <span class="hero__ghost hero__ghost--tl" aria-hidden="true">SYS.01</span>
     <span class="hero__ghost hero__ghost--tr" aria-hidden="true">REV.A</span>
@@ -33,7 +33,7 @@ function renderHero(mount, contentEl) {
     <span class="hero__cross hero__cross--b" aria-hidden="true"></span>
     <span class="hero__dot hero__dot--1" aria-hidden="true"></span>
     <span class="hero__dot hero__dot--2" aria-hidden="true"></span>
-  `);
+  `;
 
   // --- Content ---
   const actions = [
@@ -55,7 +55,7 @@ function renderHero(mount, contentEl) {
     )
     .join('');
 
-  contentEl.innerHTML = `
+  const content = `
     <p class="hero__meta">
       <span class="hero__meta-code">// ENGINEERING PORTFOLIO</span>
       <span class="hero__meta-tags">MECH · PCB · FW · CTRL · SIM</span>
@@ -67,7 +67,8 @@ function renderHero(mount, contentEl) {
 
     <p class="hero__roleline">
       <span class="hero__roleline__label">I'M A</span>
-      <span class="hero__role" data-roles='${rolesAttr}'>${escapeHtml(profile.roles[0])}</span>
+      <span class="sr-only">${escapeHtml(profile.roles[0])}</span>
+      <span class="hero__role" aria-hidden="true" data-roles='${rolesAttr}'>${escapeHtml(profile.roles[0])}</span>
     </p>
 
     <p class="hero__subtitle">${escapeHtml(profile.subtitle)}</p>
@@ -82,7 +83,7 @@ function renderHero(mount, contentEl) {
     .join('');
   const marqueeTrack = `${tickerHalf}${tickerHalf}`;
 
-  mount.insertAdjacentHTML('beforeend', `
+  const footer = `
     <div class="hero__scroll" aria-hidden="true">
       <span class="hero__scroll__text">SCROLL</span>
       <span class="hero__scroll__line"></span>
@@ -91,7 +92,9 @@ function renderHero(mount, contentEl) {
     <div class="marquee" aria-hidden="true">
       <div class="marquee__track">${marqueeTrack}</div>
     </div>
-  `);
+  `;
+
+  return `${background}<div class="container hero__content">${content}</div>${footer}`;
 }
 
 /**
@@ -111,9 +114,9 @@ function initTyping() {
     return;
   }
 
-  let charIndex = 0;
+  let charIndex = roles[0].length;
   let currentIndex = 0;
-  let isDeleting = false;
+  let isDeleting = true;
   const typingSpeed = 90;
   const deletingSpeed = 45;
   const pauseDuration = 1800;
@@ -138,13 +141,13 @@ function initTyping() {
     setTimeout(type, nextSpeed);
   };
 
-  type();
+  setTimeout(type, pauseDuration);
 }
 
 export function initHero() {
   const mount = document.querySelector(MOUNT);
   if (!mount) return;
 
-  renderHero(mount, mount.querySelector('.container'));
+  if (!mount.querySelector('#hero-title')) mount.innerHTML = renderHero();
   initTyping();
 }

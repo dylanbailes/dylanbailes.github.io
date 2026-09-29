@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dylanbailes.github.io/sitemap.xml

@@ -9,10 +9,12 @@ import './styles.css';
 import { initTheme } from './theme.js';
 import { initNav } from './nav.js';
 import { initOptilatroViewer } from './optilatro-viewer.js';
+import { initSmoothScroll } from './smooth-scroll.js';
 
 function boot() {
   initTheme();
   initNav();
+  initSmoothScroll();
 
   // Fill year
   const yearEl = document.getElementById('current-year');
@@ -53,7 +55,13 @@ function launchOptilatro() {
   if (!viewport) return;
 
   viewport.hidden = false;
-  viewport.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  viewport.scrollIntoView({
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+    block: 'start',
+  });
+  const title = document.getElementById('sim-title');
+  title.setAttribute('tabindex', '-1');
+  title.focus({ preventScroll: true });
 
   initOptilatroViewer();
 }
