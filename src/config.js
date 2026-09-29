@@ -134,10 +134,10 @@ export const site = {
       code: 'CAD',
       icon: 'gear', // icon keys: gear | chip | cpu | cube | wave
       items: [
-        { name: 'SolidWorks', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots', 'UAS Motor & Spring Modeling'] },
+        { name: 'SolidWorks', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots', 'UAS Mechanism Design & Engineering Analysis'] },
         { name: 'Fusion 360', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots'] },
         { name: 'ANSYS FEA & Maxwell', usage: ['Multi-Chamber Camera Bioreactor'] },
-        { name: 'SolidWorks Macros', usage: ['UAS Motor & Spring Modeling'] },
+        { name: 'SolidWorks Macros', usage: ['UAS Mechanism Design & Engineering Analysis'] },
       ],
     },
     {
@@ -159,7 +159,7 @@ export const site = {
         { name: 'CNC Operation', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots'] },
         { name: 'Manual Mill & Lathe', usage: ['FRC Competition Robots'] },
         { name: 'Rapid Prototyping', usage: ['Prime Day Delivery Bot', 'FRC Competition Robots'] },
-        { name: 'Design for Manufacturing', usage: ['Prime Day Delivery Bot', 'UAS Motor & Spring Modeling'] },
+        { name: 'Design for Manufacturing', usage: ['Prime Day Delivery Bot', 'UAS Mechanism Design & Engineering Analysis'] },
       ],
     },
     {
@@ -167,7 +167,7 @@ export const site = {
       code: 'PRG',
       icon: 'cpu',
       items: [
-        { name: 'Python', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor', 'UAS Motor & Spring Modeling'] },
+        { name: 'Python', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor', 'UAS Mechanism Design & Engineering Analysis'] },
         { name: 'C++', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor'] },
         { name: 'ROS2', usage: ['Autonomous Car Racing'] },
         { name: 'Linux', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor'] },
@@ -274,15 +274,15 @@ export const site = {
       ],
     },
     {
-      title: 'UAS Motor & Spring Modeling',
+      title: 'UAS Mechanism Design & Engineering Analysis',
       category: 'simulation',
       summary:
-        "At AeroVironment, developed physics-based models predicting motor and spring behavior for small unmanned aerial systems under strict weight and strength constraints. Automated geometry optimization with SolidWorks macros, significantly reducing design iteration time.",
+        "At AeroVironment, prototyped and developed the initial design of a motor-driven SUAS mechanism. A 99.5% confidence tolerance analysis exposed insufficient worst-case spring-force margin; automated FEA mesh convergence and curve fitting estimated converged peak stress.",
       specs: [
         { label: 'Company', value: 'AeroVironment' },
-        { label: 'Domain', value: 'SUAS drones' },
-        { label: 'Analysis', value: 'Physics-based modeling' },
-        { label: 'Automation', value: 'SolidWorks macros' },
+        { label: 'Design', value: 'Motor-driven SUAS mechanism' },
+        { label: 'Tolerance', value: '99.5% confidence spring-force analysis' },
+        { label: 'FEA', value: 'Mesh convergence + stress extrapolation' },
       ],
       links: [
         { label: 'GitHub', href: 'https://github.com/dylanbailes' },
