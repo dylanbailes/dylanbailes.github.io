@@ -1389,6 +1389,10 @@ table {
 .project-media__main {
   position: relative;
 }
+.project-card__media .project-media__image--contain {
+  object-fit: contain;
+  background: #171716;
+}
 .project-media__counter {
   position: absolute;
   right: var(--sp-3);
@@ -1427,6 +1431,10 @@ table {
 .project-card__media.project-media--color .project-media__thumb img {
   filter: none;
 }
+.project-card__media .project-media__thumb[data-gallery-fit="contain"] img {
+  object-fit: contain;
+  background: #171716;
+}
 .project-media__thumb:hover,
 .project-media__thumb:focus-visible {
   border-color: var(--color-accent);
@@ -1442,6 +1450,13 @@ table {
 }
 .project-media__thumb.is-active img {
   opacity: 1;
+}
+.project-media__caption {
+  padding: 0 var(--sp-3) var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  line-height: 1.45;
+  color: var(--color-muted);
 }
 
 /* Model viewer */
