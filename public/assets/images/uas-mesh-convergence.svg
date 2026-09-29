@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="title description">
+  <title id="title">Conceptual FEA mesh-convergence analysis</title>
+  <desc id="description">A generic, illustrative curve approaches a stress estimate as a simulation mesh is refined. No project results or geometry are shown.</desc>
+  <rect width="960" height="720" fill="#171716"/>
+  <path d="M0 143H960M0 622H960" stroke="#454540"/>
+  <g stroke="#3c3c38" stroke-width="1" opacity=".65">
+    <path d="M0 220H960M0 300H960M0 380H960M0 460H960M0 540H960"/>
+    <path d="M125 143V622M225 143V622M325 143V622M425 143V622M525 143V622M625 143V622M725 143V622M825 143V622"/>
+  </g>
+  <text x="48" y="55" fill="#ff3b30" font-family="monospace" font-size="22" letter-spacing="4">ENGINEERING METHOD / 02</text>
+  <text x="48" y="109" fill="#f4f4f1" font-family="Arial, sans-serif" font-size="42" font-weight="700">FEA mesh convergence</text>
+  <path d="M138 199v348h666" stroke="#bbbcb5" stroke-width="3" fill="none"/>
+  <g stroke="#5d5d57" stroke-width="2" stroke-dasharray="5 8">
+    <path d="M138 290h666"/>
+    <path d="M138 375h666"/>
+    <path d="M138 460h666"/>
+  </g>
+  <path d="M183 508C235 489 262 425 313 387S422 318 505 294s186-29 268-30" fill="none" stroke="#f4f4f1" stroke-width="5" stroke-linecap="round"/>
+  <path d="M138 258h666" stroke="#ff3b30" stroke-width="3" stroke-dasharray="12 10"/>
+  <g fill="#ff3b30">
+    <circle cx="183" cy="508" r="7"/><circle cx="313" cy="387" r="7"/><circle cx="505" cy="294" r="7"/><circle cx="773" cy="264" r="7"/>
+  </g>
+  <g font-family="monospace" fill="#d8d8d2">
+    <text x="536" y="230" font-size="20">Extrapolated trend</text>
+    <text x="319" y="585" font-size="22">Increasing mesh refinement →</text>
+    <text x="138" y="188" font-size="18">Stress estimate</text>
+  </g>
+  <text x="48" y="669" fill="#a6a69f" font-family="monospace" font-size="17" letter-spacing="1">ILLUSTRATIVE CURVE · NO PROJECT MEASUREMENTS</text>
+</svg>

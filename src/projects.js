@@ -126,18 +126,20 @@ function renderSimulationMedia() {
 
 function renderImageMedia(media) {
   const gallery = media.gallery && media.gallery.length ? media.gallery : [];
+  const images = [{ src: media.src, alt: media.alt }, ...gallery];
 
   const thumbs = gallery.length
     ? `
       <div class="project-media__thumbs" role="group" aria-label="Project image gallery">
-        ${gallery
+        ${images
           .map(
             (g, index) => `
             <button
-              class="project-media__thumb"
+              class="project-media__thumb${index === 0 ? ' is-active' : ''}"
               data-gallery-src="${escapeHtml(g.src)}"
               data-gallery-alt="${escapeHtml(g.alt || g.src)}"
-              aria-label="View gallery image ${index + 2}"
+              aria-label="View gallery image ${index + 1}"
+              aria-pressed="${index === 0}"
             >
               <img src="${escapeHtml(g.src)}" alt="" loading="lazy">
             </button>`
@@ -151,7 +153,7 @@ function renderImageMedia(media) {
     : '';
 
   return `
-    <div class="project-card__media project-media">
+    <div class="project-card__media project-media${media.tone === 'color' ? ' project-media--color' : ''}">
       <div class="project-media__main">
         <img
           class="project-media__image"
@@ -344,16 +346,20 @@ function bindGallery() {
     const counter = media.querySelector('.project-media__counter');
     if (!main || thumbs.length === 0) return;
 
-    const total = thumbs.length + 1;
+    const total = thumbs.length;
 
     thumbs.forEach((thumb, index) => {
       thumb.addEventListener('click', () => {
         main.src = thumb.dataset.gallerySrc;
         main.alt = thumb.dataset.galleryAlt;
-        thumbs.forEach((t) => t.classList.remove('is-active'));
+        thumbs.forEach((t) => {
+          t.classList.remove('is-active');
+          t.setAttribute('aria-pressed', 'false');
+        });
         thumb.classList.add('is-active');
+        thumb.setAttribute('aria-pressed', 'true');
         if (counter) {
-          counter.textContent = `${String(index + 2).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+          counter.textContent = `${String(index + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
         }
       });
     });

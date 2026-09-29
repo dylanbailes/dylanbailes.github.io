@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="title description">
+  <title id="title">Conceptual spring-force margin analysis workflow</title>
+  <desc id="description">A generic, illustrative workflow connecting manufacturing variation, spring-force range, and margin review. No project data or hardware geometry is shown.</desc>
+  <rect width="960" height="720" fill="#171716"/>
+  <path d="M0 143H960M0 622H960" stroke="#454540"/>
+  <g fill="#2c2c29" opacity=".65">
+    <path d="M0 200H960M0 260H960M0 320H960M0 380H960M0 440H960M0 500H960M0 560H960" stroke="#3c3c38"/>
+    <path d="M60 143V622M120 143V622M180 143V622M240 143V622M300 143V622M360 143V622M420 143V622M480 143V622M540 143V622M600 143V622M660 143V622M720 143V622M780 143V622M840 143V622M900 143V622" stroke="#3c3c38"/>
+  </g>
+  <text x="48" y="55" fill="#ff3b30" font-family="monospace" font-size="22" letter-spacing="4">ENGINEERING METHOD / 01</text>
+  <text x="48" y="109" fill="#f4f4f1" font-family="Arial, sans-serif" font-size="42" font-weight="700">Spring-force margin</text>
+  <g stroke="#686862" stroke-width="2" fill="#20201e">
+    <rect x="48" y="211" width="250" height="330" rx="5"/>
+    <rect x="355" y="211" width="250" height="330" rx="5"/>
+    <rect x="662" y="211" width="250" height="330" rx="5"/>
+  </g>
+  <g font-family="monospace" font-size="18" fill="#ff3b30" letter-spacing="2">
+    <text x="72" y="251">01 / INPUTS</text>
+    <text x="379" y="251">02 / RESPONSE</text>
+    <text x="686" y="251">03 / REVIEW</text>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#f4f4f1">
+    <text x="72" y="298">Manufacturing</text><text x="72" y="329">variation</text>
+    <text x="379" y="298">Spring-force</text><text x="379" y="329">range</text>
+    <text x="686" y="298">Design margin</text>
+  </g>
+  <g stroke="#a6a69f" stroke-width="2.5" fill="none">
+    <path d="M84 444h175"/>
+    <path d="M104 436v16m69-24v32m66-24v16"/>
+    <path d="M388 464c40-2 48-85 92-85s52 83 92 85"/>
+    <path d="M704 464h164"/>
+    <path d="M744 444v40m94-80v80"/>
+  </g>
+  <g stroke="#ff3b30" stroke-width="4" fill="none">
+    <path d="M173 409v70"/>
+    <path d="M797 394v99" stroke-dasharray="8 8"/>
+  </g>
+  <g fill="#ff3b30"><path d="m321 366 17 12-17 12zm307 0 17 12-17 12z"/></g>
+  <g font-family="monospace" font-size="15" fill="#bebeb8">
+    <text x="72" y="506">Tolerance stack</text>
+    <text x="379" y="506">Modeled spread</text>
+    <text x="686" y="506">Check worst case</text>
+  </g>
+  <text x="48" y="669" fill="#a6a69f" font-family="monospace" font-size="17" letter-spacing="1">ILLUSTRATIVE WORKFLOW · NO PROJECT MEASUREMENTS</text>
+</svg>
