@@ -158,7 +158,7 @@ function renderImageMedia(media) {
     : '';
 
   return `
-    <div class="project-card__media project-media${media.tone === 'color' ? ' project-media--color' : ''}">
+    <div class="project-card__media project-media">
       <div class="project-media__main">
         <img
           class="project-media__image${media.fit === 'contain' ? ' project-media__image--contain' : ''}"
