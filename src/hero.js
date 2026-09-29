@@ -41,7 +41,7 @@ function renderHero(mount, contentEl) {
     { href: '#contact', icon: 'mail', label: 'Get In Touch', cls: 'btn--ghost', code: '02' },
   ];
   if (cvUrl) {
-    actions.push({ href: cvUrl, icon: 'download', label: 'Download CV', cls: 'btn--ghost', code: '03', download: true });
+    actions.push({ href: cvUrl, icon: 'download', label: 'Download Resume', cls: 'btn--ghost', code: '03', download: true });
   }
 
   const actionButtons = actions
