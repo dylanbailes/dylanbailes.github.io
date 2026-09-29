@@ -58,7 +58,7 @@ function renderHero(mount, contentEl) {
   contentEl.innerHTML = `
     <p class="hero__meta">
       <span class="hero__meta-code">// ENGINEERING PORTFOLIO</span>
-      <span class="hero__meta-tags">MECH · PCB · FW · SIM</span>
+      <span class="hero__meta-tags">MECH · PCB · FW · CTRL · SIM</span>
     </p>
 
     <h1 id="hero-title" class="hero__title">

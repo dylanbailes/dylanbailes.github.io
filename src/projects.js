@@ -17,6 +17,7 @@ const CATEGORY_CODE = {
   mechanical: 'MECH',
   pcb: 'PCB',
   firmware: 'FW',
+  controls: 'CTRL',
   simulation: 'SIM',
 };
 

@@ -183,6 +183,7 @@ export const site = {
     { id: 'mechanical', label: 'Mechanical' },
     { id: 'pcb', label: 'PCB' },
     { id: 'firmware', label: 'Firmware' },
+    { id: 'controls', label: 'Controls' },
     { id: 'simulation', label: 'Simulation' },
   ],
 
@@ -203,9 +204,9 @@ export const site = {
       title: 'Prime Day Delivery Bot',
       category: 'mechanical',
       summary:
-        "Competition robot built for MAE 3 as Design & Manufacturing Lead: a differential elevator lift with a spring-actuated bucket and friction drive. Reaches full extension in ~6 seconds, lifts 0.82 kg (2.5× the required payload), and went through 50+ design iterations to solve the elevator's planar-motion problem.",
+        "Competition robot built for MAE 3 as Design & Manufacturing Lead: a three-stage differential elevator lift with a spring-actuated bucket and friction drive. Reaches full extension in ~6 seconds, lifts 0.82 kg (2.5× the required payload), and went through 50+ design iterations to solve the elevator's planar-motion problem.",
       specs: [
-        { label: 'Mechanism', value: 'Differential elevator' },
+        { label: 'Mechanism', value: 'Three-stage differential elevator' },
         { label: 'Drive', value: 'Spring friction drive' },
         { label: 'Robot Mass', value: '2.3 kg' },
         { label: 'Lift Time', value: '6 s to full extension' },
@@ -261,6 +262,18 @@ export const site = {
         { label: 'Estimation', value: 'Kalman filter' },
         { label: 'Control', value: 'State-space' },
         { label: 'Middleware', value: 'ROS2' },
+      ],
+    },
+    {
+      title: 'Flexible-Shaft Torque Control Testbed',
+      category: 'controls',
+      summary:
+        'In-progress compliant music-wire torque testbed comparing PID, model predictive control (MPC), and learned MPC. Mechanical design and controller code are complete; hardware validation is pending parts.',
+      specs: [
+        { label: 'Mechanism', value: 'Compliant music-wire shaft' },
+        { label: 'Controllers', value: 'PID · MPC · learned MPC' },
+        { label: 'Progress', value: 'Design + controller code complete' },
+        { label: 'Next step', value: 'Hardware validation after parts arrive' },
       ],
     },
     {
