@@ -1923,12 +1923,14 @@ model-viewer {
 
 .games-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
   gap: var(--sp-5);
 }
 
 .game-card {
   position: relative;
+  display: flex;
+  flex-direction: column;
   background: var(--color-paper);
   border: 1px solid var(--color-line);
   border-radius: 2px;
@@ -1942,10 +1944,6 @@ model-viewer {
   box-shadow: 6px 6px 0 -3px var(--color-surface), 6px 6px 0 -1px var(--color-accent);
 }
 
-.game-card--coming-soon {
-  opacity: 0.6;
-}
-
 .game-card__badge {
   position: absolute;
   top: var(--sp-4);
@@ -1957,10 +1955,6 @@ model-viewer {
   padding: 0.2rem 0.5rem;
   background: var(--color-accent);
   color: var(--color-on-accent);
-}
-
-.game-card__badge--soon {
-  background: var(--color-muted);
 }
 
 .game-card__header {
@@ -2019,7 +2013,102 @@ model-viewer {
 
 .game-card__actions {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--sp-3);
+  margin-top: auto;
+}
+
+/* Embedded games stay inside the portfolio, with a viewport sized for touch play. */
+body.game-dialog-open {
+  overflow: hidden;
+}
+
+.game-dialog {
+  width: min(600px, calc(100% - 2rem));
+  height: calc(100dvh - 2rem);
+  max-width: none;
+  max-height: 960px;
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  overflow: hidden;
+}
+
+.game-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-dialog::backdrop {
+  background: rgb(0 0 0 / 75%);
+}
+
+.game-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  border-bottom: 1px solid var(--color-line);
+}
+
+.game-dialog__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-muted);
+}
+
+.game-dialog__title {
+  font-size: var(--fs-md);
+  line-height: 1.4;
+}
+
+.game-dialog__frame {
+  display: block;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  border: 0;
+  background: #09090b;
+}
+
+.game-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: var(--sp-2) var(--sp-4);
+  border-top: 1px solid var(--color-line);
+  font-size: var(--fs-xs);
+  color: var(--color-muted);
+}
+
+.game-dialog__footer a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  .game-dialog {
+    width: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
+    border: 0;
+    border-radius: 0;
+  }
+
+  .game-dialog__header {
+    padding-top: max(var(--sp-3), env(safe-area-inset-top));
+  }
+
+  .game-dialog__footer {
+    padding-bottom: max(var(--sp-2), env(safe-area-inset-bottom));
+  }
 }
 
 /* Simulator viewport */

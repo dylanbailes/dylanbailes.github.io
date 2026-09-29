@@ -18,11 +18,30 @@ function boot() {
   const yearEl = document.getElementById('current-year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
 
+  const letterLeagueDialog = document.getElementById('letter-league-dialog');
+  const letterLeagueFrame = document.getElementById('letter-league-frame');
+  const letterLeagueLauncher = document.querySelector('[data-launch-game="letter-league"]');
+
+  letterLeagueDialog.querySelector('[data-close-game]').addEventListener('click', () => {
+    letterLeagueDialog.close();
+  });
+  letterLeagueDialog.addEventListener('close', () => {
+    // End the embedded session and its network activity when the player closes it.
+    letterLeagueFrame.removeAttribute('src');
+    document.body.classList.remove('game-dialog-open');
+    letterLeagueLauncher.focus({ preventScroll: true });
+  });
+
   // Wire up game launcher buttons
   document.querySelectorAll('[data-launch-game]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const game = btn.dataset.launchGame;
       if (game === 'optilatro') launchOptilatro();
+      if (game === 'letter-league') {
+        letterLeagueFrame.src = letterLeagueFrame.dataset.src;
+        document.body.classList.add('game-dialog-open');
+        letterLeagueDialog.showModal();
+      }
     });
   });
 
