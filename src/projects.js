@@ -218,7 +218,7 @@ function renderProjects(container) {
 
       const challenges = project.challenges?.length
         ? `<details class="project-card__details">
-             <summary>Engineering Challenges</summary>
+             <summary>${escapeHtml(project.challengesTitle || 'Engineering Challenges')}</summary>
              <ul>${project.challenges.map((challenge) => `<li>${escapeHtml(challenge)}</li>`).join('')}</ul>
              ${project.challengeNote ? `<p>${escapeHtml(project.challengeNote)}</p>` : ''}
            </details>`

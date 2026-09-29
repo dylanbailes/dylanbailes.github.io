@@ -69,10 +69,10 @@ export const site = {
         location: 'Simi Valley, CA',
         period: 'Jun 2025 — Aug 2025',
         bullets: [
-          'Designed and prototyped a motor-driven SUAS mechanism under tight mass, packaging, and load constraints, completing the prototype and initial design for one subassembly',
-          'Tested motor-driven mechanisms against weight and strength requirements and worked with cross-functional engineering teams to advance subassemblies through initial design',
-          'Developed physics-based motor and spring models; a 99.5% confidence GD&T/tolerance analysis showed insufficient spring-force margin at the low end of the tolerance range',
-          'Built SolidWorks macros and FEA automation to refine meshes near holes and tight corners, fit stress-convergence curves, and estimate asymptotic peak stress while reducing design iteration time',
+          'Designed and prototyped a motor-driven small-UAS mechanism, balancing mass, packaging, and structural requirements through initial subassembly design',
+          'Worked with cross-functional engineers to test prototype behavior against design requirements and refine the mechanism through early design iterations',
+          'Built physics-based motor and spring models; tolerance-stack analysis identified potential spring-force margin concerns under manufacturing variation',
+          'Automated SolidWorks FEA mesh-convergence studies near stress concentrations and fit convergence trends to estimate peak stress more consistently',
         ],
       },
       {
@@ -292,12 +292,19 @@ export const site = {
       title: 'UAS Mechanism Design & Engineering Analysis',
       category: 'simulation',
       summary:
-        "At AeroVironment, prototyped and developed the initial design of a motor-driven SUAS mechanism. A 99.5% confidence tolerance analysis exposed insufficient worst-case spring-force margin; automated FEA mesh convergence and curve fitting estimated converged peak stress.",
+        'At AeroVironment, designed and prototyped a motor-driven small-UAS mechanism. Connected analytical modeling, tolerance analysis, prototype testing, and structural simulation to guide design iterations; spring-force margin emerged as a key design consideration.',
       specs: [
         { label: 'Company', value: 'AeroVironment' },
-        { label: 'Design', value: 'Motor-driven SUAS mechanism' },
-        { label: 'Tolerance', value: '99.5% confidence spring-force analysis' },
-        { label: 'FEA', value: 'Mesh convergence + stress extrapolation' },
+        { label: 'Design', value: 'Motor-driven small-UAS mechanism' },
+        { label: 'Modeling', value: 'Motor, spring, and tolerance analysis' },
+        { label: 'Simulation', value: 'FEA mesh convergence' },
+      ],
+      challengesTitle: 'Engineering Approach',
+      challenges: [
+        'Translate mass, packaging, and load requirements into a prototype design',
+        'Model motor and spring behavior and assess how manufacturing variation affects spring-force margin',
+        'Test prototype behavior against design requirements and use the findings to guide iteration',
+        'Automate repeated FEA mesh refinements and fit stress-convergence trends',
       ],
     },
   ],
