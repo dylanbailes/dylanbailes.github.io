@@ -7,7 +7,6 @@
  * Remaining TODO items (all optional):
  *  - real documentation URLs for the three projects whose "Documentation"
  *    buttons are currently hidden (Autonomous Car Racing, FRC, UAS)
- *  - a CV PDF for the hero download button (`cvUrl`)
  */
 
 export const site = {
@@ -319,5 +318,5 @@ export const site = {
    * Drop the PDF in `public/assets/cv/` and set the path here.
    * Leave '' to hide the button.
    * ------------------------------------------------------------------ */
-  cvUrl: '', // TODO: 'assets/cv/dylan-bailes-cv.pdf',
+  cvUrl: 'assets/cv/dylan-bailes-general-resume.pdf',
 };
