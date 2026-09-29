@@ -122,7 +122,7 @@ export const site = {
 
   /* ------------------------------------------------------------------
    * Skills — all tools displayed at once, grouped by category. Each item
-   * carries its own `usage` list: the real projects that used that tool,
+   * carries its own `usage` list: projects or coursework that used that tool,
    * shown when the chip is hovered or clicked.
    * ------------------------------------------------------------------ */
   skills: [
@@ -166,6 +166,7 @@ export const site = {
       items: [
         { name: 'Python', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor', 'UAS Mechanism Design & Engineering Analysis'] },
         { name: 'C++', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor'] },
+        { name: 'MATLAB', usage: ['Controls & Robotics coursework'] },
         { name: 'ROS2', usage: ['Autonomous Car Racing'] },
         { name: 'Linux', usage: ['Autonomous Car Racing', 'Multi-Chamber Camera Bioreactor'] },
       ],

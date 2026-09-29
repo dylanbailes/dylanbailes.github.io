@@ -1,7 +1,7 @@
 /**
  * skills.js — Skills section: all tools displayed at once, grouped by
  * category. Each tool chip is interactive — hovering (desktop) or clicking
- * or tapping (touch) shows the real projects that used that tool in a
+ * or tapping (touch) shows the work that used that tool in a
  * readout strip below the groups. Clicking a chip pins its readout.
  */
 
@@ -56,7 +56,7 @@ function renderSkills(container) {
       <span class="skill-readout__tag">// USED IN</span>
       <span class="skill-readout__skill" hidden></span>
       <span class="skill-readout__arrow" hidden>→</span>
-      <span class="skill-readout__value">Hover or click a skill to see its projects</span>
+      <span class="skill-readout__value">Hover or click a skill to see where it was used</span>
     </p>
   `;
 }
@@ -69,7 +69,7 @@ function bindChips(container) {
   const skillEl = readout.querySelector('.skill-readout__skill');
   const arrowEl = readout.querySelector('.skill-readout__arrow');
   const valueEl = readout.querySelector('.skill-readout__value');
-  const EMPTY = 'Hover or click a skill to see its projects';
+  const EMPTY = 'Hover or click a skill to see where it was used';
 
   const board = container.querySelector('.skills-board');
   let pinned = null;
