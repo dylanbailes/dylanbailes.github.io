@@ -272,6 +272,12 @@ export const site = {
         caption: 'RoboButler prototype · team project',
         gallery: [
           {
+            src: 'assets/images/robobutler-apriltag-depth-map.jpg',
+            alt: 'Side-by-side AprilTag camera view and color-coded depth map from the RoboButler final project',
+            fit: 'contain',
+            caption: 'AprilTag detection and depth map · final-project vision test',
+          },
+          {
             src: 'assets/images/robobutler-hardware-detail.jpg',
             alt: 'Close-up of the RoboButler camera mount, electronics, and cargo carousel',
             caption: 'Vehicle electronics and cargo carousel · team project',
