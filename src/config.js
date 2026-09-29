@@ -299,6 +299,18 @@ export const site = {
         { label: 'Modeling', value: 'Motor, spring, and tolerance analysis' },
         { label: 'Simulation', value: 'FEA mesh convergence' },
       ],
+      media: {
+        type: 'image',
+        tone: 'color',
+        src: 'assets/images/uas-tolerance-workflow.svg',
+        alt: 'Illustrative workflow for tolerance analysis and spring-force margin review; no project measurements',
+        gallery: [
+          {
+            src: 'assets/images/uas-mesh-convergence.svg',
+            alt: 'Illustrative FEA mesh-convergence trend; no project measurements',
+          },
+        ],
+      },
       challengesTitle: 'Engineering Approach',
       challenges: [
         'Translate mass, packaging, and load requirements into a prototype design',
