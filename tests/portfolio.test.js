@@ -95,7 +95,8 @@ test('unavailable storage never prevents initialization or theme switching', () 
   assert.equal(state.attributes.get('data-theme'), 'light');
 });
 
-const pages = ['index.html', 'games.html', 'bioreactor.html'];
+const pages = ['index.html', 'games.html', 'bioreactor.html',
+  'reports/mae3-prime-day-delivery-bot.html', 'reports/mccb-final-report.html'];
 for (const page of pages) {
   test(`${page} delivers an early theme, complete metadata, and valid local destinations`, () => {
     const path = resolve('dist', page);
@@ -147,4 +148,39 @@ test('the built portfolio includes every section and project without running Jav
   for (const file of manifest.files) assert.ok(existsSync(resolve('dist/optilatro', file)), file);
   assert.ok(existsSync(resolve('dist/robots.txt')));
   assert.ok(existsSync(resolve('dist/sitemap.xml')));
+});
+
+test('HTML reports retain all diagrams, tables, and substantive sections', () => {
+  const report = readFileSync(resolve('dist/reports/mccb-final-report.html'), 'utf8');
+  assert.match(report, /Chapter 5: Design Recommendations and Conclusions/);
+  assert.match(report, /A\.6 User Manual/);
+  assert.match(report, /Executive Summary/);
+  const figures = [...report.matchAll(/src="\.\.\/assets\/reports\/figures\/mccb-final-report\/(image\d+)\.png"/g)].map(match => match[1]);
+  const source = readFileSync(resolve('public/assets/reports/mccb-final-report.md'), 'utf8');
+  const originalFigures = [...source.matchAll(/^\[(image\d+)\]:/gm)].map(match => match[1]);
+  assert.deepEqual([...new Set(figures)].sort(), originalFigures.sort());
+  assert.equal((report.match(/<table>/g) || []).length,
+    (source.match(/^\|\s*:?-{3}/gm) || []).length);
+  assert.doesNotMatch(report, /data:image\/png;base64|\{#[^}]+\}/);
+  assert.match(report, /class="katex"/);
+  assert.match(report, /scope="col"/);
+  assert.match(report, /<figcaption/);
+  assert.match(report, /<caption/);
+  for (const figure of report.matchAll(/<figure class="report-figure">([\s\S]*?)<\/figure>/g)) {
+    assert.doesNotMatch(figure[1], /<h[1-6]|<table|<p/,
+      'Captions must stay with their figure without swallowing report sections');
+  }
+  for (const caption of report.matchAll(/<caption[^>]*>([\s\S]*?)<\/caption>/g)) {
+    assert.doesNotMatch(caption[1], /<p|<img|<h[1-6]/,
+      'Table captions must not include unrelated content');
+  }
+  assert.match(report, /rel="canonical" href="https:\/\/dylanbailes.github.io\/reports\/mccb-final-report.html"/);
+  const delivery = readFileSync(resolve('dist/reports/mae3-prime-day-delivery-bot.html'), 'utf8');
+  assert.match(delivery, /Design Process Essay/);
+  assert.match(delivery, /221\.7%/);
+  assert.match(delivery, /m=2\.67kg/);
+  assert.match(delivery, /Print \/ Save PDF/);
+  for (const page of ['index.html', 'bioreactor.html']) {
+    assert.doesNotMatch(readFileSync(resolve('dist', page), 'utf8'), /href="[^\"]*\.md"/);
+  }
 });

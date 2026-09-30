@@ -47,10 +47,10 @@ The published website is available at https://dylanbailes.github.io/.
 
 ## Optional follow-ups
 
-The technical reports currently open as Markdown. HTML or PDF versions would
-offer more polished reading. A dedicated social-sharing image could replace the
-portrait preview. These are content presentation improvements; the existing
-report and image links resolve correctly.
+The technical reports now open as styled HTML readers with section navigation,
+complete figures and tables, and print layouts for saving a PDF. The original
+Markdown remains the editable source. A dedicated social-sharing image could
+replace the portrait preview as a further presentation improvement.
 
 Vite still emits a size warning for the optional CAD viewer (approximately
 999 kB minified / 284 kB gzip). It is already imported dynamically and is not

@@ -25,10 +25,8 @@ export function portfolioHtml() {
         const isHome = /(?:^|[\\/])index\.html$/.test(context.filename);
         const description = isHome ? site.meta.description
           : html.match(/<meta name="description" content="([^"]*)"/)[1];
-        const title = isHome ? site.meta.title
-          : /games\.html$/.test(context.filename) ? 'Games & Simulators — Dylan Bailes'
-          : 'Multi-Chamber Camera Bioreactor | Dylan Bailes';
-        const page = isHome ? '' : context.filename.split(/[\\/]/).pop();
+        const title = isHome ? site.meta.title : html.match(/<title>(.*?)<\/title>/)[1];
+        const page = isHome ? '' : context.path.replace(/^\//, '');
         const url = `${site.meta.url}/${page}`;
 
         html = html.replace(' data-theme="light"', '');

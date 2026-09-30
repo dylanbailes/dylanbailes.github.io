@@ -213,7 +213,7 @@ export const site = {
       ],
       media: { type: 'image', src: 'assets/images/mae3-robot.webp', alt: 'Prime Day Delivery Bot' },
       links: [
-        { label: 'Final Report', href: 'assets/reports/mae3-prime-day-delivery-bot.md', primary: true },
+        { label: 'Final Report', href: 'reports/mae3-prime-day-delivery-bot.html', primary: true },
       ],
     },
     {
@@ -249,7 +249,7 @@ export const site = {
       },
       links: [
         { label: 'Read Case Study', href: 'bioreactor.html', primary: true },
-        { label: 'Full Technical Report', href: 'assets/reports/mccb-final-report.md' },
+        { label: 'Full Technical Report', href: 'reports/mccb-final-report.html' },
       ],
     },
     {
