@@ -201,22 +201,6 @@ export const site = {
    * ------------------------------------------------------------------ */
   projects: [
     {
-      title: 'Prime Day Delivery Bot',
-      category: 'mechanical',
-      summary:
-        "Competition robot built for MAE 3 as Design & Manufacturing Lead: a three-stage differential elevator lift with a spring-actuated bucket and friction drive. Reaches full extension in ~6 seconds, lifts 0.82 kg (2.5× the required payload), and went through 50+ design iterations to solve the elevator's planar-motion problem.",
-      specs: [
-        { label: 'Mechanism', value: 'Three-stage differential elevator' },
-        { label: 'Drive', value: 'Spring friction drive' },
-        { label: 'Robot Mass', value: '2.3 kg' },
-        { label: 'Lift Time', value: '6 s to full extension' },
-      ],
-      media: { type: 'image', src: 'assets/images/mae3-robot.webp', alt: 'Prime Day Delivery Bot' },
-      links: [
-        { label: 'Final Report', href: 'reports/mae3-prime-day-delivery-bot.html', primary: true },
-      ],
-    },
-    {
       title: 'Multi-Chamber Camera Bioreactor',
       category: 'pcb',
       summary:
@@ -300,30 +284,6 @@ export const site = {
       ],
     },
     {
-      title: 'Flexible-Shaft Torque Control Testbed',
-      category: 'controls',
-      summary:
-        'In-progress compliant music-wire torque testbed comparing PID, model predictive control (MPC), and learned MPC. Mechanical design and controller code are complete; hardware validation is pending parts.',
-      specs: [
-        { label: 'Mechanism', value: 'Compliant music-wire shaft' },
-        { label: 'Controllers', value: 'PID · MPC · learned MPC' },
-        { label: 'Progress', value: 'Design + controller code complete' },
-        { label: 'Next step', value: 'Hardware validation after parts arrive' },
-      ],
-    },
-    {
-      title: 'FRC Competition Robots',
-      category: 'mechanical',
-      summary:
-        "Mechanical lead for Robodox FRC (Team 599): led design of two award-winning robots, including the team's first regional competition win. Modeled and fabricated 300+ parts across CAD, CNC, and manual machining, and taught a robotics curriculum to elementary students.",
-      specs: [
-        { label: 'Team', value: 'Robodox FRC 599' },
-        { label: 'Result', value: 'First regional win' },
-        { label: 'Parts', value: '300+ fabricated' },
-        { label: 'Hours', value: '1,000+ logged' },
-      ],
-    },
-    {
       title: 'UAS Mechanism Design & Engineering Analysis',
       category: 'simulation',
       summary:
@@ -351,6 +311,46 @@ export const site = {
         'Model motor and spring behavior and assess how manufacturing variation affects spring-force margin',
         'Test prototype behavior against design requirements and use the findings to guide iteration',
         'Automate repeated FEA mesh refinements and fit stress-convergence trends',
+      ],
+    },
+    {
+      title: 'FRC Competition Robots',
+      category: 'mechanical',
+      summary:
+        "Mechanical lead for Robodox FRC (Team 599): led design of two award-winning robots, including the team's first regional competition win. Modeled and fabricated 300+ parts across CAD, CNC, and manual machining, and taught a robotics curriculum to elementary students.",
+      specs: [
+        { label: 'Team', value: 'Robodox FRC 599' },
+        { label: 'Result', value: 'First regional win' },
+        { label: 'Parts', value: '300+ fabricated' },
+        { label: 'Hours', value: '1,000+ logged' },
+      ],
+    },
+    {
+      title: 'Flexible-Shaft Torque Control Testbed',
+      category: 'controls',
+      summary:
+        'In-progress compliant music-wire torque testbed comparing PID, model predictive control (MPC), and learned MPC. Mechanical design and controller code are complete; hardware validation is pending parts.',
+      specs: [
+        { label: 'Mechanism', value: 'Compliant music-wire shaft' },
+        { label: 'Controllers', value: 'PID · MPC · learned MPC' },
+        { label: 'Progress', value: 'Design + controller code complete' },
+        { label: 'Next step', value: 'Hardware validation after parts arrive' },
+      ],
+    },
+    {
+      title: 'Prime Day Delivery Bot',
+      category: 'mechanical',
+      summary:
+        "Competition robot built for MAE 3 as Design & Manufacturing Lead: a three-stage differential elevator lift with a spring-actuated bucket and friction drive. Reaches full extension in ~6 seconds, lifts 0.82 kg (2.5× the required payload), and went through 50+ design iterations to solve the elevator's planar-motion problem.",
+      specs: [
+        { label: 'Mechanism', value: 'Three-stage differential elevator' },
+        { label: 'Drive', value: 'Spring friction drive' },
+        { label: 'Robot Mass', value: '2.3 kg' },
+        { label: 'Lift Time', value: '6 s to full extension' },
+      ],
+      media: { type: 'image', src: 'assets/images/mae3-robot.webp', alt: 'Prime Day Delivery Bot' },
+      links: [
+        { label: 'Final Report', href: 'reports/mae3-prime-day-delivery-bot.html', primary: true },
       ],
     },
   ],
