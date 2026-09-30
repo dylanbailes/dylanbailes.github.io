@@ -54,6 +54,19 @@ The theme bootstrap and critical background styles run in every page's head, bef
 stylesheets and modules load. Keep the `<!-- Early theme -->` marker in each page.
 Automatic system-theme changes do not create an explicit saved preference.
 
+## Technical reports
+
+Project report links open styled HTML readers at `reports/mae3-prime-day-delivery-bot.html`
+and `reports/mccb-final-report.html`. Both include section navigation, the shared
+theme, and a **Print / Save PDF** action with a dedicated print layout.
+
+Edit the original files in `public/assets/reports/` to update report content.
+`build/reports-html.js` renders the complete reports during Vite's build and extracts
+embedded figures into separate image assets. It replaces the exported page-number
+indexes with working section links. The original Markdown URLs remain available.
+Marked and KaTeX run during the build; the browser receives static report content
+and rendered equations. `npm test` checks report links, figures, tables, and metadata.
+
 Photos are served as optimized WebP files. Original JPG/PNG URLs remain available
 for existing links. Update `src/image-assets.js` with dimensions when adding photos.
 Letter League's security policy permits embedding only from the published
