@@ -6,7 +6,7 @@ import { escapeHtml } from '../src/utils.js';
 
 export const reports = [
   {
-    slug: 'mae3-prime-day-delivery-bot', code: 'P.01 / MAE 3',
+    slug: 'mae3-prime-day-delivery-bot', code: 'P.06 / MAE 3',
     title: 'Prime Day Delivery Bot', subtitle: 'Design, performance & mechanical analysis',
     authors: 'Dylan Bailes', course: 'MAE 3 — Introduction to Engineering Graphics and Design',
     description: 'The full Prime Day Delivery Bot report: elevator and bucket design, lift requirements, mechanical analysis, test results, and design lessons.',
@@ -14,7 +14,7 @@ export const reports = [
     imageAlt: 'Prime Day Delivery Bot competition robot',
   },
   {
-    slug: 'mccb-final-report', code: 'P.02 / MAE 156B',
+    slug: 'mccb-final-report', code: 'P.01 / MAE 156B',
     title: 'Multi-Chamber Camera Bioreactor', subtitle: 'Final technical report',
     authors: 'Dylan Bailes, Kaitlyn Lavarias, Dylan Lee, Samantha Olivar',
     course: 'MAE 156B — Fundamental Principles of Mechanical Design II',
