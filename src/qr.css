@@ -1,7 +1,7 @@
 .qr-page::after { display: none; }
 .qr-header { display: flex; align-items: center; justify-content: space-between; min-height: 88px; border-bottom: 1px solid var(--color-line); }
 .qr-header .theme-toggle { position: static; flex: none; }
-.qr-main { max-width: 920px; padding-top: 3rem; padding-bottom: 3rem; }
+.qr-main { max-width: 1120px; padding-top: 3rem; padding-bottom: 3rem; }
 .qr-intro { margin-bottom: 2.5rem; }
 .qr-eyebrow { font-family: var(--font-mono); font-size: .75rem; text-transform: uppercase; letter-spacing: .12em; color: var(--color-accent); margin-bottom: .75rem; }
 .qr-intro h1 { font-size: clamp(2.75rem, 8vw, 4.5rem); line-height: 1.05; letter-spacing: -.04em; margin-bottom: 1rem; }
@@ -12,10 +12,7 @@
 .qr-email { font-family: var(--font-mono); font-size: .85rem; text-decoration: underline; text-underline-offset: .25em; overflow-wrap: anywhere; }
 .qr-contact { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1.5rem; }
 .qr-contact a { min-height: 44px; display: inline-flex; align-items: center; }
-.qr-linkedin { font-family: var(--font-mono); font-size: .85rem; gap: .4rem; text-decoration: underline; text-underline-offset: .25em; }
-.qr-linkedin .icon { width: 16px; height: 16px; }
-.qr-linkedin__print { display: none; }
-.qr-codes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.qr-codes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
 .qr-card { min-width: 0; padding: 1.5rem; border: 1px solid var(--color-line); background: var(--color-surface); break-inside: avoid; }
 .qr-card__heading { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
 .qr-card h2 { font-size: 1.4rem; font-weight: 600; }
@@ -48,17 +45,14 @@
   .qr-availability { font-size: 10pt; border-color: #000; }
   .qr-contact { gap: 0 8mm; }
   .qr-contact a { min-height: auto; }
-  .qr-linkedin { font-size: 9pt; }
-  .qr-linkedin .icon { display: none; }
-  .qr-linkedin__label { display: none; }
-  .qr-linkedin__print { display: inline; }
   .qr-email { display: inline-block; margin-top: .75rem; }
-  .qr-codes { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8mm; }
-  .qr-card { padding: 6mm; border-color: #999; }
-  .qr-image-link { width: 55mm; max-width: 100%; }
+  .qr-codes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4mm; }
+  .qr-card { padding: 4mm; border-color: #999; }
+  .qr-image-link { width: 44mm; max-width: 100%; }
+  .qr-card__heading { display: block; min-height: 17mm; margin-bottom: 4mm; }
   .qr-card h2 { font-size: 16pt; }
-  .qr-card__heading span { font-size: 8pt; }
-  .qr-card__instruction { font-size: 10pt; }
-  .qr-card__url { font-size: 8pt; }
+  .qr-card__heading span { display: block; margin-top: 1mm; font-size: 7pt; }
+  .qr-card__instruction { font-size: 9pt; min-height: 12mm; }
+  .qr-card__url { font-size: 7pt; }
   .qr-page a[href]::after { content: none; }
 }

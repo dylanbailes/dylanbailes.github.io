@@ -19,10 +19,9 @@ export function renderQrContent() {
       </div>
       <div class="qr-contact">
         <a class="qr-email" href="mailto:${email}">${email}</a>
-        ${linkedIn ? `<a class="qr-linkedin" href="${escapeHtml(linkedIn.url)}"><span class="qr-linkedin__label">Connect on LinkedIn</span><span class="qr-linkedin__print">${escapeHtml(linkedIn.url.replace(/^https:\/\/(?:www\.)?/, ''))}</span>${icon('arrowUpRight')}</a>` : ''}
       </div>
     </div>
-    <section class="qr-codes" aria-label="Scan for my portfolio or résumé">
+    <section class="qr-codes" aria-label="Scan for my portfolio, résumé, or LinkedIn">
       <article class="qr-card">
         <div class="qr-card__heading"><h2>Portfolio</h2><span>Projects &amp; experience</span></div>
         <a class="qr-image-link" href="index.html" aria-label="Open Dylan Bailes's portfolio">
@@ -41,6 +40,15 @@ export function renderQrContent() {
         <a class="qr-card__url" href="${escapeHtml(cvUrl)}" download="Dylan-Bailes-Resume.pdf">Dylan Bailes / Résumé PDF</a>
         <a class="qr-save" href="assets/qr/resume.png" download="Dylan-Bailes-Resume-QR.png">Save QR image ${icon('download')}</a>
       </article>
+      ${linkedIn ? `<article class="qr-card qr-card--linkedin">
+        <div class="qr-card__heading"><h2>LinkedIn</h2><span>Stay connected</span></div>
+        <a class="qr-image-link" href="${escapeHtml(linkedIn.url)}" aria-label="Connect with Dylan Bailes on LinkedIn">
+          <img class="qr-image" src="assets/qr/linkedin.svg" alt="QR code for Dylan Bailes's LinkedIn profile" width="512" height="512">
+        </a>
+        <p class="qr-card__instruction">Scan to connect on LinkedIn.</p>
+        <a class="qr-card__url" href="${escapeHtml(linkedIn.url)}">${escapeHtml(linkedIn.url.replace(/^https:\/\/(?:www\.)?/, ''))}</a>
+        <a class="qr-save" href="assets/qr/linkedin.png" download="Dylan-Bailes-LinkedIn-QR.png">Save QR image ${icon('download')}</a>
+      </article>` : ''}
     </section>
     <div class="qr-tools">
       <button class="btn btn--ghost" id="print-qr" hidden>Print / Save PDF</button>

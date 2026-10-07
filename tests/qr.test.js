@@ -9,6 +9,7 @@ import { site } from '../src/config.js';
 for (const [name, url] of Object.entries({
   portfolio: `${site.meta.url}/`,
   resume: new URL(site.cvUrl, `${site.meta.url}/`).href,
+  linkedin: site.contact.socials.find(social => social.name === 'LinkedIn').url,
 })) {
   test(`${name} QR decodes to the published destination`, () => {
     const png = PNG.sync.read(readFileSync(resolve(`dist/assets/qr/${name}.png`)));
@@ -32,4 +33,5 @@ test('recruiters can reach the portfolio and download the résumé without JavaS
   assert.ok(readFileSync(resolve('dist/index.html'), 'utf8').includes(site.profile.availability));
   assert.match(html, /assets\/qr\/portfolio\.svg/);
   assert.match(html, /assets\/qr\/resume\.svg/);
+  assert.match(html, /assets\/qr\/linkedin\.svg/);
 });

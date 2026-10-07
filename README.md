@@ -56,8 +56,8 @@ Automatic system-theme changes do not create an explicit saved preference.
 
 ## Career-fair QR page
 
-Open `qr.html` to show or print two QR codes: the portfolio and the current résumé
-PDF. The page also offers direct portfolio, résumé-download, and email links.
+Open `qr.html` to show or print three QR codes: the portfolio, current résumé
+PDF, and LinkedIn profile. The page also offers direct portfolio, résumé-download, and email links.
 QR images are generated locally from `src/config.js` before development and builds;
 they use the published website URLs, including when previewed on localhost.
 Download each PNG on the page, or use **Print / Save PDF** for a one-page handout.

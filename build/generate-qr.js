@@ -8,6 +8,7 @@ await mkdir(directory, { recursive: true });
 const destinations = {
   portfolio: `${site.meta.url}/`,
   resume: new URL(site.cvUrl, `${site.meta.url}/`).href,
+  linkedin: site.contact.socials.find(social => social.name === 'LinkedIn').url,
 };
 
 for (const [name, url] of Object.entries(destinations)) {
@@ -16,4 +17,4 @@ for (const [name, url] of Object.entries(destinations)) {
   await QRCode.toFile(fileURLToPath(new URL(`${name}.svg`, directory)), url, options);
   await QRCode.toFile(fileURLToPath(new URL(`${name}.png`, directory)), url, options);
 }
-console.log('Generated portfolio and résumé QR codes.');
+console.log('Generated portfolio, résumé, and LinkedIn QR codes.');
