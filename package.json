@@ -5,7 +5,9 @@
   "description": "Personal engineering portfolio — mechanical, PCB, firmware & simulation projects",
   "type": "module",
   "scripts": {
+    "predev": "node build/generate-qr.js",
     "dev": "vite",
+    "prebuild": "node build/generate-qr.js",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --test"
@@ -23,8 +25,11 @@
     "@google/model-viewer": "^4.2.0"
   },
   "devDependencies": {
+    "jsqr": "^1.4.0",
     "katex": "^0.18.9",
     "marked": "^18.0.14",
+    "pngjs": "^7.0.0",
+    "qrcode": "^1.5.4",
     "vite": "^8.3.1"
   }
 }

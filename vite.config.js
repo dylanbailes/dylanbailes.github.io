@@ -17,6 +17,7 @@ export default defineConfig({
         main: 'index.html',
         games: 'games.html',
         bioreactor: 'bioreactor.html',
+        qr: 'qr.html',
         deliveryReport: 'reports/mae3-prime-day-delivery-bot.html',
         bioreactorReport: 'reports/mccb-final-report.html',
       },

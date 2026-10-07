@@ -645,6 +645,11 @@ table {
 .hero__cross--a { top: 32%; right: 12%; }
 .hero__cross--b { bottom: 26%; left: 8%; }
 
+/* Wrapped mobile actions need the space occupied by these decorative marks. */
+@media (max-width: 768px) {
+  .hero__cross { display: none; }
+}
+
 .hero__dot {
   position: absolute;
   width: 7px;

@@ -54,6 +54,14 @@ The theme bootstrap and critical background styles run in every page's head, bef
 stylesheets and modules load. Keep the `<!-- Early theme -->` marker in each page.
 Automatic system-theme changes do not create an explicit saved preference.
 
+## Career-fair QR page
+
+Open `qr.html` to show or print two QR codes: the portfolio and the current résumé
+PDF. The page also offers direct portfolio, résumé-download, and email links.
+QR images are generated locally from `src/config.js` before development and builds;
+they use the published website URLs, including when previewed on localhost.
+Download each PNG on the page, or use **Print / Save PDF** for a one-page handout.
+
 ## Technical reports
 
 Project report links open styled HTML readers at `reports/mae3-prime-day-delivery-bot.html`

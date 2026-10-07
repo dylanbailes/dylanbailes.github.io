@@ -7,6 +7,7 @@ import { renderExperience } from '../src/experience.js';
 import { renderSkills } from '../src/skills.js';
 import { renderProjects } from '../src/projects.js';
 import { renderContact } from '../src/contact.js';
+import { renderQrContent } from '../src/qr-content.js';
 
 const renderers = {
   hero: renderHero, about: renderAbout, experience: renderExperience,
@@ -60,6 +61,7 @@ export function portfolioHtml() {
           `<span id="current-year">${new Date().getFullYear()}</span>`);
         html = html.replace(/<span data-footer-name><\/span>/,
           `<span data-footer-name>${escapeHtml(site.profile.name.toUpperCase())}</span>`);
+        html = html.replace('<!-- QR content -->', renderQrContent());
 
         if (isHome) {
           html = html.replace(/<section([^>]*data-mount="([^"]+)"[^>]*)>[\s\S]*?<\/section>/g,

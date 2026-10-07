@@ -95,7 +95,7 @@ test('unavailable storage never prevents initialization or theme switching', () 
   assert.equal(state.attributes.get('data-theme'), 'light');
 });
 
-const pages = ['index.html', 'games.html', 'bioreactor.html',
+const pages = ['index.html', 'games.html', 'bioreactor.html', 'qr.html',
   'reports/mae3-prime-day-delivery-bot.html', 'reports/mccb-final-report.html'];
 for (const page of pages) {
   test(`${page} delivers an early theme, complete metadata, and valid local destinations`, () => {
