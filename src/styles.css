@@ -1512,6 +1512,16 @@ table {
   line-height: 1.45;
   color: var(--color-muted);
 }
+.project-card__media.project-media--figure .project-media__image {
+  aspect-ratio: 16 / 9;
+}
+.project-media__full-size {
+  display: inline-block;
+  margin: 0 var(--sp-3) var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-underline-offset: 0.2em;
+}
 
 /* Model viewer */
 .model-viewer-container {

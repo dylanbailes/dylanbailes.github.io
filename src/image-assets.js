@@ -12,6 +12,9 @@ const dimensions = {
   'robobutler-outdoor-test': [1200, 675],
   'uas-mesh-convergence': [960, 720],
   'uas-tolerance-workflow': [960, 720],
+  'torque-controller-comparison': [1152, 648],
+  'torque-learned-feedforward': [1152, 648],
+  'torque-project-progress': [1152, 648],
 };
 
 export function imageAttributes(src) {

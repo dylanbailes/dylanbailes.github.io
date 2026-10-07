@@ -159,7 +159,7 @@ function renderImageMedia(media) {
     : '';
 
   return `
-    <div class="project-card__media project-media">
+    <div class="project-card__media project-media${media.layout === 'figure' ? ' project-media--figure' : ''}">
       <div class="project-media__main">
         <img
           class="project-media__image${media.fit === 'contain' ? ' project-media__image--contain' : ''}"
@@ -173,6 +173,7 @@ function renderImageMedia(media) {
       </div>
       ${thumbs}
       ${caption}
+      ${media.fullSize ? `<a class="project-media__full-size" data-gallery-full-size href="${escapeHtml(media.src)}" target="_blank" rel="noopener">Open full-size figure ↗</a>` : ''}
     </div>
   `;
 }
@@ -354,6 +355,7 @@ function bindGallery() {
     const thumbs = media.querySelectorAll('.project-media__thumb');
     const counter = media.querySelector('.project-media__counter');
     const caption = media.querySelector('[data-gallery-caption-text]');
+    const fullSize = media.querySelector('[data-gallery-full-size]');
     if (!main || thumbs.length === 0) return;
 
     const total = thumbs.length;
@@ -364,6 +366,7 @@ function bindGallery() {
         main.alt = thumb.dataset.galleryAlt;
         main.classList.toggle('project-media__image--contain', thumb.dataset.galleryFit === 'contain');
         if (caption) caption.textContent = thumb.dataset.galleryCaption;
+        if (fullSize) fullSize.href = thumb.dataset.gallerySrc;
         thumbs.forEach((t) => {
           t.classList.remove('is-active');
           t.setAttribute('aria-pressed', 'false');

@@ -331,12 +331,38 @@ export const site = {
       title: 'Flexible-Shaft Torque Control Testbed',
       category: 'controls',
       summary:
-        'In-progress compliant music-wire torque testbed comparing PID, model predictive control (MPC), and learned MPC. Mechanical design and controller code are complete; hardware validation is pending parts.',
+        'Series-elastic actuator project connecting mechanical compliance, system identification, constrained model predictive control (MPC), and learned feedforward. Simulation compares PID and MPC under a shared current limit; STM32 integration and physical validation are in progress.',
       specs: [
         { label: 'Mechanism', value: 'Compliant music-wire shaft' },
-        { label: 'Controllers', value: 'PID · MPC · learned MPC' },
-        { label: 'Progress', value: 'Design + controller code complete' },
-        { label: 'Next step', value: 'Hardware validation after parts arrive' },
+        { label: 'Controllers', value: 'PID · MPC · MPC + learned feedforward' },
+        { label: 'Progress', value: 'Simulation + portable C host checks' },
+        { label: 'Next step', value: 'STM32 integration + hardware validation' },
+      ],
+      media: {
+        type: 'image',
+        layout: 'figure',
+        fullSize: true,
+        src: 'assets/images/torque-controller-comparison.svg',
+        alt: 'Simulation bar charts comparing PID, MPC, and MPC with learned feedforward: smooth tracking RMS of 24.77, 2.98, and 2.98 millinewton-meters, with additional edge-rich tracking and disturbance comparisons.',
+        fit: 'contain',
+        caption: 'Simulation: PID and MPC share a ±3 A current budget. MPC improves torque tracking in the selected actuator scenario; hardware validation is pending.',
+        gallery: [
+          {
+            src: 'assets/images/torque-learned-feedforward.svg',
+            alt: 'Learned feedforward reduces error relative to MPC by approximately 0.1% for smooth tracking, 4.6% for edge-rich tracking, and 35% for steady disturbance rejection in one simulation scenario.',
+            fit: 'contain',
+            caption: 'Simulation: learned feedforward reduces edge-rich tracking RMS by 4.6% and steady disturbance error by 35% in this scenario, with nearly no change in smooth tracking.',
+          },
+          {
+            src: 'assets/images/torque-project-progress.svg',
+            alt: 'A motor and load connected by a torsion spring, followed by four project stages: simulation implemented, portable C host checked, STM32 integration in progress, and physical validation pending.',
+            fit: 'contain',
+            caption: 'Project progress: actuator modeling, identification, and controller comparisons are implemented in simulation. Portable C modules are host checked; board integration and physical tests are next.',
+          },
+        ],
+      },
+      links: [
+        { label: 'GitHub Source Code', href: 'https://github.com/dylanbailes/MPCTorqueControl', primary: true },
       ],
     },
     {
