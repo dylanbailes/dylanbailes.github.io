@@ -27,6 +27,7 @@ export const site = {
     name: 'Dylan Bailes',
     logoText: 'DylanBailes',
     logoTagline: 'Controls & Robotics Engineer',
+    availability: 'Seeking full-time engineering roles starting June 2027',
 
     // Roles are cycled through with the typing effect
     roles: [
@@ -234,6 +235,7 @@ export const site = {
       links: [
         { label: 'Read Case Study', href: 'bioreactor.html', primary: true },
         { label: 'Full Technical Report', href: 'reports/mccb-final-report.html' },
+        { label: 'Team Video', href: 'https://www.youtube.com/watch?v=5tLC9Iq_kE8' },
       ],
     },
     {
@@ -360,7 +362,7 @@ export const site = {
    * ------------------------------------------------------------------ */
   contact: {
     blurb:
-      "Mechanical engineering M.S. candidate at UC San Diego — open to internships, research, and full-time opportunities in controls, robotics, and embedded systems.",
+      "Mechanical engineering M.S. candidate at UC San Diego — seeking full-time work starting June 2027 in controls, robotics, embedded systems, and mechanical design.",
     email: 'dbailes0001@gmail.com',
 
     // Buttons under the blurb. Use `mailto: true` to auto-fill the address.

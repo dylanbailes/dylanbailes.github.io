@@ -26,6 +26,10 @@ test('recruiters can reach the portfolio and download the résumé without JavaS
   assert.ok(existsSync(resolve('dist', site.cvUrl)));
   assert.match(readFileSync(resolve('dist', site.cvUrl)).toString('ascii', 0, 5), /%PDF-/);
   assert.ok(html.includes(`mailto:${site.contact.email}`));
+  assert.ok(html.includes(site.profile.availability));
+  const linkedin = site.contact.socials.find(social => social.name === 'LinkedIn');
+  assert.ok(html.includes(`href="${linkedin.url}"`));
+  assert.ok(readFileSync(resolve('dist/index.html'), 'utf8').includes(site.profile.availability));
   assert.match(html, /assets\/qr\/portfolio\.svg/);
   assert.match(html, /assets\/qr\/resume\.svg/);
 });

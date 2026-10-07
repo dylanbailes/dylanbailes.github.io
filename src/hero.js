@@ -65,6 +65,8 @@ export function renderHero() {
       <span class="hero__name">${escapeHtml(profile.name)}</span><span class="hero__period">.</span>
     </h1>
 
+    <p class="hero__availability">${escapeHtml(profile.availability)}</p>
+
     <p class="hero__roleline">
       <span class="hero__roleline__label">I'M A</span>
       <span class="sr-only">${escapeHtml(profile.roles[0])}</span>

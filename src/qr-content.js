@@ -6,16 +6,21 @@ export function renderQrContent() {
   const { profile, contact, cvUrl, meta } = site;
   const email = escapeHtml(contact.email);
   const portfolioUrl = `${meta.url}/`;
+  const linkedIn = contact.socials.find(social => social.name === 'LinkedIn');
   return `
     <div class="qr-intro">
       <p class="qr-eyebrow">Controls &amp; robotics engineering</p>
       <h1 id="qr-title">${escapeHtml(profile.name)}<span class="qr-period">.</span></h1>
       <p class="qr-summary">Mechanical engineering M.S. candidate at UC San Diego.<br>Robotics, embedded systems, and UAS design.</p>
+      <p class="qr-availability">${escapeHtml(profile.availability)}</p>
       <div class="qr-actions">
         <a class="btn btn--primary" href="index.html">View portfolio ${icon('arrowRight')}</a>
         <a class="btn btn--ghost" id="resume-download" href="${escapeHtml(cvUrl)}" download="Dylan-Bailes-Resume.pdf">Download résumé ${icon('download')}</a>
       </div>
-      <a class="qr-email" href="mailto:${email}">${email}</a>
+      <div class="qr-contact">
+        <a class="qr-email" href="mailto:${email}">${email}</a>
+        ${linkedIn ? `<a class="qr-linkedin" href="${escapeHtml(linkedIn.url)}"><span class="qr-linkedin__label">Connect on LinkedIn</span><span class="qr-linkedin__print">${escapeHtml(linkedIn.url.replace(/^https:\/\/(?:www\.)?/, ''))}</span>${icon('arrowUpRight')}</a>` : ''}
+      </div>
     </div>
     <section class="qr-codes" aria-label="Scan for my portfolio or résumé">
       <article class="qr-card">
