@@ -20,7 +20,7 @@ and clearly links to V2 as the authoritative release.
 
 The case study adds ownership, requirements versus outcomes, lid tradeoffs, four
 magnetic-generator iterations, geometry, both custom boards, working electronics,
-embedded waveform timing, early electric simulation, field mapping, validation,
+embedded waveform timing, magnetic ANSYS and Python analysis, field mapping, validation,
 final UI, the final demonstration, and next steps. Image-level provenance is in
 `public/assets/images/bioreactor/SOURCES.md`.
 
@@ -28,7 +28,8 @@ Important source distinctions preserved:
 
 - Final report Table A1.1 credits Dylan Bailes with initial electric simulations,
   lid analysis, magnetic-generator CAD and versions 1–4, and final UI design/testing.
-  Other subsystem work and team measurements are attributed to the team.
+  The user's later clarification also establishes his well design work. Slide
+  name credits identify presenters and are not evidence of authorship.
 - Four well modules were delivered with one complete optical station.
 - The Hall-sensor satellite was used in the final build; the main STM32 drive
   board needed revision. Final drive electronics used ESP32/perfboard assemblies.
@@ -74,3 +75,18 @@ the tested 20-inch reach and explains why higher scoring heights were missed.
   section-number watermarks, rather than the project text. No run warnings.
 
 Public deployment verification is recorded after publication.
+
+## Follow-up corrections
+
+- User confirmed the connected vertical housing is iteration 3 and the split
+  housing is iteration 4/final. The case study sequence and home gallery now agree.
+- Replaced the electrode simulation in the geometry analysis with the original
+  horseshoe ANSYS plot and Python Helmholtz axial model. Proposal parameters are
+  identified separately from final coil parameters. Moved the final measured and
+  theoretical surface comparison to magnetic validation.
+- Removed the field-map measurement notes from the public case study.
+- Refocused the narrative on Dylan's design decisions, well design, magnetic
+  development, electronics, characterization, and final UI. Electric-stimulus
+  team testing is available in a collapsed supporting section.
+- Ownership follows the user's direct clarification and supplied technical
+  records; presenter names on slides are not treated as author credits.

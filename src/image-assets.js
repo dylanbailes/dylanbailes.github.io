@@ -6,6 +6,8 @@ const dimensions = {
   'coil-horseshoe': [1600, 1205],
   'coil-well': [527, 702],
   'field-map': [1600, 903],
+  'horseshoe-ansys': [1096, 598],
+  'helmholtz-axial-model': [800, 500],
   'bench': [1205, 1600],
   'drive-pcb': [1600, 952],
   'hall-pcb': [1600, 1032],

@@ -37,7 +37,7 @@
 <div>
 <h1>Multi-Chamber Camera Bioreactor<span class="case-study__period">.</span>
 </h1>
-<p class="case-study__lead">From field-generator prototypes to an integrated research platform. I developed the magnetic subsystem, custom electronics, and final touchscreen interface for a four-well bioreactor.</p>
+<p class="case-study__lead">From field-generator prototypes to an integrated research platform. I designed the well and magnetic subsystem, developed custom electronics, and completed the final touchscreen interface for a four-well bioreactor.</p>
 <div class="case-study__actions">
 <button class="btn btn--primary" data-present-visuals hidden>Present visuals ↗</button><a class="btn btn--ghost" href="#ownership">My contributions ↓</a><a class="btn btn--ghost" href="assets/reports/mccb-final-report-release-v2.pdf">Final report V2 ↗</a>
 </div>
@@ -69,19 +69,21 @@
 </section>
 <section id="ownership" class="case-study__section">
 <h2>What I owned</h2>
-<p>I took the magnetic subsystem from geometry selection through four physical iterations, custom board design, and bench validation. I also contributed the initial electric-field simulations, evaluated lid concepts, and completed the final interface design and testing.</p>
+<p>I designed the well and owned the magnetic generator from the first ANSYS and Python studies through four physical iterations, custom PCB design, and bench characterization. My work connected the sample chamber to the field model, coil geometry, mechanical housing, Hall-sensor placement, and final touchscreen controls. I also evaluated lid concepts and contributed the initial electric-field simulations.</p>
 <div class="case-study__table-wrap">
-<table class="case-study__table"><caption>My contributions recorded in the final report</caption>
+<table class="case-study__table"><caption>My design and development work</caption>
 <thead>
 <tr><th scope="col">Workstream</th><th scope="col">My work</th>
 </tr>
 </thead>
 <tbody>
+<tr><th scope="row">Well design</th><td>Sample-well design and its integration with the magnetic assembly, electrodes, lid interfaces, and optical access.</td>
+</tr>
 <tr><th scope="row">Magnetic generator</th><td>Coil geometry, electromagnet CAD, versions 1–4, packaging, and field characterization.</td>
 </tr>
 <tr><th scope="row">Custom electronics</th><td>KiCad drive-board and Hall-sensor satellite designs; prototype bring-up and debugging.</td>
 </tr>
-<tr><th scope="row">Early design analysis</th><td>Electric-field simulations and an individual lid-design trade study.</td>
+<tr><th scope="row">Design analysis</th><td>Horseshoe magnetic-field analysis in ANSYS, Python Helmholtz field models, initial electric-field simulations, and an individual lid-design trade study.</td>
 </tr>
 <tr><th scope="row">Final software interface</th><td>UI design and testing for device assignment, calibration, stimulus settings, telemetry, and imaging.</td>
 </tr>
@@ -90,10 +92,10 @@
 </tbody>
 </table>
 </div>
-<p class="case-study__source">Attribution: final report, Table A1.1, and the individual design analysis by Dylan Bailes.</p>
+<p class="case-study__source">Technical references: final report and my individual design analysis. The sections below follow my work from design decisions through prototype validation.</p>
 <details class="case-study__details">
 <summary>Team contributions</summary>
-<p>Kaitlyn Lavarias developed the initial UI and sensor/electronics research, initial electrode circuit, and optical validation. Dylan Lee led chassis, gantry, and circuit fabrication. Samantha Olivar led well and pressure-system work, electrode fabrication/testing, revised electric-field simulations, and camera/UI integration. The validation results and final assembly below are team outcomes.</p>
+<p>Kaitlyn Lavarias developed the initial UI and sensor/electronics research, initial electrode circuit, and optical validation. Dylan Lee led chassis, gantry, and circuit fabrication. Samantha Olivar contributed pressure-system work, electrode fabrication/testing, revised electric-field simulations, and camera/UI integration. The assembled platform combined these contributions with my well, magnetic subsystem, electronics, and final interface work.</p>
 </details>
 </section>
 <section id="requirements" class="case-study__section">
@@ -124,10 +126,10 @@
 </section>
 <section id="architecture" class="case-study__section">
 <h2>A well module with room for optics</h2>
-<p>Each clear-bottom well sits inside a Helmholtz coil pair. Titanium plates apply the electric stimulus; the threaded lid provides fluid ports and illumination. A Hall-sensor satellite fits around the well, and the microscope observes the sample from below. The extrusion frame supports four modules and a Raspberry Pi touchscreen.</p>
+<p>I designed the well and magnetic assembly together around the sample volume and microscope access. The clear-bottom well sits inside my split coil housing, with room for the Hall-sensor satellite and an unobstructed optical path below. Threaded lid interfaces, electrodes, fluid connections, and the team's frame complete the four-well platform.</p>
 <p>The final control path used ESP32 controllers and perfboard drive electronics. The four-station imaging layout was part of the design, while the delivered hardware contained one complete optical station.</p>
 <figure class="case-study__figure"><a href="assets/images/bioreactor/coil-well.webp" data-visual aria-label="Enlarge: Resin-printed well inside the final coil housing"><img src="assets/images/bioreactor/coil-well.webp" alt="Resin-printed well inside the final coil housing" width="527" height="702" decoding="async" loading="lazy"></a>
-<figcaption>Final well and coil packaging. Source: final sponsor presentation.</figcaption>
+<figcaption>My well design inside my final split coil housing. Source: final sponsor presentation.</figcaption>
 </figure>
 <div class="case-study__figure-grid">
 <figure class="case-study__figure"><a href="assets/images/bioreactor/microscope.webp" data-visual aria-label="Enlarge: Microscope beneath a coil and clear-bottom sample well"><img src="assets/images/bioreactor/microscope.webp" alt="Microscope beneath a coil and clear-bottom sample well" width="521" height="695" decoding="async" loading="lazy"></a>
@@ -141,7 +143,7 @@
 <section id="lid" class="case-study__section">
 <h2>Choose interfaces that can be assembled and serviced</h2>
 <p>My individual design analysis compared an adhesive-sealed Delrin concept, a serviceable acrylic lid with threaded/compression fittings, and a spring-loaded PTFE concept with Luer/PEEK connections. I weighed sealing, chemical compatibility, deflection, assembly effort, cost, and lead time.</p>
-<p>I recommended the serviceable middle option at that stage. The team's final design evolved to a resin-printed threaded well and lid with an O-ring, Luer fluid connections, a central LED diffuser, and bolted electrode ring terminals. The concept recommendation and the delivered geometry were different stages of the design process.</p>
+<p>I recommended the serviceable middle option at that stage. The delivered assembly used my resin-printed well design with a threaded lid, an O-ring, Luer fluid connections, a central LED diffuser, and bolted electrode ring terminals. The concept recommendation and the delivered geometry were different stages of the design process.</p>
 <div class="case-study__table-wrap">
 <table class="case-study__table"><caption>Lid concept trade study</caption>
 <thead>
@@ -160,7 +162,7 @@
 </div>
 <div class="case-study__figure-grid">
 <figure class="case-study__figure"><a href="assets/images/bioreactor/well.webp" data-visual aria-label="Enlarge: Final transparent well with titanium electrodes and ring-terminal connections"><img src="assets/images/bioreactor/well.webp" alt="Final transparent well with titanium electrodes and ring-terminal connections" width="802" height="420" decoding="async" loading="lazy"></a>
-<figcaption>Delivered well. Well and electrode implementation were team work. Source: project photos.</figcaption>
+<figcaption>My well design, with the team's fabricated titanium electrodes and connections. Source: project photos.</figcaption>
 </figure>
 <figure class="case-study__figure"><a href="assets/images/bioreactor/lid.webp" data-visual aria-label="Enlarge: Final threaded lid with fluid ports and illumination diffuser"><img src="assets/images/bioreactor/lid.webp" alt="Final threaded lid with fluid ports and illumination diffuser" width="390" height="390" decoding="async" loading="lazy"></a>
 <figcaption>Final lid interfaces. Source: project photos.</figcaption>
@@ -171,22 +173,22 @@
 <section id="coils" class="case-study__section">
 <h2>Four iterations of the magnetic generator</h2>
 <p>I first compared an air-gap horseshoe magnet with a Helmholtz pair. The horseshoe offered lower current demand, but the analysis showed larger lateral field variation and raised concerns about residual magnetism. The Helmholtz configuration offered a more uniform central region and a practical path to alternating fields.</p>
-<p>An early coil-spacing error reduced the field substantially. Correcting the geometry so coil separation equaled the radius was a key change. Later iterations improved well access, mounting, and sensor-board integration.</p>
+<p>An early coil-spacing error reduced the field substantially. I corrected the geometry so coil separation equaled the radius, then developed the connected vertical housing and finally the split housing. Those mechanical iterations addressed well access, mounting, and sensor-board integration.</p>
 <div class="case-study__figure-grid case-study__iterations">
 <figure class="case-study__figure"><a href="assets/images/bioreactor/coil-horseshoe.webp" data-visual aria-label="Enlarge: Early horseshoe electromagnet prototype"><img src="assets/images/bioreactor/coil-horseshoe.webp" alt="Early horseshoe electromagnet prototype" width="1600" height="1205" decoding="async" loading="lazy"></a>
-<figcaption>Horseshoe prototype: evaluate the air-gap approach. Source: final sponsor presentation.</figcaption>
+<figcaption>1 · Horseshoe prototype: I evaluated the air-gap approach. Source: final sponsor presentation.</figcaption>
 </figure>
 <figure class="case-study__figure"><a href="assets/images/bioreactor/coil-horizontal.webp" data-visual aria-label="Enlarge: Early blue horizontal Helmholtz coil pair"><img src="assets/images/bioreactor/coil-horizontal.webp" alt="Early blue horizontal Helmholtz coil pair" width="1600" height="1205" decoding="async" loading="lazy"></a>
-<figcaption>Horizontal pair: establish coil geometry and test access. Source: final sponsor presentation.</figcaption>
+<figcaption>2 · Horizontal pair: I developed and tested the Helmholtz geometry. Source: final sponsor presentation.</figcaption>
 </figure>
-<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-well.webp" data-visual aria-label="Enlarge: Vertical connected coil assembly around the sample well"><img src="assets/images/bioreactor/coil-well.webp" alt="Vertical connected coil assembly around the sample well" width="527" height="702" decoding="async" loading="lazy"></a>
-<figcaption>Connected vertical arrangement: package the well between coils. Source: final sponsor presentation.</figcaption>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-final.webp" data-visual aria-label="Enlarge: Third iteration with a connected vertical coil housing"><img src="assets/images/bioreactor/coil-final.webp" alt="Third iteration with a connected vertical coil housing" width="1600" height="1205" decoding="async" loading="lazy"></a>
+<figcaption>3 · Connected vertical housing: I packaged the coil pair around the well. Source: final sponsor presentation.</figcaption>
 </figure>
-<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-final.webp" data-visual aria-label="Enlarge: Final ASA Helmholtz coil housing with hand-wound magnet wire"><img src="assets/images/bioreactor/coil-final.webp" alt="Final ASA Helmholtz coil housing with hand-wound magnet wire" width="1600" height="1205" decoding="async" loading="lazy"></a>
-<figcaption>Final housing: integrate well mounting and satellite-board access. Source: final sponsor presentation.</figcaption>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-well.webp" data-visual aria-label="Enlarge: Fourth and final iteration with split coil housing around the sample well"><img src="assets/images/bioreactor/coil-well.webp" alt="Fourth and final iteration with split coil housing around the sample well" width="527" height="702" decoding="async" loading="lazy"></a>
+<figcaption>4 · Final split housing: I refined well access, mounting, and satellite-board packaging. Source: final sponsor presentation.</figcaption>
 </figure>
 </div>
-<p>The final coil used <strong>156 turns of 24 AWG wire per coil, a 27 mm radius, and 27 mm separation</strong>, with a printed ASA housing. The report predicts approximately 5 mT at 1 A and compares that prediction with a measured field map.</p>
+<p>My final coil design used <strong>156 turns of 24 AWG wire per coil, a 27 mm radius, and 27 mm separation</strong>, with a printed ASA housing. The analytical prediction was approximately 5 mT at 1 A; I compared the model with field measurements during characterization.</p>
 <figure class="case-study__figure"><a href="assets/images/bioreactor/coil-geometry.webp" data-visual aria-label="Enlarge: CAD section of the final coil, well, and satellite-board packaging"><img src="assets/images/bioreactor/coil-geometry.webp" alt="CAD section of the final coil, well, and satellite-board packaging" width="438" height="365" decoding="async" loading="lazy"></a>
 <figcaption>Final geometry and packaging. Source: final report, Figure 3.4.</figcaption>
 </figure>
@@ -221,19 +223,25 @@
 </section>
 <section id="simulation" class="case-study__section">
 <h2>Use analysis to choose geometry, then test it</h2>
-<p>I contributed initial electric-field simulations and magnetic-field analysis to guide geometry selection. The team later revised the electric-field models for the final well. Simulation helped us reason about field distribution, electrode geometry, and packaging before committing to hardware.</p>
-<figure class="case-study__figure"><a href="assets/images/bioreactor/electric-simulation.webp" data-visual aria-label="Enlarge early ANSYS electric-field model"><img src="assets/images/bioreactor/electric-simulation.webp" alt="Early ANSYS Maxwell model showing electric-field concentration near two parallel wire electrodes" width="558" height="408" loading="lazy" decoding="async"></a><figcaption>Early parallel-wire electrode study, with 16 mm center spacing and 5 V excitation in saline. Source: team Design Proposal Presentation, slide 10. The final team design used titanium plates.</figcaption></figure>
-<p>For the magnetic generator, we compared the analytical Helmholtz model with a calibrated magnetometer map. The published figure below combines measured surface data and theoretical contours. It is the team's reported result, including interpolation; it is not a newly generated dataset.</p>
-<figure class="case-study__figure"><a href="assets/images/bioreactor/field-map.webp" data-visual aria-label="Enlarge: Measured magnetic field surface and theoretical Helmholtz uniformity contours"><img src="assets/images/bioreactor/field-map.webp" alt="Measured magnetic field surface and theoretical Helmholtz uniformity contours" width="1600" height="903" decoding="async" loading="lazy"></a>
-<figcaption>Team field map: reported 4.98 mT center and &lt;1% deviation across the well footprint at 1 A. Source: final report, Figure 4.4 / final sponsor presentation.</figcaption>
+<p>I compared two magnetic geometries before committing to the final hardware: an iron-core horseshoe magnet modeled in ANSYS and an air-core Helmholtz pair modeled in Python. I needed a uniform stimulus across the sample, practical alternating-field control, and a geometry that could fit around the well and optics.</p>
+<h3>Horseshoe magnet · ANSYS field analysis</h3>
+<p>My ANSYS study showed field lines bulging around the air gap and stronger fields near the pole faces. Recurving the pole faces could reduce fringing, but the study still showed variation across the gap. I weighed the horseshoe's lower current demand and simple mounting against this nonuniformity, remanent magnetization, and nonlinear core behavior under AC drive.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/horseshoe-ansys.webp" data-visual aria-label="Enlarge: My ANSYS horseshoe magnet simulation showing air-gap fringing and magnetic flux density"><img src="assets/images/bioreactor/horseshoe-ansys.webp" alt="ANSYS horseshoe magnetic flux-density vectors showing fringing around the air gap and higher field near the pole faces" width="1096" height="598" loading="lazy" decoding="async"></a>
+<figcaption>My horseshoe magnetic-field study in ANSYS. Source: Design Proposal Presentation, slide 12.</figcaption>
 </figure>
-<details class="case-study__details">
-<summary>Field-map measurement notes</summary>
-<p>The published surface is interpolated from the magnetometer measurements. The raw appendix table has an unresolved unit-label inconsistency, so the figure is presented with the units and results stated in the report. Additional mapped trials would establish repeatability.</p>
-</details>
+<h3>Helmholtz pair · Python field model</h3>
+<p>I used Python to visualize the combined field from two coils and identify the flatter central region between them. The early axial plot below models 10 layers × 28 turns at 0.5 A. It made coil separation a design variable: setting the gap equal to the coil radius gives the uniform central region needed for the sample.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/helmholtz-axial-model.webp" data-visual aria-label="Enlarge: My theoretical Helmholtz field along the coil axis at 0.5 amperes"><img src="assets/images/bioreactor/helmholtz-axial-model.webp" alt="Theoretical magnetic field versus axial distance at 0.5 amperes, with coil positions marked and a flatter region between the coils" width="800" height="500" loading="lazy" decoding="async"></a>
+<figcaption>My early Helmholtz field model: axial strength and coil positions. Source: Design Proposal Presentation, slide 13. These are proposal-stage parameters.</figcaption>
+</figure>
+<p><strong>My design decision:</strong> I chose the Helmholtz pair for its central uniformity and suitability for alternating fields, then corrected the spacing and developed the housing around the well and sensing board. The final model used the 156-turn, 27 mm geometry shown above; the theoretical surface and measurement comparison below close the loop from analysis to hardware.</p>
 </section>
 <section id="testing" class="case-study__section">
 <h2>Characterize the subsystem and its limits</h2>
+<p>I characterized the magnetic generator by comparing the predicted spatial field with magnetometer measurements, checking the Hall-sensor waveforms, and examining the coil's electrical response. The final report records these results alongside the team's system validation.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/field-map.webp" data-visual aria-label="Enlarge: Measured magnetic field surface and theoretical Helmholtz uniformity contours"><img src="assets/images/bioreactor/field-map.webp" alt="Measured magnetic field surface and theoretical Helmholtz uniformity contours" width="1600" height="903" decoding="async" loading="lazy"></a>
+<figcaption>My magnetic characterization: measured surface (left) and theoretical Helmholtz visualization (right). Reported center field: 4.98 mT at 1 A; well footprint within the &lt;1% deviation contour. Source: final report, Figure 4.4 / final sponsor presentation.</figcaption>
+</figure>
 <div class="case-study__table-wrap">
 <table class="case-study__table"><caption>Magnetic subsystem evidence from Chapter 4 of the final report</caption>
 <thead>
@@ -262,16 +270,18 @@
 <figcaption>Measured Hall-sensor waveform at 100 Hz. Source: final report, Figure 4.5.</figcaption>
 </figure>
 </div>
-<h3>Electric stimulus: team dry and saline tests</h3>
+<details class="case-study__details">
+<summary>Supporting team validation: electric stimulus</summary>
 <p>The team calibrated the electrode drive using a 100 Ω dry load and then tested the electrodes in saline. The chart below reproduces the four points in <em>Electrode Test Data.xlsx</em>. It shows measured drive voltage, rather than a biological result or a complete field-uniformity validation.</p>
 <figure class="case-study__figure"><a href="assets/images/bioreactor/electrode-voltage.svg" data-visual aria-label="Enlarge electrode voltage measurements"><img src="assets/images/bioreactor/electrode-voltage.svg" alt="Expected output of 2, 3, 4 and 5 volts compared with dry measurements of 1.68, 2.68, 3.64 and 4.62 volts and saline measurements of 1.98, 2.96, 3.98 and 4.96 volts" width="1000" height="650" loading="lazy" decoding="async"></a>
 <figcaption>Four supplied measurements per condition; no repeatability/error bars were provided. Source: team Electrode Test Data.xlsx, Sheet1. <a href="assets/reports/mccb-electrode-test-data.csv">Download plotted data (CSV)</a>.</figcaption>
 </figure>
+</details>
 <p class="case-study__source">The report's thermal wording does not clearly distinguish temperature rise from absolute temperature. Cross-well magnetic isolation, long-duration sample temperature, repeatability, and biological response remain further validation.</p>
 </section>
 <section id="ui" class="case-study__section">
 <h2>Make the hardware usable from one screen</h2>
-<p>The final report credits me with final UI design and testing, building on Kaitlyn's initial interface and Samantha's camera integration. The Raspberry Pi interface provides device assignment, firmware initialization, per-well parameters, calibration, live magnetic readings, and camera controls.</p>
+<p>I completed the final UI design and testing, building on Kaitlyn's initial interface and Samantha's camera integration. I brought device assignment, firmware initialization, per-well parameters, calibration, live magnetic readings, and camera controls into the final Raspberry Pi touchscreen workflow.</p>
 <p>The demo walks through assigning controllers, calibrating PWM against Hall readings, selecting waveform and field settings, and adjusting exposure, gain, and frame rate. The camera screen supports a four-view layout, while the delivered prototype had one installed camera station.</p>
 <figure class="case-study__figure"><a href="assets/images/bioreactor/ui-control.webp" data-visual aria-label="Enlarge: Final interface with independent electric and magnetic waveform settings"><img src="assets/images/bioreactor/ui-control.webp" alt="Final interface with independent electric and magnetic waveform settings" width="1124" height="702" decoding="async" loading="lazy"></a>
 <figcaption>Per-well electric and magnetic stimulus controls. Source: final sponsor presentation.</figcaption>

@@ -205,10 +205,10 @@ export const site = {
       title: 'Multi-Chamber Camera Bioreactor',
       category: 'pcb',
       categories: ['mechanical', 'pcb', 'firmware', 'simulation'],
-      role: 'Magnetic subsystem, custom electronics, final UI design and testing',
+      role: 'Well and magnetic subsystem design, custom electronics, final UI',
       outcome: 'Completed capstone prototype · UC San Diego, 2026',
       summary:
-        "Built a four-well research platform with a four-person team. I developed the magnetic generator through four iterations, designed drive and Hall-sensor boards, contributed field simulations and lid design, and completed the final UI. The delivered system combined independent stimulus control with one complete microscope/camera station.",
+        "Built a four-well research platform with a four-person team. I designed the well, compared magnetic geometries in ANSYS and Python, developed the magnetic generator through four iterations, designed drive and Hall-sensor boards, and completed the final UI. The delivered system combined independent stimulus control with one complete microscope/camera station.",
       specs: [
         { label: 'Delivered', value: '4 wells · 1 complete imaging station' },
         { label: 'Field map', value: '4.98 mT center at 1 A (team report)' },
@@ -233,9 +233,9 @@ export const site = {
         fullSize: true,
         // Extra shots — shown as a thumbnail strip under the main image
         gallery: [
-          { src: 'assets/images/bioreactor/coil-final.webp', alt: 'Final printed Helmholtz coil housing with hand-wound magnet wire', fit: 'contain', caption: 'Magnetic generator · final coil iteration' },
+          { src: 'assets/images/bioreactor/coil-well.webp', alt: 'Final split Helmholtz coil housing around the sample well', fit: 'contain', caption: 'My magnetic generator · final split housing' },
           { src: 'assets/images/bioreactor/drive-pcb.webp', alt: 'Custom STM32 drive board layout in KiCad', fit: 'contain', caption: 'Custom drive PCB design · prototype requiring revision' },
-          { src: 'assets/images/bioreactor/field-map.webp', alt: 'Reported measured magnetic surface and theoretical uniformity contours', fit: 'contain', caption: 'Team field map · 4.98 mT center; reported footprint variation below 1%' },
+          { src: 'assets/images/bioreactor/field-map.webp', alt: 'Measured magnetic surface and theoretical Helmholtz uniformity contours', fit: 'contain', caption: 'My magnetic characterization · 4.98 mT center; reported footprint variation below 1%' },
           { src: 'assets/images/bioreactor/ui-control.webp', alt: 'Final touchscreen interface for electric and magnetic waveform settings', fit: 'contain', caption: 'Final UI · individual well stimulus controls' },
         ],
       },

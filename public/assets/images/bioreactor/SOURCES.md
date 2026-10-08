@@ -2,15 +2,17 @@
 
 Original material provided by the user in the [MAE 156B project folder](https://drive.google.com/drive/folders/1ZbeMrbLJBG24YN2HKOzTh8cuP53QPTIm). Reviewed October 7, 2026.
 
+Slide name credits identify presenters, not necessarily designers or authors. Ownership descriptions incorporate Dylan Bailes's direct clarification that he designed the well and performed the horseshoe ANSYS and Helmholtz Python analysis; they are not inferred from presenter labels.
+
 Photos were resized and converted to WebP; UI screenshots, board layouts, and measured plots use lossless WebP. Scientific results were preserved as reported. No hardware photographs were generated.
 
 | Asset | Original source |
 | --- | --- |
 | assembly.webp | Final Sponsor Presentation.pptx / slide2-0.png |
-| coil-final.webp | Final Sponsor Presentation.pptx / slide15-0.jpg |
+| coil-final.webp | Final Sponsor Presentation.pptx / slide15-0.jpg; connected housing, third iteration (legacy filename retained) |
 | coil-horizontal.webp | Final Sponsor Presentation.pptx / slide15-3.jpg |
 | coil-horseshoe.webp | Final Sponsor Presentation.pptx / slide15-2.jpg |
-| coil-well.webp | Final Sponsor Presentation.pptx / slide15-1.png |
+| coil-well.webp | Final Sponsor Presentation.pptx / slide15-1.png; split housing, fourth and final iteration |
 | field-map.webp | Final Sponsor Presentation.pptx / slide16-0.png |
 | bench.webp | Final Sponsor Presentation.pptx / slide17-0.jpg |
 | drive-pcb.webp | Final Sponsor Presentation.pptx / slide18-0.png |
@@ -31,6 +33,8 @@ Photos were resized and converted to WebP; UI screenshots, board layouts, and me
 | coil-geometry.webp | Final report / image16 |
 | poster.webp | Final Poster.pdf / page 1 |
 | electric-simulation.webp | Design Proposal Presentation.pptx / slide 10 |
+| horseshoe-ansys.webp | Design Proposal Presentation.pptx / slide 12, Figure 12.a; original embedded 1096×598 image |
+| helmholtz-axial-model.webp | Design Proposal Presentation.pptx / slide 13, Figure 13.a; original embedded 800×500 image, proposal-stage 10 layers × 28 turns at 0.5 A |
 | demo-poster.webp | MCCBVIDEO.mov / frame at 4 seconds |
 
 `electrode-voltage.svg` reproduces the four expected/dry/wet output-voltage points in Internal Research Notes / Electrode Test Data.xlsx, Sheet1. The plotted values are also supplied in `assets/reports/mccb-electrode-test-data.csv`. No repeated trials or error bars were supplied.
@@ -39,4 +43,4 @@ Photos were resized and converted to WebP; UI screenshots, board layouts, and me
 
 The report, presentation, and poster PDFs are unmodified originals. The final report PDF is the explicit **RELEASE V2**, reviewed with Errata Document.docx. The HTML report preserves the earlier supplied export and links to the authoritative V2 PDF.
 
-The original report has unresolved raw magnetic-table unit labels and ambiguous thermal-temperature wording. The case study uses the published magnetic figure with reported units, labels its interpolation, and makes thermal and repeatability limits explicit.
+The case study uses the magnetic figure and results as published in the final report. The ANSYS and Python proposal-stage figures are preserved without altering their axes, data, or geometry. The final magnetic model and measured comparison appear in the validation section.
