@@ -249,12 +249,14 @@ export function renderProjects() {
         : '';
 
       return `
-        <article class="project-card" data-category="${escapeHtml(project.category)}">
+        <article class="project-card" data-category="${escapeHtml(project.category)}" data-categories="${escapeHtml((project.categories || [project.category]).join(' '))}">
           <div class="project-card__top">
             <span class="project-card__index">P.${String(index + 1).padStart(2, '0')}</span>
             <span class="project-card__badge project-card__badge--${escapeHtml(project.category)}">${code}</span>
           </div>
           <h3 class="project-card__title">${escapeHtml(project.title)}</h3>
+          ${project.role ? `<p class="project-card__role">${escapeHtml(project.role)}</p>` : ''}
+          ${project.outcome ? `<p class="project-card__outcome">${escapeHtml(project.outcome)}</p>` : ''}
 
           ${renderMedia(project.media)}
 
@@ -299,7 +301,7 @@ function filterProjects(category) {
   });
 
   cards.forEach((card, index) => {
-    const matches = category === 'all' || card.dataset.category === category;
+    const matches = category === 'all' || (card.dataset.categories || card.dataset.category).split(' ').includes(category);
 
     if (matches) {
       card.classList.remove('hidden');

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Dylan Bailes's engineering case study of a four-chamber bioreactor: magnetic-field hardware, electronics, STM32 firmware, simulation, and testing.">
+  <meta name="description" content="Dylan Bailes's bioreactor capstone: four coil iterations, custom PCBs, embedded waveform control, field validation, and a Raspberry Pi touchscreen interface.">
   <meta name="author" content="Dylan Bailes">
   <meta name="theme-color" content="#f4f4f1">
   <!-- Early theme -->
@@ -32,117 +32,303 @@
   </header>
 
   <main id="case-study" class="case-study container" tabindex="-1">
-    <div class="case-study__eyebrow">P.01 / HARDWARE · EMBEDDED · SIMULATION</div>
+    <div class="case-study__eyebrow">UC SAN DIEGO · MAE 156B · SPRING 2026</div>
     <div class="case-study__intro">
-      <div>
-        <h1>Multi-Chamber Camera Bioreactor<span class="case-study__period">.</span></h1>
-        <p class="case-study__lead">A four-chamber research platform for applying electric and magnetic stimulation while observing cell cultures. My focus was the magnetic-field subsystem, control electronics, firmware development, and validation.</p>
-        <div class="case-study__actions">
-          <a class="btn btn--primary" href="#problem">Explore the project →</a>
-          <a class="btn btn--ghost" href="reports/mccb-final-report.html">Full Technical Report ↗</a>
-          <a class="btn btn--ghost" href="https://www.youtube.com/watch?v=5tLC9Iq_kE8">Watch Team Video ↗</a>
-        </div>
-      </div>
-      <figure class="case-study__hero-figure">
-        <img src="assets/images/mccb-final-design.webp" alt="CAD rendering of the four-chamber bioreactor assembly" width="747" height="678" decoding="async" fetchpriority="high">
-        <figcaption>Four-well final design · UC San Diego MAE 156B, 2026</figcaption>
-      </figure>
-    </div>
-
-    <div class="case-study__metrics" aria-label="Project highlights">
-      <div><strong>4</strong><span>Independent chambers</span></div>
-      <div><strong>4.98 mT</strong><span>Measured center field</span></div>
-      <div><strong>&lt;1%</strong><span>Field variation across well</span></div>
-      <div><strong>2</strong><span>Custom PCB designs</span></div>
-    </div>
-
+<div>
+<h1>Multi-Chamber Camera Bioreactor<span class="case-study__period">.</span>
+</h1>
+<p class="case-study__lead">From field-generator prototypes to an integrated research platform. I developed the magnetic subsystem, custom electronics, and final touchscreen interface for a four-well bioreactor.</p>
+<div class="case-study__actions">
+<button class="btn btn--primary" data-present-visuals hidden>Present visuals ↗</button><a class="btn btn--ghost" href="#ownership">My contributions ↓</a><a class="btn btn--ghost" href="assets/reports/mccb-final-report-release-v2.pdf">Final report V2 ↗</a>
+</div>
+<p class="case-study__hint">Open any image to enlarge it. In presentation view, use the arrow keys to move between visuals.</p>
+</div>
+<figure class="case-study__hero-figure"><a href="assets/images/bioreactor/assembly.webp" data-visual aria-label="Enlarge: Finished four-well bioreactor with touchscreen and one installed optical station"><img src="assets/images/bioreactor/assembly.webp" srcset="assets/images/bioreactor/assembly-320.webp 320w, assets/images/bioreactor/assembly-640.webp 640w, assets/images/bioreactor/assembly.webp 961w" sizes="(max-width: 900px) 75vw, 40vw" alt="Finished four-well bioreactor with touchscreen and one installed optical station" width="961" height="959" decoding="async" fetchpriority="high"></a>
+<figcaption>Delivered four-well prototype with one complete microscope/camera station. Source: final sponsor presentation.</figcaption>
+</figure>
+</div>
+<div class="case-study__metrics" aria-label="Project highlights">
+<div><strong>4 iterations</strong><span>Magnetic generator development</span>
+</div>
+<div><strong>4.98 mT</strong><span>Reported center field at 1 A</span>
+</div>
+<div><strong>2 boards</strong><span>Drive prototype + Hall satellite</span>
+</div>
+<div><strong>1 interface</strong><span>Final UI design and testing</span>
+</div>
+</div>
     <div class="case-study__layout">
-      <nav class="case-study__toc" aria-label="Case study sections">
-        <span>CONTENTS</span>
-        <a href="#problem">01 Problem</a>
-        <a href="#requirements">02 Requirements</a>
-        <a href="#architecture">03 Architecture</a>
-        <a href="#electronics">04 Electronics</a>
-        <a href="#firmware">05 Firmware</a>
-        <a href="#simulation">06 Simulation</a>
-        <a href="#testing">07 Testing</a>
-        <a href="#lessons">08 Lessons learned</a>
-      </nav>
-
-      <div class="case-study__sections">
-        <section id="problem" class="case-study__section">
-          <p class="case-study__section-index">01 / PROBLEM</p>
-          <h2>Study cell response under controlled fields</h2>
-          <p>A stem-cell research lab needed a way to apply repeatable electric and magnetic stimuli to cell cultures and observe the response. The team built a modular platform with four wells so experiments could be controlled separately while microscopy remained available beneath each chamber.</p>
-        </section>
-
-        <section id="requirements" class="case-study__section">
-          <p class="case-study__section-index">02 / REQUIREMENTS</p>
-          <h2>Make the fields measurable and the samples visible</h2>
-          <ul class="case-study__list">
-            <li>Four optically clear, sealable chambers with individual stimulation control.</li>
-            <li>A magnetic field of at least 1.5 mT with good uniformity across each well.</li>
-            <li>Electric-field control around the 1.5 V/cm target while avoiding electrolysis.</li>
-            <li>Microscope access, fluid ports, and a clear path to field feedback and calibration.</li>
-          </ul>
-        </section>
-
-        <section id="architecture" class="case-study__section">
-          <p class="case-study__section-index">03 / ARCHITECTURE</p>
-          <h2>Four repeatable well modules</h2>
-          <p>Each chamber paired a clear-bottom well and titanium electrodes with Helmholtz coils for magnetic stimulation. A microscope stage sat below each well. The system architecture connected sensor feedback and stimulus control to a Raspberry Pi touchscreen interface; the final integrated build used an ESP32 control path and perf-board drive electronics.</p>
-          <figure class="case-study__figure">
-            <img src="assets/images/mccb-intermediate.webp" alt="Intermediate physical bioreactor assembly with structural frame and well modules" width="1200" height="1071" decoding="async" loading="lazy">
-            <figcaption>Intermediate assembly during mechanical and electronics integration</figcaption>
-          </figure>
-        </section>
-
-        <section id="electronics" class="case-study__section">
-          <p class="case-study__section-index">04 / ELECTRONICS</p>
-          <h2>Drive, sense, and debug the magnetic subsystem</h2>
-          <p>I designed two KiCad PCB prototypes for the magnetic-field electronics, including the drive and Hall-sensor feedback paths. PCB debugging exposed issues that could not be fully revised within the project timeline. The working integrated system used perf-board assemblies for field drive while the PCB design remained a clear next iteration.</p>
-        </section>
-
-        <section id="firmware" class="case-study__section">
-          <p class="case-study__section-index">05 / FIRMWARE</p>
-          <h2>Bring up STM32 control hardware</h2>
-          <p>STM32 firmware development included I²C and UART interfaces, peripheral bring-up, and recovery from option-byte configuration problems. When HAL did not provide the needed behavior, I configured peripherals through direct register access. That work turned board-level problems into specific, testable issues.</p>
-        </section>
-
-        <section id="simulation" class="case-study__section">
-          <p class="case-study__section-index">06 / SIMULATION</p>
-          <h2>Check field behavior before and after building</h2>
-          <p>ANSYS Maxwell simulations helped compare magnetic-field geometry and predict uniformity. The team also simulated the electric field in the saline-filled wells. Those results guided the prototype geometry and provided a reference for physical field mapping.</p>
-          <figure class="case-study__figure">
-            <img src="assets/images/mccb-surface-comparison.webp" alt="Comparison of bioreactor field simulation results" width="597" height="336" decoding="async" loading="lazy">
-            <figcaption>Simulation comparison used to assess field distribution</figcaption>
-          </figure>
-        </section>
-
-        <section id="testing" class="case-study__section">
-          <p class="case-study__section-index">07 / TESTING</p>
-          <h2>Measure what the prototype delivered</h2>
-          <p>Bench mapping measured a 4.98 mT magnetic field at the coil center and less than 1% variation across the well footprint. Hall sensors tracked the 100 Hz drive waveform, and AC tests covered the intended 0–250 Hz range. Cross-well magnetic isolation still needs formal characterization.</p>
-          <figure class="case-study__figure">
-            <img src="assets/images/mccb-setup-web.webp" alt="Bioreactor magnetic-field bench test setup" width="1200" height="900" decoding="async" loading="lazy">
-            <figcaption>Prototype test setup for the magnetic-field subsystem</figcaption>
-          </figure>
-        </section>
-
-        <section id="lessons" class="case-study__section">
-          <p class="case-study__section-index">08 / LESSONS LEARNED</p>
-          <h2>Isolate subsystems, then integrate with evidence</h2>
-          <p>Working coil and field measurements provided a validated baseline even while the custom drive PCB needed another revision. The next engineering steps are to complete that board revision, integrate it into the control system, and characterize interaction between neighboring wells. The project reinforced the value of keeping a testable prototype path when custom electronics lag system integration.</p>
-        </section>
-      </div>
-    </div>
-
-    <footer class="case-study__footer">
-      <a class="btn btn--primary" href="index.html#projects">← Back to projects</a>
-      <a class="btn btn--ghost" href="reports/mccb-final-report.html">Full Technical Report ↗</a>
-      <a class="btn btn--ghost" href="https://drive.google.com/file/d/1cpDNCRgkVr8pNTfsqG08lngT2ASLOM8R/view">Team Poster ↗</a>
-      <a class="btn btn--ghost" href="https://sites.google.com/eng.ucsd.edu/mae156b-2026spring-team22/home">Team Website ↗</a>
-    </footer>
-  </main>
-</body>
-</html>
+<nav class="case-study__toc" aria-label="Case study sections"><span>CONTENTS</span><a href="#problem">Problem</a><a href="#ownership">My contributions</a><a href="#requirements">Targets and outcomes</a><a href="#architecture">System architecture</a><a href="#lid">Lid trade study</a><a href="#coils">Coil iterations</a><a href="#electronics">Custom electronics</a><a href="#firmware">Embedded control</a><a href="#simulation">Field analysis</a><a href="#testing">Validation</a><a href="#ui">Final interface</a><a href="#lessons">Lessons and next steps</a><a href="#resources">Reports and poster</a>
+</nav>
+<div class="case-study__sections">
+<section id="problem" class="case-study__section">
+<h2>From a single stimulus chamber to a research platform</h2>
+<p>Our sponsor's earlier bioreactor applied fields to a single cell-culture chamber. The next version needed multiple chambers, independent electric and magnetic stimuli, fluid access, and microscope imaging. We built the Multi-Chamber Camera Bioreactor (MCCB) as a four-person UC San Diego MAE 156B capstone team in spring 2026.</p>
+<p>The final report records team spending of $3,185.38 against a $3,600 budget. The system was designed for four optical stations, but one complete station was installed within the project scope.</p>
+<p>The engineering challenge was to fit the field generators, clear-bottom wells, electrodes, sensors, and optics into repeatable modules that a researcher could operate from one touchscreen.</p>
+</section>
+<section id="ownership" class="case-study__section">
+<h2>What I owned</h2>
+<p>I took the magnetic subsystem from geometry selection through four physical iterations, custom board design, and bench validation. I also contributed the initial electric-field simulations, evaluated lid concepts, and completed the final interface design and testing.</p>
+<div class="case-study__table-wrap">
+<table class="case-study__table"><caption>My contributions recorded in the final report</caption>
+<thead>
+<tr><th scope="col">Workstream</th><th scope="col">My work</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Magnetic generator</th><td>Coil geometry, electromagnet CAD, versions 1–4, packaging, and field characterization.</td>
+</tr>
+<tr><th scope="row">Custom electronics</th><td>KiCad drive-board and Hall-sensor satellite designs; prototype bring-up and debugging.</td>
+</tr>
+<tr><th scope="row">Early design analysis</th><td>Electric-field simulations and an individual lid-design trade study.</td>
+</tr>
+<tr><th scope="row">Final software interface</th><td>UI design and testing for device assignment, calibration, stimulus settings, telemetry, and imaging.</td>
+</tr>
+<tr><th scope="row">Project coordination</th><td>Meeting presentations, Gantt planning, and engineering analysis.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="case-study__source">Attribution: final report, Table A1.1, and the individual design analysis by Dylan Bailes.</p>
+<details class="case-study__details">
+<summary>Team contributions</summary>
+<p>Kaitlyn Lavarias developed the initial UI and sensor/electronics research, initial electrode circuit, and optical validation. Dylan Lee led chassis, gantry, and circuit fabrication. Samantha Olivar led well and pressure-system work, electrode fabrication/testing, revised electric-field simulations, and camera/UI integration. The validation results and final assembly below are team outcomes.</p>
+</details>
+</section>
+<section id="requirements" class="case-study__section">
+<h2>Targets and demonstrated scope</h2>
+<p>The design requirements guided our choices. The delivered prototype and the remaining validation are distinct parts of the story.</p>
+<div class="case-study__table-wrap">
+<table class="case-study__table">
+<thead>
+<tr><th scope="col">Requirement or goal</th><th scope="col">Final evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Four individually controlled wells</th><td>Four well modules and per-well stimulus settings in the final interface.</td>
+</tr>
+<tr><th scope="row">Microscope observation</th><td>One complete microscope/camera station was installed. Additional stations remained a purchasing and integration step.</td>
+</tr>
+<tr><th scope="row">Magnetic field ≥1.5 mT</th><td>The report records 4.98 mT at the center at 1 A and AC testing across 0–250 Hz.</td>
+</tr>
+<tr><th scope="row">Uniform magnetic stimulus</th><td>The report's interpolated field map places the well footprint inside the &lt;1% deviation contour. Cross-well interaction still needs a dedicated test.</td>
+</tr>
+<tr><th scope="row">Electric field around 1.5 V/cm</th><td>Titanium electrodes, field simulations, and dry/saline voltage-control tests. Voltage measurements alone do not establish cell-response performance.</td>
+</tr>
+<tr><th scope="row">Sustained cell-culture experiments</th><td>Prototype hardware demonstration; long-duration thermal behavior and biological outcomes remain unvalidated.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="architecture" class="case-study__section">
+<h2>A well module with room for optics</h2>
+<p>Each clear-bottom well sits inside a Helmholtz coil pair. Titanium plates apply the electric stimulus; the threaded lid provides fluid ports and illumination. A Hall-sensor satellite fits around the well, and the microscope observes the sample from below. The extrusion frame supports four modules and a Raspberry Pi touchscreen.</p>
+<p>The final control path used ESP32 controllers and perfboard drive electronics. The four-station imaging layout was part of the design, while the delivered hardware contained one complete optical station.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-well.webp" data-visual aria-label="Enlarge: Resin-printed well inside the final coil housing"><img src="assets/images/bioreactor/coil-well.webp" alt="Resin-printed well inside the final coil housing" width="527" height="702" decoding="async" loading="lazy"></a>
+<figcaption>Final well and coil packaging. Source: final sponsor presentation.</figcaption>
+</figure>
+<div class="case-study__figure-grid">
+<figure class="case-study__figure"><a href="assets/images/bioreactor/microscope.webp" data-visual aria-label="Enlarge: Microscope beneath a coil and clear-bottom sample well"><img src="assets/images/bioreactor/microscope.webp" alt="Microscope beneath a coil and clear-bottom sample well" width="521" height="695" decoding="async" loading="lazy"></a>
+<figcaption>Optical access beneath the well. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/stage.webp" data-visual aria-label="Enlarge: Manual positioning stage and microscope camera mount"><img src="assets/images/bioreactor/stage.webp" alt="Manual positioning stage and microscope camera mount" width="926" height="695" decoding="async" loading="lazy"></a>
+<figcaption>Manual stage for positioning and focus. Source: final sponsor presentation.</figcaption>
+</figure>
+</div>
+</section>
+<section id="lid" class="case-study__section">
+<h2>Choose interfaces that can be assembled and serviced</h2>
+<p>My individual design analysis compared an adhesive-sealed Delrin concept, a serviceable acrylic lid with threaded/compression fittings, and a spring-loaded PTFE concept with Luer/PEEK connections. I weighed sealing, chemical compatibility, deflection, assembly effort, cost, and lead time.</p>
+<p>I recommended the serviceable middle option at that stage. The team's final design evolved to a resin-printed threaded well and lid with an O-ring, Luer fluid connections, a central LED diffuser, and bolted electrode ring terminals. The concept recommendation and the delivered geometry were different stages of the design process.</p>
+<div class="case-study__table-wrap">
+<table class="case-study__table"><caption>Lid concept trade study</caption>
+<thead>
+<tr><th scope="col">Concept</th><th scope="col">Main tradeoff</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Adhesive / Delrin</th><td>Simple interfaces, but permanent bonds complicate repair and repeated access.</td>
+</tr>
+<tr><th scope="row">Threaded fittings / acrylic</th><td>Serviceable connections and practical packaging, with more sealing interfaces to manage.</td>
+</tr>
+<tr><th scope="row">Spring / PTFE / PEEK</th><td>Chemical resistance and compliant clamping, with more manufacturing and assembly effort.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="case-study__figure-grid">
+<figure class="case-study__figure"><a href="assets/images/bioreactor/well.webp" data-visual aria-label="Enlarge: Final transparent well with titanium electrodes and ring-terminal connections"><img src="assets/images/bioreactor/well.webp" alt="Final transparent well with titanium electrodes and ring-terminal connections" width="802" height="420" decoding="async" loading="lazy"></a>
+<figcaption>Delivered well. Well and electrode implementation were team work. Source: project photos.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/lid.webp" data-visual aria-label="Enlarge: Final threaded lid with fluid ports and illumination diffuser"><img src="assets/images/bioreactor/lid.webp" alt="Final threaded lid with fluid ports and illumination diffuser" width="390" height="390" decoding="async" loading="lazy"></a>
+<figcaption>Final lid interfaces. Source: project photos.</figcaption>
+</figure>
+</div>
+<p class="case-study__source">The 48-hour seal duration, compression load, and cycle-life values in the lid analysis were design targets, rather than completed endurance-test results.</p>
+</section>
+<section id="coils" class="case-study__section">
+<h2>Four iterations of the magnetic generator</h2>
+<p>I first compared an air-gap horseshoe magnet with a Helmholtz pair. The horseshoe offered lower current demand, but the analysis showed larger lateral field variation and raised concerns about residual magnetism. The Helmholtz configuration offered a more uniform central region and a practical path to alternating fields.</p>
+<p>An early coil-spacing error reduced the field substantially. Correcting the geometry so coil separation equaled the radius was a key change. Later iterations improved well access, mounting, and sensor-board integration.</p>
+<div class="case-study__figure-grid case-study__iterations">
+<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-horseshoe.webp" data-visual aria-label="Enlarge: Early horseshoe electromagnet prototype"><img src="assets/images/bioreactor/coil-horseshoe.webp" alt="Early horseshoe electromagnet prototype" width="1600" height="1205" decoding="async" loading="lazy"></a>
+<figcaption>Horseshoe prototype: evaluate the air-gap approach. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-horizontal.webp" data-visual aria-label="Enlarge: Early blue horizontal Helmholtz coil pair"><img src="assets/images/bioreactor/coil-horizontal.webp" alt="Early blue horizontal Helmholtz coil pair" width="1600" height="1205" decoding="async" loading="lazy"></a>
+<figcaption>Horizontal pair: establish coil geometry and test access. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-well.webp" data-visual aria-label="Enlarge: Vertical connected coil assembly around the sample well"><img src="assets/images/bioreactor/coil-well.webp" alt="Vertical connected coil assembly around the sample well" width="527" height="702" decoding="async" loading="lazy"></a>
+<figcaption>Connected vertical arrangement: package the well between coils. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-final.webp" data-visual aria-label="Enlarge: Final ASA Helmholtz coil housing with hand-wound magnet wire"><img src="assets/images/bioreactor/coil-final.webp" alt="Final ASA Helmholtz coil housing with hand-wound magnet wire" width="1600" height="1205" decoding="async" loading="lazy"></a>
+<figcaption>Final housing: integrate well mounting and satellite-board access. Source: final sponsor presentation.</figcaption>
+</figure>
+</div>
+<p>The final coil used <strong>156 turns of 24 AWG wire per coil, a 27 mm radius, and 27 mm separation</strong>, with a printed ASA housing. The report predicts approximately 5 mT at 1 A and compares that prediction with a measured field map.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/coil-geometry.webp" data-visual aria-label="Enlarge: CAD section of the final coil, well, and satellite-board packaging"><img src="assets/images/bioreactor/coil-geometry.webp" alt="CAD section of the final coil, well, and satellite-board packaging" width="438" height="365" decoding="async" loading="lazy"></a>
+<figcaption>Final geometry and packaging. Source: final report, Figure 3.4.</figcaption>
+</figure>
+</section>
+<section id="electronics" class="case-study__section">
+<h2>Two board designs and a working delivery path</h2>
+<p>I designed a main drive PCB and a separate Hall-sensor satellite in KiCad. The drive board combined the STM32 control path with field-drive electronics; the satellite positioned two Hall sensors close to the well. Mechanical packaging was part of the board design, rather than an afterthought.</p>
+<div class="case-study__figure-grid">
+<figure class="case-study__figure"><a href="assets/images/bioreactor/drive-pcb.webp" data-visual aria-label="Enlarge: KiCad layout of the custom STM32 main drive board"><img src="assets/images/bioreactor/drive-pcb.webp" alt="KiCad layout of the custom STM32 main drive board" width="1600" height="952" decoding="async" loading="lazy"></a>
+<figcaption>Main drive-board prototype. It required revision and did not reach final integration. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/hall-pcb.webp" data-visual aria-label="Enlarge: KiCad layout of the U-shaped two-sensor Hall satellite"><img src="assets/images/bioreactor/hall-pcb.webp" alt="KiCad layout of the U-shaped two-sensor Hall satellite" width="1600" height="1032" decoding="async" loading="lazy"></a>
+<figcaption>Hall-sensor satellite. This board was used in the final system. Source: final sponsor presentation.</figcaption>
+</figure>
+</div>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/pcb-packaging.webp" data-visual aria-label="Enlarge: CAD view of the Hall satellite fitting around the sample well"><img src="assets/images/bioreactor/pcb-packaging.webp" alt="CAD view of the Hall satellite fitting around the sample well" width="1600" height="1117" decoding="async" loading="lazy"></a>
+<figcaption>Electronics and well packaging. Source: final sponsor presentation.</figcaption>
+</figure>
+<p>The custom main board did not reach full integration within the schedule. The team delivered stimulus control using ESP32/perfboard assemblies while retaining the satellite board for magnetic sensing. That gave us a working system to test and a specific board revision to pursue.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/working-controls.webp" data-visual aria-label="Enlarge: Working coil, Hall board, ESP32 and motor-driver electronics"><img src="assets/images/bioreactor/working-controls.webp" alt="Working coil, Hall board, ESP32 and motor-driver electronics" width="835" height="681" decoding="async" loading="lazy"></a>
+<figcaption>Delivered prototype control path. Source: project photo, controlsphoto.PNG.</figcaption>
+</figure>
+</section>
+<section id="firmware" class="case-study__section">
+<h2>Separate waveform timing from commands and sensing</h2>
+<p>My STM32 prototype work included peripheral bring-up, I²C/UART interfaces, option-byte recovery, and direct register configuration where needed. The final available control firmware uses an ESP32 with a DRV8876 H-bridge, 20 kHz PWM, and Hall-sensor readout.</p>
+<p>The firmware assigns waveform generation to one ESP32 core and serial commands/sensing to the other. It supports off, DC step, square, sine, and triangle commands, plus Hall zeroing and telemetry. The interface's calibration sequence relates PWM duty to measured field so the user can request a field value.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/control-path.webp" data-visual aria-label="Enlarge: Report diagram of the coil drive and sensing electronics"><img src="assets/images/bioreactor/control-path.webp" alt="Report diagram of the coil drive and sensing electronics" width="576" height="365" decoding="async" loading="lazy"></a>
+<figcaption>Proposed board packaging and connections. Final drive used ESP32/perfboard electronics. Source: final report, Figure 3.5.</figcaption>
+</figure>
+<p><strong>Delivered behavior:</strong> calibrated waveform drive and Hall telemetry. The supplied <code>FullModule.ino</code> removes current monitoring and does not implement a completed closed-loop field regulator. Closed-loop control, automatic thermal protection, and final STM32 board integration remain further work.</p>
+</section>
+<section id="simulation" class="case-study__section">
+<h2>Use analysis to choose geometry, then test it</h2>
+<p>I contributed initial electric-field simulations and magnetic-field analysis to guide geometry selection. The team later revised the electric-field models for the final well. Simulation helped us reason about field distribution, electrode geometry, and packaging before committing to hardware.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/electric-simulation.webp" data-visual aria-label="Enlarge early ANSYS electric-field model"><img src="assets/images/bioreactor/electric-simulation.webp" alt="Early ANSYS Maxwell model showing electric-field concentration near two parallel wire electrodes" width="558" height="408" loading="lazy" decoding="async"></a><figcaption>Early parallel-wire electrode study, with 16 mm center spacing and 5 V excitation in saline. Source: team Design Proposal Presentation, slide 10. The final team design used titanium plates.</figcaption></figure>
+<p>For the magnetic generator, we compared the analytical Helmholtz model with a calibrated magnetometer map. The published figure below combines measured surface data and theoretical contours. It is the team's reported result, including interpolation; it is not a newly generated dataset.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/field-map.webp" data-visual aria-label="Enlarge: Measured magnetic field surface and theoretical Helmholtz uniformity contours"><img src="assets/images/bioreactor/field-map.webp" alt="Measured magnetic field surface and theoretical Helmholtz uniformity contours" width="1600" height="903" decoding="async" loading="lazy"></a>
+<figcaption>Team field map: reported 4.98 mT center and &lt;1% deviation across the well footprint at 1 A. Source: final report, Figure 4.4 / final sponsor presentation.</figcaption>
+</figure>
+<details class="case-study__details">
+<summary>Field-map measurement notes</summary>
+<p>The published surface is interpolated from the magnetometer measurements. The raw appendix table has an unresolved unit-label inconsistency, so the figure is presented with the units and results stated in the report. Additional mapped trials would establish repeatability.</p>
+</details>
+</section>
+<section id="testing" class="case-study__section">
+<h2>Characterize the subsystem and its limits</h2>
+<div class="case-study__table-wrap">
+<table class="case-study__table"><caption>Magnetic subsystem evidence from Chapter 4 of the final report</caption>
+<thead>
+<tr><th scope="col">Test</th><th scope="col">Reported finding</th><th scope="col">What it establishes</th>
+</tr>
+</thead>
+<tbody>
+<tr><th scope="row">Static field mapping</th><td>4.98 mT center at 1 A</td><td>A measured reference for the coil geometry.</td>
+</tr>
+<tr><th scope="row">Spatial mapping</th><td>Well footprint inside the reported &lt;1% contour</td><td>Local uniformity in the mapped/interpolated region.</td>
+</tr>
+<tr><th scope="row">AC drive</th><td>Tests across 0–250 Hz; Hall trace at 100 Hz</td><td>Waveform generation and sensor tracking in prototype tests.</td>
+</tr>
+<tr><th scope="row">Impedance characterization</th><td>NanoVNA self-resonance around 570 kHz</td><td>Coil electrical behavior characterized above the stimulus band.</td>
+</tr>
+<tr><th scope="row">Two-hour thermal test</th><td>Substantial heating of the coils and driver</td><td>Cooling and sample-temperature validation are needed before long-duration operation.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="case-study__figure-grid">
+<figure class="case-study__figure"><a href="assets/images/bioreactor/bench.webp" data-visual aria-label="Enlarge: Bench power supply, coil and field-measurement equipment"><img src="assets/images/bioreactor/bench.webp" alt="Bench power supply, coil and field-measurement equipment" width="1205" height="1600" decoding="async" loading="lazy"></a>
+<figcaption>Prototype bench characterization. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/hall-waveform.webp" data-visual aria-label="Enlarge: Two Hall-sensor measurements tracking a 100 Hz square-wave field"><img src="assets/images/bioreactor/hall-waveform.webp" alt="Two Hall-sensor measurements tracking a 100 Hz square-wave field" width="576" height="303" decoding="async" loading="lazy"></a>
+<figcaption>Measured Hall-sensor waveform at 100 Hz. Source: final report, Figure 4.5.</figcaption>
+</figure>
+</div>
+<h3>Electric stimulus: team dry and saline tests</h3>
+<p>The team calibrated the electrode drive using a 100 Ω dry load and then tested the electrodes in saline. The chart below reproduces the four points in <em>Electrode Test Data.xlsx</em>. It shows measured drive voltage, rather than a biological result or a complete field-uniformity validation.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/electrode-voltage.svg" data-visual aria-label="Enlarge electrode voltage measurements"><img src="assets/images/bioreactor/electrode-voltage.svg" alt="Expected output of 2, 3, 4 and 5 volts compared with dry measurements of 1.68, 2.68, 3.64 and 4.62 volts and saline measurements of 1.98, 2.96, 3.98 and 4.96 volts" width="1000" height="650" loading="lazy" decoding="async"></a>
+<figcaption>Four supplied measurements per condition; no repeatability/error bars were provided. Source: team Electrode Test Data.xlsx, Sheet1. <a href="assets/reports/mccb-electrode-test-data.csv">Download plotted data (CSV)</a>.</figcaption>
+</figure>
+<p class="case-study__source">The report's thermal wording does not clearly distinguish temperature rise from absolute temperature. Cross-well magnetic isolation, long-duration sample temperature, repeatability, and biological response remain further validation.</p>
+</section>
+<section id="ui" class="case-study__section">
+<h2>Make the hardware usable from one screen</h2>
+<p>The final report credits me with final UI design and testing, building on Kaitlyn's initial interface and Samantha's camera integration. The Raspberry Pi interface provides device assignment, firmware initialization, per-well parameters, calibration, live magnetic readings, and camera controls.</p>
+<p>The demo walks through assigning controllers, calibrating PWM against Hall readings, selecting waveform and field settings, and adjusting exposure, gain, and frame rate. The camera screen supports a four-view layout, while the delivered prototype had one installed camera station.</p>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/ui-control.webp" data-visual aria-label="Enlarge: Final interface with independent electric and magnetic waveform settings"><img src="assets/images/bioreactor/ui-control.webp" alt="Final interface with independent electric and magnetic waveform settings" width="1124" height="702" decoding="async" loading="lazy"></a>
+<figcaption>Per-well electric and magnetic stimulus controls. Source: final sponsor presentation.</figcaption>
+</figure>
+<div class="case-study__figure-grid">
+<figure class="case-study__figure"><a href="assets/images/bioreactor/ui-devices.webp" data-visual aria-label="Enlarge: UI screen assigning serial controllers to well slots"><img src="assets/images/bioreactor/ui-devices.webp" alt="UI screen assigning serial controllers to well slots" width="1124" height="702" decoding="async" loading="lazy"></a>
+<figcaption>Assign connected controllers to well slots. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/ui-home.webp" data-visual aria-label="Enlarge: Final UI home screen displaying four well status panels"><img src="assets/images/bioreactor/ui-home.webp" alt="Final UI home screen displaying four well status panels" width="1124" height="702" decoding="async" loading="lazy"></a>
+<figcaption>Review per-well state from the home screen. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/ui-telemetry.webp" data-visual aria-label="Enlarge: Live magnetic field graph in the touchscreen UI"><img src="assets/images/bioreactor/ui-telemetry.webp" alt="Live magnetic field graph in the touchscreen UI" width="1124" height="702" decoding="async" loading="lazy"></a>
+<figcaption>Monitor magnetic readings and calibration behavior. Source: final sponsor presentation.</figcaption>
+</figure>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/ui-camera.webp" data-visual aria-label="Enlarge: Camera interface with four-view layout and imaging settings"><img src="assets/images/bioreactor/ui-camera.webp" alt="Camera interface with four-view layout and imaging settings" width="1124" height="702" decoding="async" loading="lazy"></a>
+<figcaption>Imaging controls and capture. Four-view layout shown; one optical station installed. Source: final sponsor presentation.</figcaption>
+</figure>
+</div>
+<figure class="case-study__figure case-study__video">
+<video controls playsinline preload="none" poster="assets/images/bioreactor/demo-poster.webp" width="1280" height="720" aria-label="Team demonstration of the finished bioreactor and touchscreen interface" aria-describedby="demo-caption">
+<source src="assets/video/mccb-team-demo.mp4" type="video/mp4">
+<p><a href="assets/video/mccb-team-demo.mp4">Open the team demonstration</a>
+</p>
+</video>
+<figcaption id="demo-caption">Team demonstration · 2 min 54 s. Hardware walkthrough, device assignment, calibration, imaging, and waveform control. <a href="assets/video/mccb-team-demo.mp4" download>Download video (40 MB)</a>.</figcaption>
+</figure>
+<details class="case-study__details">
+<summary>Demonstration overview</summary>
+<p>The first minute shows the finished frame, threaded well and fluid connections, electrodes, coil housing, Hall board, microscope, and perfboard drive electronics. The remaining demonstration shows the touchscreen device-assignment workflow, calibration, magnetic telemetry, camera settings and image capture, and waveform selection.</p>
+<p>The original narration calls the sensing path closed-loop feedback. The available final firmware demonstrates calibrated drive and Hall telemetry; completed closed-loop regulation is a further integration step. The camera interface supports four views, with one optical station installed in the delivered prototype.</p>
+</details>
+<p><a class="btn btn--ghost" href="https://www.youtube.com/watch?v=5tLC9Iq_kE8">Watch the team's narrated demonstration ↗</a>
+</p>
+</section>
+<section id="lessons" class="case-study__section">
+<h2>What I would carry into the next build</h2>
+<ul class="case-study__list">
+<li><strong>Check geometry before increasing power.</strong> Coil spacing affected the field enough that a geometry correction mattered more than simply driving harder.</li>
+<li><strong>Package the sensing path with the mechanism.</strong> Well access, optical clearance, wire routing, and the Hall-board outline all shaped the magnetic assembly.</li>
+<li><strong>Keep a working integration path.</strong> The ESP32/perfboard implementation let the team demonstrate the system while the custom drive board needed revision.</li>
+<li><strong>Calibrate the user command against a measurement.</strong> Duty-cycle percentage alone does not describe the field at the sample.</li>
+<li><strong>Extend validation beyond a successful demo.</strong> The next tests should quantify cross-well interaction, temperature at the sample, long-duration stability, and repeatability before biological experiments.</li>
+</ul>
+<p>The next hardware revision would complete the main board, add verified current and thermal protection, and integrate closed-loop field regulation. Additional optical stations and sustained culture testing would then establish the platform's full experimental scope.</p>
+</section>
+<section id="resources" class="case-study__section">
+<h2>Technical material for a deeper discussion</h2>
+<p>This case study was checked against the folder's <strong>Final Report – RELEASE V2</strong>, its errata, the final sponsor presentation and poster, individual design analyses, progress notes, available control firmware, and test spreadsheets. The original final documents are available below.</p>
+<div class="case-study__actions"><a class="btn btn--primary" href="assets/reports/mccb-final-report-release-v2.pdf">Final report, Release V2 (PDF · 38 MB) ↗</a><a class="btn btn--ghost" href="reports/mccb-final-report.html">Browse technical report ↗</a><a class="btn btn--ghost" href="assets/reports/mccb-final-presentation.pdf">Final presentation (PDF · 9 MB) ↗</a><a class="btn btn--ghost" href="assets/reports/mccb-final-poster.pdf">Final poster (PDF · 4 MB) ↗</a><a class="btn btn--ghost" href="https://sites.google.com/eng.ucsd.edu/mae156b-2026spring-team22/home">Team website ↗</a>
+</div>
+<figure class="case-study__figure"><a href="assets/images/bioreactor/poster.webp" data-visual aria-label="Enlarge: Team final poster covering well design, magnetic and electric stimuli, optics and user interface"><img src="assets/images/bioreactor/poster.webp" alt="Team final poster covering well design, magnetic and electric stimuli, optics and user interface" width="2000" height="1500" decoding="async" loading="lazy"></a>
+<figcaption>Team final poster. Enlarge for interview discussion or open the original PDF above.</figcaption>
+</figure>
+</section>
+</div>
+</div>
+<footer class="case-study__footer"><a class="btn btn--primary" href="index.html#projects">← All projects</a>
+<button class="btn btn--ghost" data-present-visuals hidden>Present visuals ↗</button><a class="btn btn--ghost" href="#case-study">Back to top ↑</a>
+</footer>
+</main></body></html>

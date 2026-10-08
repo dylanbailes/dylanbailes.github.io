@@ -18,6 +18,7 @@ import { initSkills } from './skills.js';
 import { initProjects } from './projects.js';
 import { initContact } from './contact.js';
 import { initSmoothScroll } from './smooth-scroll.js';
+import { initVisualViewer } from './visual-viewer.js';
 
 /** Syncs <title>, description and Open Graph tags from the config. */
 function applyMeta(meta) {
@@ -45,6 +46,7 @@ function boot() {
   initExperience();
   initSkills();
   initProjects();
+  initVisualViewer();
   initContact();
   initSmoothScroll();
 

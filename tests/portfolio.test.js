@@ -104,7 +104,7 @@ for (const page of pages) {
     const html = readFileSync(path, 'utf8');
     const early = html.indexOf('<script data-theme-bootstrap>');
     assert.ok(early >= 0 && early < html.indexOf('<script type="module"'));
-    assert.ok(early < html.indexOf('fonts.googleapis.com'));
+    assert.ok(early < html.indexOf('rel="stylesheet"'), 'theme must precede font and page styles');
     assert.match(html, /data-critical-theme/);
     assert.doesNotMatch(html, /<html[^>]*data-theme="light"/);
     assert.equal((html.match(/rel="canonical"/g) || []).length, 1);

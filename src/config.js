@@ -204,13 +204,16 @@ export const site = {
     {
       title: 'Multi-Chamber Camera Bioreactor',
       category: 'pcb',
+      categories: ['mechanical', 'pcb', 'firmware', 'simulation'],
+      role: 'Magnetic subsystem, custom electronics, final UI design and testing',
+      outcome: 'Completed capstone prototype · UC San Diego, 2026',
       summary:
-        "Senior capstone (MAE 156B) for a stem-cell research lab: a four-chamber platform for electric and magnetic stimulation with microscope observation. Designed the magnetic subsystem, two KiCad PCB prototypes, and STM32 firmware; validated the field with ANSYS and bench measurements.",
+        "Built a four-well research platform with a four-person team. I developed the magnetic generator through four iterations, designed drive and Hall-sensor boards, contributed field simulations and lid design, and completed the final UI. The delivered system combined independent stimulus control with one complete microscope/camera station.",
       specs: [
-        { label: 'Chambers', value: '4 optically clear' },
-        { label: 'Stimulation', value: 'E-field 1.5 V/cm · B-field ≥1.5 mT' },
-        { label: 'Electronics', value: '2× KiCad PCBs + STM32' },
-        { label: 'Validation', value: 'ANSYS field simulations' },
+        { label: 'Delivered', value: '4 wells · 1 complete imaging station' },
+        { label: 'Field map', value: '4.98 mT center at 1 A (team report)' },
+        { label: 'Electronics', value: 'Hall PCB + ESP32/perfboard drive' },
+        { label: 'Interface', value: 'Raspberry Pi touchscreen + calibration' },
       ],
       challenges: [
         'Brought up STM32 firmware and configured peripherals',
@@ -220,16 +223,20 @@ export const site = {
         'Debugged the custom PCB prototype and drive electronics',
         'Validated field behavior with ANSYS and bench measurements',
       ],
-      challengeNote: 'The custom drive PCB did not reach full system integration; the magnetic-field subsystem was tested on a working prototype setup.',
+      challengeNote: 'The Hall-sensor satellite board was used in the final build. The custom STM32 drive board required another revision; ESP32/perfboard electronics supported delivery. The available firmware implements calibrated waveform drive and Hall telemetry, with closed-loop regulation still a next step.',
       media: {
         type: 'image',
-        src: 'assets/images/mccb-final-design.webp',
-        alt: 'Multi-Chamber Camera Bioreactor final design',
+        src: 'assets/images/bioreactor/assembly.webp',
+        alt: 'Finished four-well bioreactor with touchscreen and one installed microscope/camera station',
+        fit: 'contain',
+        caption: 'Delivered prototype · final sponsor presentation, 2026',
+        fullSize: true,
         // Extra shots — shown as a thumbnail strip under the main image
         gallery: [
-          { src: 'assets/images/mccb-intermediate.webp', alt: 'Bioreactor intermediate design iteration' },
-          { src: 'assets/images/mccb-surface-comparison.webp', alt: 'ANSYS surface field comparison' },
-          { src: 'assets/images/mccb-setup-web.webp', alt: 'Bioreactor lab test setup' },
+          { src: 'assets/images/bioreactor/coil-final.webp', alt: 'Final printed Helmholtz coil housing with hand-wound magnet wire', fit: 'contain', caption: 'Magnetic generator · final coil iteration' },
+          { src: 'assets/images/bioreactor/drive-pcb.webp', alt: 'Custom STM32 drive board layout in KiCad', fit: 'contain', caption: 'Custom drive PCB design · prototype requiring revision' },
+          { src: 'assets/images/bioreactor/field-map.webp', alt: 'Reported measured magnetic surface and theoretical uniformity contours', fit: 'contain', caption: 'Team field map · 4.98 mT center; reported footprint variation below 1%' },
+          { src: 'assets/images/bioreactor/ui-control.webp', alt: 'Final touchscreen interface for electric and magnetic waveform settings', fit: 'contain', caption: 'Final UI · individual well stimulus controls' },
         ],
       },
       links: [
@@ -241,6 +248,9 @@ export const site = {
     {
       title: 'Autonomous Car Racing & RoboButler',
       category: 'firmware',
+      categories: ['firmware', 'controls'],
+      role: 'Navigation software lead for the RoboButler final project',
+      outcome: 'Subsystem demonstrations completed · automatic camera handoff pending',
       summary:
         'In ECE/MAE 148, worked with three ECE teammates on ROS2 racing laps using GPS, camera, LiDAR, and neural-network perception. For the later eight-person RoboButler final project, led navigation software for target following, object detection, Kalman-filter state estimation, and state-space control.',
       specs: [
@@ -288,6 +298,9 @@ export const site = {
     {
       title: 'UAS Mechanism Design & Engineering Analysis',
       category: 'simulation',
+      categories: ['mechanical', 'simulation'],
+      role: 'Mechanical engineering intern · AeroVironment',
+      outcome: 'Prototype design, testing, and engineering analysis · summer 2025',
       summary:
         'At AeroVironment, designed and prototyped a motor-driven small-UAS mechanism. Connected analytical modeling, tolerance analysis, prototype testing, and structural simulation to guide design iterations; spring-force margin emerged as a key design consideration.',
       specs: [
@@ -300,10 +313,16 @@ export const site = {
         type: 'image',
         src: 'assets/images/uas-tolerance-workflow.svg',
         alt: 'Illustrative workflow for tolerance analysis and spring-force margin review; no project measurements',
+        fit: 'contain',
+        layout: 'figure',
+        fullSize: true,
+        caption: 'Illustration of my analysis workflow. Company geometry and project measurements are omitted.',
         gallery: [
           {
             src: 'assets/images/uas-mesh-convergence.svg',
             alt: 'Illustrative FEA mesh-convergence trend; no project measurements',
+            fit: 'contain',
+            caption: 'Illustrative convergence trend explaining the method; values are not project measurements.',
           },
         ],
       },
@@ -318,6 +337,9 @@ export const site = {
     {
       title: 'FRC Competition Robots',
       category: 'mechanical',
+      categories: ['mechanical'],
+      role: 'Mechanical lead · Robodox FRC Team 599',
+      outcome: 'Two award-winning robots · 2019–2023',
       summary:
         "Mechanical lead for Robodox FRC (Team 599): led design of two award-winning robots, including the team's first regional competition win. Modeled and fabricated 300+ parts across CAD, CNC, and manual machining, and taught a robotics curriculum to elementary students.",
       specs: [
@@ -326,10 +348,19 @@ export const site = {
         { label: 'Parts', value: '300+ fabricated' },
         { label: 'Hours', value: '1,000+ logged' },
       ],
+      challengesTitle: 'My Contributions',
+      challenges: [
+        'Led mechanism design and coordinated mechanical integration with the electronics and programming teams.',
+        'Took parts from CAD to fabrication using CNC equipment, manual mills, and lathes.',
+        'Taught an elementary-school robotics curriculum alongside the competition work.',
+      ],
     },
     {
       title: 'Flexible-Shaft Torque Control Testbed',
       category: 'controls',
+      categories: ['mechanical', 'controls', 'simulation', 'firmware'],
+      role: 'Actuator modeling, controller development, and embedded implementation',
+      outcome: 'Simulation and host validation · hardware work in progress',
       summary:
         'Series-elastic actuator project connecting mechanical compliance, system identification, constrained model predictive control (MPC), and learned feedforward. Simulation compares PID and MPC under a shared current limit; STM32 integration and physical validation are in progress.',
       specs: [
@@ -368,15 +399,25 @@ export const site = {
     {
       title: 'Prime Day Delivery Bot',
       category: 'mechanical',
+      categories: ['mechanical'],
+      role: 'Design and manufacturing lead · MAE 3',
+      outcome: 'Built and tested prototype · scoring height limited by travel',
       summary:
-        "Competition robot built for MAE 3 as Design & Manufacturing Lead: a three-stage differential elevator lift with a spring-actuated bucket and friction drive. Reaches full extension in ~6 seconds, lifts 0.82 kg (2.5× the required payload), and went through 50+ design iterations to solve the elevator's planar-motion problem.",
+        "Designed and manufactured a three-stage differential elevator with a spring-actuated bucket and friction drive. The prototype lifted 0.82 kg, about 2.5 times the required payload, and reached its tested 20-inch height in about 6 seconds. More than 50 iterations addressed planar motion; friction and string length limited scoring height.",
       specs: [
         { label: 'Mechanism', value: 'Three-stage differential elevator' },
         { label: 'Drive', value: 'Spring friction drive' },
         { label: 'Robot Mass', value: '2.3 kg' },
-        { label: 'Lift Time', value: '6 s to full extension' },
+        { label: 'Tested travel', value: '20 in in about 6 s' },
       ],
-      media: { type: 'image', src: 'assets/images/mae3-robot.webp', alt: 'Prime Day Delivery Bot' },
+      challengesTitle: 'Test Results & Lessons',
+      challenges: [
+        'Lifted 0.82 kg against a 0.325 kg requirement; the analytical lift estimate was 2.67 kg.',
+        'Observed bending and friction reduce payload capacity relative to the ideal force model.',
+        'First-stage friction and insufficient string travel limited reach to 20 inches, below the higher scoring targets.',
+        'Iterated the elevator geometry and overlap to improve guidance and prevent out-of-plane motion.',
+      ],
+      media: { type: 'image', src: 'assets/images/mae3-robot.webp', alt: 'Prime Day Delivery Bot with elevator lift and bucket', fullSize: true, caption: 'Built MAE 3 competition prototype · measured results in the report' },
       links: [
         { label: 'Final Report', href: 'reports/mae3-prime-day-delivery-bot.html', primary: true },
       ],

@@ -15,7 +15,8 @@ export const reports = [
   },
   {
     slug: 'mccb-final-report', code: 'P.01 / MAE 156B',
-    title: 'Multi-Chamber Camera Bioreactor', subtitle: 'Final technical report',
+    title: 'Multi-Chamber Camera Bioreactor', subtitle: 'Technical report · HTML reading edition',
+    pdf: '../assets/reports/mccb-final-report-release-v2.pdf',
     authors: 'Dylan Bailes, Kaitlyn Lavarias, Dylan Lee, Samantha Olivar',
     course: 'MAE 156B — Fundamental Principles of Mechanical Design II',
     details: 'University of California San Diego · Professor David Gillett',
@@ -172,6 +173,7 @@ export function renderReport(report) {
     : { src: `../assets/reports/figures/${report.slug}/image1.png`, ...images.get(`../assets/reports/figures/${report.slug}/image1.png`), alt: 'Multi-Chamber Camera Bioreactor final assembly' };
   const readingTime = Math.ceil(cleanText(markdown.replace(/^\[[^\]]+\]:.*$/gm, '')).split(/\s+/).length / 200);
   const caseLink = report.slug === 'mccb-final-report' ? '<a href="../bioreactor.html" class="btn btn--ghost">Project case study →</a>' : '';
+  const latestPdf = report.pdf ? `<a href="${report.pdf}" class="btn btn--ghost">Latest Release V2 PDF ↗</a>` : '';
   const html = `
   <a href="#report-content" class="skip-link">Skip to report</a>
   <button class="theme-toggle" aria-label="Toggle dark/light theme" title="Toggle theme">
@@ -190,7 +192,8 @@ export function renderReport(report) {
         <p class="report-authors">${escapeHtml(report.authors)}</p>
         <p class="report-meta">${escapeHtml(report.course)}${report.details ? `<br>${escapeHtml(report.details)}` : ''}${report.sponsor ? `<br>Sponsor: ${escapeHtml(report.sponsor)}` : ''}</p>
         <p class="report-edition">${report.release ? `Released ${report.release} · ` : ''}${readingTime} min read</p>
-        <div class="report-actions"><a href="#report-content" class="btn btn--primary">Read report ↓</a><button class="btn btn--ghost" data-print-report hidden>Print / Save PDF</button>${caseLink}</div>
+        <div class="report-actions"><a href="#report-content" class="btn btn--primary">Read report ↓</a><button class="btn btn--ghost" data-print-report hidden>Print / Save PDF</button>${caseLink}${latestPdf}</div>
+        ${report.pdf ? '<p class="report-edition">This HTML edition preserves the supplied report export. The original Release V2 PDF includes the final errata and is the authoritative release.</p>' : ''}
       </div>
       <figure class="report-cover-image"><img src="${cover.src}" alt="${cover.alt}" width="${cover.width}" height="${cover.height}" decoding="async"><figcaption>${escapeHtml(report.title)}</figcaption></figure>
     </div>

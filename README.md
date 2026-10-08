@@ -80,6 +80,22 @@ for existing links. Update `src/image-assets.js` with dimensions when adding pho
 Letter League's security policy permits embedding only from the published
 `https://dylanbailes.github.io` origin; use **Open standalone** during local previews.
 
+## Interview visuals
+
+`bioreactor.html` contains the source-reviewed capstone case study. **Present visuals**
+opens its figures in a native dialog; arrow keys navigate, Home/End jump, and Escape
+closes the view and restores focus. Images remain ordinary links without JavaScript.
+Project galleries also offer an enlarged presentation view.
+
+The authoritative bioreactor report is the unmodified **RELEASE V2** PDF, linked
+from the case study and HTML reader. The final poster, presentation, plotted electrode
+data, and compressed team demonstration are hosted locally. Image provenance is in
+`public/assets/images/bioreactor/SOURCES.md`; review notes are in `audit/interview-review.md`.
+
+Project cards include `role`, `outcome`, and a `categories` array so work can appear
+under every relevant discipline. Existing `category` values still select the badge.
+Fonts are hosted locally in `public/assets/fonts/` with their Open Font Licenses.
+
 ### Adding a project
 
 Add one object to the `projects` array in `src/config.js`:

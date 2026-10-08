@@ -29,6 +29,12 @@ export function portfolioHtml() {
         const title = isHome ? site.meta.title : html.match(/<title>(.*?)<\/title>/)[1];
         const page = isHome ? '' : context.path.replace(/^\//, '');
         const url = `${site.meta.url}/${page}`;
+        const isBioreactor = page === 'bioreactor.html';
+        const socialImage = isBioreactor ? 'assets/images/bioreactor/assembly.webp' : 'assets/images/profile.jpg';
+        const socialAlt = isBioreactor ? 'Finished four-well camera bioreactor' : 'Portrait of Dylan Bailes';
+
+        // The same fonts are hosted locally to avoid an external rendering dependency.
+        html = html.replace(/\s*<link[^>]+(?:fonts\.googleapis\.com|fonts\.gstatic\.com)[^>]*>/g, '');
 
         html = html.replace(' data-theme="light"', '');
         html = html.replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)}</title>`);
@@ -41,12 +47,12 @@ export function portfolioHtml() {
   <meta property="og:title" content="${escapeHtml(title)}">
   <meta property="og:description" content="${escapeHtml(description)}">
   <meta property="og:url" content="${escapeHtml(url)}">
-  <meta property="og:image" content="${site.meta.url}/assets/images/profile.jpg">
-  <meta property="og:image:alt" content="Portrait of Dylan Bailes">
-  <meta name="twitter:card" content="summary">
+  <meta property="og:image" content="${site.meta.url}/${socialImage}">
+  <meta property="og:image:alt" content="${socialAlt}">
+  <meta name="twitter:card" content="${isBioreactor ? 'summary_large_image' : 'summary'}">
   <meta name="twitter:title" content="${escapeHtml(title)}">
   <meta name="twitter:description" content="${escapeHtml(description)}">
-  <meta name="twitter:image" content="${site.meta.url}/assets/images/profile.jpg">`;
+  <meta name="twitter:image" content="${site.meta.url}/${socialImage}">`;
         // Establish the page canvas before fonts, CSS, and module downloads.
         const earlyTheme = `<style data-critical-theme>
     :root { color-scheme: light; background: #f4f4f1; color: #111110; }

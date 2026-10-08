@@ -1,3 +1,5 @@
+@import './fonts.css';
+
 /* ==========================================================================
    ENGINEERING PORTFOLIO — DESIGN SYSTEM v2
    Nothing OS-inspired: monochrome + signal red, technical precision,
@@ -2618,3 +2620,5 @@ body.game-dialog-open {
   h1, h2, h3, h4 { page-break-after: avoid; }
   .container { max-width: 100%; padding: 0; }
 }
+.project-card__role { margin: 0 0 8px; font-size: .9rem; font-weight: 600; line-height: 1.5; }
+.project-card__outcome { margin: 0 0 20px; color: var(--color-muted); font-family: var(--font-mono); font-size: .72rem; line-height: 1.6; }
